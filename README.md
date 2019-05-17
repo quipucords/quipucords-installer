@@ -9,7 +9,7 @@ This *README* file contains information about the installation and development o
 - [Installation](#installation)
 - [Development](#development)
 - [Issues](#issues)
-- [Authors](#author)
+- [Authors](#authors)
 - [Copyright and License](#copyright)
 
 
