@@ -1,6 +1,6 @@
 # Quipucords Installer
 
-Installs the Quipucords server and CLI.  Quipucords is a tool for discovery, inspection, collection, deduplication, and reporting on an IT environment
+Installs the Quipucords server and CLI.  Quipucords is a tool for discovery, inspection, collection, deduplication, and reporting on an IT environment.
 
 This *README* file contains information about the installation and development of quipucords, as well as instructions about where to find basic usage, known issues, and best practices information.
 
