@@ -1,5 +1,5 @@
 quipucords-installer was written by:
-- [Chris Hambridge](chambrid@redhat.com)
-- [Kevan Holdaway](kholdawa@redhat.com) 
-- [Cody Myers](cmyers@redhat.com)
-- [Ashley Aiken](aaiken@redhat.com)
+- [Kevan Holdaway](mailto:kholdawa@redhat.com) 
+- [Ashley Aiken](mailto:aaiken@redhat.com)
+- [Cody Myers](mailto:cmyers@redhat.com)
+- [Chris Hambridge](mailto:chambrid@redhat.com)

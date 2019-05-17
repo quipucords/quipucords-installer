@@ -2,7 +2,7 @@
 
 Installs the Quipucords server and CLI.  Quipucords is a tool for discovery, inspection, collection, deduplication, and reporting on an IT environment
 
-This *README* file contains information about the installation and development of quipucords, as well as instructions about where to find basic usage, known issue, and best practices information.
+This *README* file contains information about the installation and development of quipucords, as well as instructions about where to find basic usage, known issues, and best practices information.
 
 -  [Introduction to quipucords installer](#intro)
 - [Requirements and Assumptions](#requirements)
@@ -32,12 +32,12 @@ cd quipucords-installer
 ```
 
 ## Development<a name="development"></a>
-To work with the quipucords code, begin by cloning the repository.
+To develop the quipucords installer, begin by cloning the repository.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
 ## Issues<a name="issue"></a>
-To report bugs for quipucords [open issues](https://github.com/quipucords/quipucords-installer/issues) against this repository in Github. Complete the issue template when opening a new bug to improve investigation and resolution time.
+To report bugs for quipucords installer [open issues](https://github.com/quipucords/quipucords-installer/issues) against this repository in Github. Complete the issue template when opening a new bug to improve investigation and resolution time.
 
 
 ## Authors<a name="authors"></a>
