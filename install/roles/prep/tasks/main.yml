@@ -14,7 +14,8 @@
     - install_flag_install_offline is not defined
 
 - name: Checking if server_version is defined when install_offline is true
-  fail:
+  fail: 
+    msg: "server_version must be set when install_offline=true"
   when:
     - install_flag_install_offline and server_version is not defined
 

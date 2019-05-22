@@ -13,4 +13,5 @@
 
 - name: Validate status endpoint responded with valid JSON content
   fail:
+    msg: "The Quipucord server's status endpoint did not respond with valid JSON.  Check installation logs for errors."
   when: "'server_id' not in result.content"
