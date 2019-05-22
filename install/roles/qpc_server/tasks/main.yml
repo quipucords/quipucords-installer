@@ -257,6 +257,7 @@
     load_docker_postgres_attempted: true
   when:
     - not postgres_docker_image_present
+    - find_postgres_local_image.stat.exists == true
 
 - name: Load Quipucords image into local Docker registry
   shell: docker load -i "{{qpc_server_local_path}}"
