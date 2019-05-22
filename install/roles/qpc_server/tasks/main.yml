@@ -321,14 +321,14 @@
 
 - name: Make sure Quipucords server docker image loaded (it successfully loaded if skipped)
   fail: 
-    msg: "Quipucords docker image was not found when docker images was run"
+    msg: "The Quipucord server's docker image was not found in the output of the docker images command."
   when:
     - load_quipucords_docker_server_attempted
     - not quipucords_docker_image_present
 
 - name: Make sure Postgres docker image loaded (it successfully loaded if skipped)
   fail:
-    msg: "Postres docker image was not found when docker images was run"
+    msg: "The Postgres DB's docker image was not found in the output of the docker images command."
   when:
     - load_docker_postgres_attempted
     - not postgres_docker_image_present
