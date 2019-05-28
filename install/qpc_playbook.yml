@@ -7,11 +7,11 @@
     - prep
     - epel
     - role: docker
-      when: install_server
+      when: install_server | bool
     - role: qpc_server
-      when: install_server
+      when: install_server | bool
     - role: qpc_cli
-      when: install_cli
+      when: install_cli | bool
     - role: validate_install
-      when: install_server
+      when: install_server | bool
 

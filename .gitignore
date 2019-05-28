@@ -1,3 +1,8 @@
 # Mac files
-.DS_Store 
-packages/
+.DS_Store
+test/
+installer_config.tar.gz
+installer_config/
+installer_config_dev/
+.vagrant/
+qpc_playbook.retry
