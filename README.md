@@ -28,7 +28,7 @@ To work with the Quipucords installer, begin by cloning the repository.
 
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
-cd quipucords-installer
+cd quipucords-installer/install
 ./install.sh
 ```
 
@@ -42,7 +42,7 @@ There are various options for testing your changes to the installation scripts. 
 ## Configuring the Virtual Machines
 First bring up the virtual machines using one of the methods below.
 
-### Method1: Testing local changes using a docker image build from source.
+### Method 1: Testing local changes using a docker image build from source.
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords.git
@@ -51,7 +51,7 @@ git clone git@github.com:quipucords/quipucords-installer.git
 ```
 Build the docker image and test with the local install scripts on all supported OS's run the following.
 ```
-make build-docker
+make build-docker version=0.0.46
 make setup
 make test-all
 ```
@@ -93,17 +93,19 @@ make setup-release version=0.0.46
 make test-all
 ```
 
+_Note_: 0.0.46 can be replaced by the version number you wish to test.
+
 ## Installing QPC Inside the Virtual Machine
-The above `test-all` command will performa  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
+The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
 
 ### Configuration Scripts (internal)
 Create or obtain a tarball named `installer_config.tar.gz`.  The files in this tarball will automatically be copied inside the VMs mapped volumes.
 
 To configure use our internal scripts, do the following:
-1. cd /quipucords_installer;sudo su
-2. make setup
-3. make install
-4. make add-qpc-data
+1. `cd /quipucords_installer;sudo su`
+2. `make setup`
+3. `make install`
+4. `make add-qpc-data`
 
 This will configure repositories if needed, install the server and CLI, and add sample QPC artifacts.
 
