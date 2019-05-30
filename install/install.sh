@@ -108,7 +108,14 @@ offline_check() {
 
 for i in "${args[@]}"; do
   if [[ "$i" == *"offline"* ]]; then
-    offline_check;
+    if [[ "$i" == *"true"* ]]; then
+      offline_check;
+    elif [[ "$i" == *"false"* ]]; then
+      echo 'Performing an online installation because install_offline=false'
+    else
+      echo $i 'is an invalid option'
+      usage;
+    fi
   fi
 done
 
