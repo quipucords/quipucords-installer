@@ -5,20 +5,19 @@
     server_install_dir: "{{ ansible_env['SERVER_DIR'] | default(ansible_env['HOME'] + '/quipucords') }}"
   when: server_install_dir is not defined
 
-- name: Set server port
-  set_fact:
-    server_port: "{{ ansible_env['SERVER_PORT'] | default('9443') }}"
-  when: server_port is not defined
+- name: Validate use_supervisord is set to true or false
+  fail:
+    msg: "{{ use_supervisord}} is invalid value for use_supervisord.  Must be equal to true or false"
+  when:
+    - not use_supervisord|lower == 'true'
+    - not use_supervisord|lower == 'false'
 
-- name: Set whether installer should open port on host machine
-  set_fact:
-    open_port: "{{ ansible_env['OPEN_PORT'] | bool | default(true) }}"
-  when: open_port is defined
-
-- name: Defaulting open port setting to true
-  set_fact:
-    open_port: true
-  when: open_port is not defined
+- name: Validate open_port is set to true or false
+  fail:
+    msg: "{{ open_port}} is invalid value for open_port.  Must be equal to true or false"
+  when:
+    - not open_port|lower == 'true'
+    - not open_port|lower == 'false'
 
 - name: Open port in firewall on host machine for Quipucords server
   iptables:
@@ -31,15 +30,7 @@
   when:
     - open_port
 
-- name: Determine if supervisord should be used inside of Docker container
-  set_fact:
-    use_supervisord: "{{ use_supervisord | bool | default(true) }}"
-  when: use_supervisord is defined
 
-- name: Defaulting server supervisord setting to true
-  set_fact:
-    use_supervisord: true
-  when: use_supervisord is not defined
 
 - name: Set the server version to install using user argument
   set_fact:
@@ -76,9 +67,9 @@
     - install_flag_server_version is not defined
 
 - name: Parse release tag from github JSON
-  set_fact: 
+  set_fact:
     github_release: "{{ github_release_info.json.tag_name }}"
-  when: 
+  when:
     - install_flag_server_version is not defined
     - github_release_info is defined
     - github_release_info.json is defined
@@ -107,16 +98,6 @@
   set_fact:
     server_image_and_tag: "{{server_docker_image_name}}:{{server_image_tag}}"
   when: server_image_and_tag is not defined
-
-- name: Set docker container name
-  set_fact:
-    server_name: "{{ ansible_env['SERVER_NAME'] | default('quipucords') }}"
-  when: server_name is not defined
-
-- name: Set Quipucords HTTP server timeout
-  set_fact:
-    QPC_SERVER_TIMEOUT: "{{ ansible_env['QPC_SERVER_TIMEOUT'] | default('120') }}"
-  when: QPC_SERVER_TIMEOUT is not defined
 
 - name: Default directory mounting to empty string
   set_fact:
@@ -180,7 +161,7 @@
 - name: Rename Quipucords server docker image to version specific cache name (offline install)
   command: cp -f "{{ pkg_install_dir }}{{ github_server_filename }}" "{{qpc_server_local_path}}"
   when:
-    - install_flag_install_offline
+    - install_offline|lower == 'true'
     - not quipucords_docker_image_present
 
 - name: Check if local server docker image tar.gz exists
@@ -239,21 +220,21 @@
     - not quipucords_docker_image_present
 
 - name: Default that docker load was not attempted for Quipucords server
-  set_fact: 
+  set_fact:
     load_quipucords_docker_server_attempted: false
 
 - name: Default that docker load was not attempted for Postgres
-  set_fact: 
+  set_fact:
     load_docker_postgres_attempted: false
 
 - name: Docker load was attempted for Quipucords server
-  set_fact: 
+  set_fact:
     load_quipucords_docker_server_attempted: true
-  when: 
+  when:
     - not quipucords_docker_image_present
 
 - name: Docker load was attempted for Postgres
-  set_fact: 
+  set_fact:
     load_docker_postgres_attempted: true
   when:
     - not postgres_docker_image_present
@@ -320,7 +301,7 @@
     - "'stdout_lines' in postgres_docker_image_raw"
 
 - name: Make sure Quipucords server docker image loaded (it successfully loaded if skipped)
-  fail: 
+  fail:
     msg: "The Quipucord server's docker image was not found in the output of the docker images command."
   when:
     - load_quipucords_docker_server_attempted
@@ -368,41 +349,14 @@
   when:
     - postgres_ps_raw['stdout_lines'] | length > 0
 
-- name: Set Postgres username
-  set_fact:
-    QPC_DBMS_USER: "{{ ansible_env['QPC_DBMS_USER'] | default('postgres') }}"
-  when:
-    - QPC_DBMS_USER is not defined
-
-- name: Set Postgres password
-  set_fact:
-    QPC_DBMS_PASSWORD: "{{ ansible_env['QPC_DBMS_PASSWORD'] | default('password') }}"
-  when:
-    - QPC_DBMS_PASSWORD is not defined
-
-- name: Set Quipucords Ansible SSH timeout for network inspection jobs
-  set_fact:
-    NETWORK_INSPECT_JOB_TIMEOUT: "{{ ansible_env['NETWORK_INSPECT_JOB_TIMEOUT'] | default('10800') }}"
-  when: NETWORK_INSPECT_JOB_TIMEOUT is not defined
-
-- name: Set Quipucords Ansible SSH timeout for network connection
-  set_fact:
-    NETWORK_CONNECT_JOB_TIMEOUT: "{{ ansible_env['NETWORK_CONNECT_JOB_TIMEOUT'] | default('600') }}"
-  when: NETWORK_CONNECT_JOB_TIMEOUT is not defined
-
-- name: Set Ansible logging verbosity 
-  set_fact:
-    ANSIBLE_LOG_LEVEL: "{{ ansible_env['ANSIBLE_LOG_LEVEL'] | default('0') }}"
-  when: ANSIBLE_LOG_LEVEL is not defined
-
 - name: Start Postgres container with docker volume (RHEL 6 & Centos 6)
-  shell: docker run --name qpc-db  -e POSTGRES_USER="{{QPC_DBMS_USER}}" -e POSTGRES_PASSWORD="{{QPC_DBMS_PASSWORD}}" -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
   become: true
   when:
     - is_rhel_centos_6
 
 - name: Start Postgres container with docker volume (RHEL 7, Centos 7)
-  shell: docker run --name qpc-db  -e POSTGRES_USER="{{QPC_DBMS_USER}}" -e POSTGRES_PASSWORD="{{QPC_DBMS_PASSWORD}}" -v qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
   become: true
   when:
     - is_rhel_centos_7
@@ -412,5 +366,5 @@
     seconds: 30
 
 - name: Start Quipucords server linked to Postgres Docker container
-  shell: docker run --name "{{ server_name }}" --link qpc-db:qpc-link -d -e USE_SUPERVISORD="{{ use_supervisord }}" -e QPC_SERVER_TIMEOUT="{{ QPC_SERVER_TIMEOUT }}" -e QPC_DBMS_USER="{{ QPC_DBMS_USER }}" -e QPC_DBMS_PASSWORD="{{ QPC_DBMS_PASSWORD }}" -e QPC_DBMS_HOST="qpc-db" -e ANSIBLE_LOG_LEVEL="{{ ANSIBLE_LOG_LEVEL }}" -e NETWORK_CONNECT_JOB_TIMEOUT="{{ NETWORK_CONNECT_JOB_TIMEOUT }}" -e NETWORK_INSPECT_JOB_TIMEOUT="{{ NETWORK_INSPECT_JOB_TIMEOUT }}" -p "{{ server_port }}":443 -v "{{ server_install_dir }}"/sshkeys:/sshkeys"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/data:/var/data"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/log:/var/log"{{ dir_mount_selinux }}" -i "{{ server_image_and_tag }}"
+  shell: docker run --name "{{ server_name }}" --link qpc-db:qpc-link -d -e USE_SUPERVISORD="{{ use_supervisord }}" -e QPC_SERVER_TIMEOUT="{{ server_http_timeout }}" -e QPC_DBMS_USER="{{ dbms_user }}" -e QPC_DBMS_PASSWORD="{{ dbms_password }}" -e QPC_DBMS_HOST="qpc-db" -e ANSIBLE_LOG_LEVEL="{{ ansible_log_level }}" -e NETWORK_CONNECT_JOB_TIMEOUT="{{ connect_job_timeout }}" -e NETWORK_INSPECT_JOB_TIMEOUT="{{ inspect_job_timeout }}" -p "{{ server_port }}":443 -v "{{ server_install_dir }}"/sshkeys:/sshkeys"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/data:/var/data"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/log:/var/log"{{ dir_mount_selinux }}" -i "{{ server_image_and_tag }}"
   become: true

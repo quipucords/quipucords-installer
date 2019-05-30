@@ -3,15 +3,28 @@
 
 - name: Install the Quipucords components
   hosts: localhost
+  vars:
+      install_server: 'true'
+      install_cli: 'true'
+      install_offline: 'false'
+      use_supervisord: 'false'
+      open_port: 'true'
+      server_port: 9443
+      server_name: 'quipucords'
+      server_http_timeout: 120
+      dbms_user: 'postgres'
+      dbms_password: 'password'
+      connect_job_timeout: 600
+      inspect_job_timeout: 10800
+      ansible_log_level: 0
   roles:
     - prep
     - epel
     - role: docker
-      when: install_server | bool
+      when: install_server|lower == 'true'
     - role: qpc_server
-      when: install_server | bool
+      when: install_server|lower == 'true'
     - role: qpc_cli
-      when: install_cli | bool
+      when: install_cli|lower == 'true'
     - role: validate_install
-      when: install_server | bool
-
+      when: install_server|lower == 'true'

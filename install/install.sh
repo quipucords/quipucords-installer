@@ -33,38 +33,24 @@ usage() {
 
 
     Extra Variables:
-    * Specify the version of the quipucords server to install (defaults to the latest release):
-         -e server_version=0.0.46
-    * Specify the version of the qpc cli to install (defaults to the latest release):
-         -e cli_version=0.0.46
-    * Specify if quipucords docker container should run the server without supervisord(defaults to true):
-         -e use_supervisord=false
-    * Specify fully-qualified directory path for local install packages (defaults to `pwd`/packages/):
-         -e pkg_install_dir=/home/user/pkgs
-    * Skipping install for server:
+    * Skip install for server:
          -e install_server=false
-    * Skipping install for CLI:
+    * Skip install for CLI:
          -e install_cli=false
-    * Optionally open the server port in the firewall (defaults to true):
-         -e open_port=false
-    * Specify server port (defaults to 9443):
-         -e server_port=8443
-    * Specify server container name (defaults to quipucords):
-         -e server_name=qpc_server
-    * Optionally specify the postgres db user (if not specified the default value is 'postgres'):
-         -e QPC_DBMS_USER=postgres
-    * Optionally specify the postgres db password (if not specified the default value is 'password')
-         -e QPC_DBMS_PASSWORD=password
-    * Override default server timeout for HTTP requests (if not specified the default value is 120):
-         -e QPC_SERVER_TIMEOUT=120
-    * Specify if installing offline
+    * Perform an offline install
          -e install_offline=true
-    * Specify the playbook timeout for network inspect scans in seconds (defaults to 10800) ~ 3 hours
-          -e NETWORK_INSPECT_JOB_TIMEOUT=10800
-    * Specify the playbook timeout for network connect scans in seconds (defaults to 600) ~ 10 minutes
-          -e NETWORK_CONNECT_JOB_TIMEOUT=600
-    * Specify the ansible log level (defaults to 0)
-          -e ANSIBLE_LOG_LEVEL=1
+    * Quipucords server version to install (defaults to the latest release):
+         -e server_version=0.0.46
+    * QPC cli version to install (defaults to the latest release):
+         -e cli_version=0.0.46
+    * Specify if the Quipucords server port should be opened in the host firewall (defaults to true):
+         -e open_port=false
+    * Quipucords server port (defaults to 9443):
+         -e server_port=8443
+    * Postgres db user (defaults to 'postgres'):
+         -e dbms_user=postgres
+    * Postgres db password (defaults to 'password')
+         -e dbms_password=password
 EOM
     exit 0
 }

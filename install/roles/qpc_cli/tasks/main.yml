@@ -59,4 +59,4 @@
 - name: Configure QPC to talk to server
   shell: qpc server config --host 127.0.0.1 --port "{{ server_port }}"
   when:
-    - install_server
+    - install_server|lower == 'true'
