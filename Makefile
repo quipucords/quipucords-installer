@@ -4,7 +4,7 @@ TOPDIR = $(shell pwd)
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@echo "  setup                                          Copy configuration, install, packages to OS specific folders"
-	@echo "  setup-release version=<release_version>        Download official install scripts from GitHub specified by version.  Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  build-docker version=<release_version>         Build a docker image for quipucords source"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
