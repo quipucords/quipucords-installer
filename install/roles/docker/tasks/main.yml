@@ -143,9 +143,9 @@
     - not find_docker_rpm_local
 
 - name: Ensure packages directory exists
-  shell: mkdir -p "{{ pkg_install_dir }}"
-  args:
-    warn: false
+  file:
+    path: "{{ pkg_install_dir }}"
+    state: directory 
   when:
     - is_rhel_centos_6|bool
     - not have_docker
@@ -185,9 +185,9 @@
     - find_docker_rpm_local|bool
 
 - name: Install Docker from local path (RHEL/Centos 6)
-  shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
-  args:
-    warn: false
+  yum:
+    name: "{{find_docker_rpm_local_path}}"
+    state: present
   become: true
   when:
     - is_rhel_centos_6|bool

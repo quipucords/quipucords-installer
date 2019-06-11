@@ -175,9 +175,9 @@
   register: find_postgres_local_image
 
 - name: Create local packages directory if it does not exist
-  shell: mkdir -p "{{ pkg_install_dir }}"
-  args:
-    warn: false
+  file:
+    path: "{{ pkg_install_dir }}"
+    state: directory
   when:
     - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
@@ -317,19 +317,19 @@
     - not postgres_docker_image_present
 
 - name: Make server home directory
-  shell: mkdir -p "{{server_install_dir}}"
-  args:
-    warn: false
+  file:
+    path: "{{server_install_dir}}"
+    state: directory
 
 - name: Make server log directory
-  shell: mkdir -p "{{server_install_dir}}/log"
-  args:
-    warn: false
+  file:
+    path: "{{server_install_dir}}/log"
+    state: directory
 
 - name: Make server sshkeys directory
-  shell: mkdir -p "{{server_install_dir}}/sshkeys"
-  args:
-    warn: false
+  file:
+    path: "{{server_install_dir}}/sshkeys"
+    state: directory
 
 - name: Check for QPC server is already running
   shell: docker ps -a -f name="{{ server_name }}" | grep "{{server_name}}"

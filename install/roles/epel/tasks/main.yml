@@ -16,15 +16,15 @@
 
 - name: Set have_rpm
   set_fact:
-    have_rpm: "{{ have_rpm_raw.rc == 0 }}"
-
+    have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
+    
 - name: Check for EPEL rpm (RHEL/Centos)
-  shell: rpm -qa | grep epel-release
+  yum:
+    name: epel-release
+    state: present
   register: have_epel_rpm_raw
   become: true
   ignore_errors: yes
-  args:
-    warn: false
   when:
     - have_rpm|bool
 
@@ -60,23 +60,29 @@
     find_epel_rpm_local_path: "{{ find_epel_rpm_local_raw['files'][0]['path'] }}"
   when:
     - find_epel_rpm_local is defined
-    - find_epel_rpm_local
+    - find_epel_rpm_local|bool
 
 - name: Install EPEL from local path (RHEL/Centos)
-  shell: rpm -Uvh --force "{{find_epel_rpm_local_path}}"
+  yum:
+    name: "{{find_epel_rpm_local_path}}"
+    state: present
   become: true
   when:
     - not have_epel_rpm
-    - find_epel_rpm_local
+    - find_epel_rpm_local|bool
 
 - name: Install EPEL for RHEL 6 from internet (RHEL/Centos 6)
-  shell: rpm -Uvh  --force https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+    state: present
   become: true
   when:
     - not have_epel_rpm
 
 - name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
-  shell: rpm -Uvh --force https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
   become: true
   when:
     - not have_epel_rpm
