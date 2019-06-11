@@ -24,7 +24,7 @@
   become: true
   ignore_errors: yes
   when:
-    - have_rpm
+    - have_rpm|bool
 
 - name: Set have_epel_rpm (RHEL/Centos)
   set_fact:

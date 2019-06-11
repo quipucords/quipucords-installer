@@ -57,7 +57,7 @@
     state: present
   become: true
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
 
 - name: Install xz (RHEL 6)
@@ -66,7 +66,7 @@
     state: present
   become: true
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
 
 - name: Install libselinux-python (RHEL/Centos 6)
@@ -75,7 +75,7 @@
     state: present
   become: true
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - selinux_on
     - ansible_selinux_python_present is defined and ansible_selinux_python_present == false
     - not have_docker
@@ -100,14 +100,14 @@
     find_docker_rpm_local_path: "{{ find_docker_rpm_local_raw['files'][0]['path'] }}"
   when:
     - find_docker_rpm_local is defined
-    - find_docker_rpm_local
+    - find_docker_rpm_local|bool
 
 - name: Install Docker from local path
   shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
   become: true
   when:
     - not have_docker
-    - find_docker_rpm_local
+    - find_docker_rpm_local|bool
 
 - name: Add Docker CE repository (Centos 7)
   yum_repository:
@@ -118,7 +118,7 @@
     gpgcheck: yes
   become: true
   when:
-    - is_centos_7
+    - is_centos_7|bool
     - not have_docker
     - not find_docker_rpm_local
 
@@ -128,7 +128,7 @@
     state: latest
   become: true
   when:
-    - is_rhel7
+    - is_rhel7|bool
     - not have_docker
     - not find_docker_rpm_local
 
@@ -138,14 +138,16 @@
     state: latest
   become: true
   when:
-    - is_centos_7
+    - is_centos_7|bool
     - not have_docker
     - not find_docker_rpm_local
 
 - name: Ensure packages directory exists
   shell: mkdir -p "{{ pkg_install_dir }}"
+  args:
+    warn: false
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
     - not find_docker_rpm_local
 
@@ -155,7 +157,7 @@
     dest: "{{ pkg_install_dir }}"
     mode: 0644
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
     - not find_docker_rpm_local
 
@@ -165,7 +167,7 @@
     patterns: 'docker*.rpm'
   register: find_docker_rpm_local_raw
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
 
 - name: Set find_docker_rpm_local
@@ -180,13 +182,15 @@
     find_docker_rpm_local_path: "{{ find_docker_rpm_local_raw['files'][0]['path'] }}"
   when:
     - find_docker_rpm_local is defined
-    - find_docker_rpm_local
+    - find_docker_rpm_local|bool
 
 - name: Install Docker from local path (RHEL/Centos 6)
   shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
+  args:
+    warn: false
   become: true
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - not have_docker
 
 - name: Start Docker
@@ -200,7 +204,7 @@
   become: true
   ignore_errors: yes
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
     - have_chkconfig
 
 - name: Setup systemctl to start docker (RHEL/Centos 7)
@@ -208,5 +212,5 @@
   become: true
   ignore_errors: yes
   when:
-    - is_rhel_centos_7
-    - have_systemctl
+    - is_rhel_centos_7|bool
+    - have_systemctl|bool

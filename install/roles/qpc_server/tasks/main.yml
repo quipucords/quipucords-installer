@@ -28,7 +28,7 @@
   become: true
   ignore_errors: yes
   when:
-    - open_port
+    - open_port|bool
 
 
 
@@ -106,7 +106,7 @@
 - name: Set dir_mount_selinux to add ":z" if selinux_on is true
   set_fact:
     dir_mount_selinux: ":z"
-  when: selinux_on
+  when: selinux_on|bool
 
 - name: Check for Quipucords server docker image presence
   shell: docker images | grep "{{ server_docker_image_name }}" | grep "{{ server_image_tag }}"
@@ -176,6 +176,8 @@
 
 - name: Create local packages directory if it does not exist
   shell: mkdir -p "{{ pkg_install_dir }}"
+  args:
+    warn: false
   when:
     - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
@@ -259,7 +261,7 @@
   register: quipucords_docker_image_raw
   ignore_errors: yes
   when:
-    load_quipucords_docker_server_attempted
+    load_quipucords_docker_server_attempted|bool
 
 - name: Check for Postgres docker image presence
   shell: docker images | grep postgres | grep "{{ POSTGRES_VERSION }}"
@@ -267,27 +269,27 @@
   register: postgres_docker_image_raw
   ignore_errors: yes
   when:
-    load_docker_postgres_attempted
+    load_docker_postgres_attempted|bool
 
 - name: Set Quipucords docker image presence to false
   set_fact:
     quipucords_docker_image_present: false
   when:
-    - load_quipucords_docker_server_attempted
+    - load_quipucords_docker_server_attempted|bool
     - quipucords_docker_image_raw.rc != 0
 
 - name: Set Postgres docker image presence to false
   set_fact:
     postgres_docker_image_present: false
   when:
-    - load_docker_postgres_attempted
+    - load_docker_postgres_attempted|bool
     - postgres_docker_image_raw.rc != 0
 
 - name: Set Quipucords docker image presence to true if output is not empty
   set_fact:
     quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
   when:
-    - load_quipucords_docker_server_attempted
+    - load_quipucords_docker_server_attempted|bool
     - server_image_tag != 'unknown'
     - quipucords_docker_image_raw.rc == 0
     - "'stdout_lines' in quipucords_docker_image_raw"
@@ -296,7 +298,7 @@
   set_fact:
     postgres_docker_image_present: "{{ postgres_docker_image_raw['stdout_lines']|length > 0 }}"
   when:
-    - load_docker_postgres_attempted
+    - load_docker_postgres_attempted|bool
     - postgres_docker_image_raw.rc == 0
     - "'stdout_lines' in postgres_docker_image_raw"
 
@@ -304,24 +306,30 @@
   fail:
     msg: "The Quipucord server's docker image was not found in the output of the docker images command."
   when:
-    - load_quipucords_docker_server_attempted
+    - load_quipucords_docker_server_attempted|bool
     - not quipucords_docker_image_present
 
 - name: Make sure Postgres docker image loaded (it successfully loaded if skipped)
   fail:
     msg: "The Postgres DB's docker image was not found in the output of the docker images command."
   when:
-    - load_docker_postgres_attempted
+    - load_docker_postgres_attempted|bool
     - not postgres_docker_image_present
 
 - name: Make server home directory
   shell: mkdir -p "{{server_install_dir}}"
+  args:
+    warn: false
 
 - name: Make server log directory
   shell: mkdir -p "{{server_install_dir}}/log"
+  args:
+    warn: false
 
 - name: Make server sshkeys directory
   shell: mkdir -p "{{server_install_dir}}/sshkeys"
+  args:
+    warn: false
 
 - name: Check for QPC server is already running
   shell: docker ps -a -f name="{{ server_name }}" | grep "{{server_name}}"
@@ -353,13 +361,13 @@
   shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
   become: true
   when:
-    - is_rhel_centos_6
+    - is_rhel_centos_6|bool
 
 - name: Start Postgres container with docker volume (RHEL 7, Centos 7)
   shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
   become: true
   when:
-    - is_rhel_centos_7
+    - is_rhel_centos_7|bool
 
 - name: Waiting for Postgres to spin up
   pause:
