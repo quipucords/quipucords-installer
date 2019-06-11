@@ -23,6 +23,8 @@
   register: have_epel_rpm_raw
   become: true
   ignore_errors: yes
+  args:
+    warn: false
   when:
     - have_rpm|bool
 
