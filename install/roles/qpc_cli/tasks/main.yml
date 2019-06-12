@@ -23,7 +23,9 @@
   register: find_qpc_rpm_local
 
 - name: Install QPC from local path
-  shell: rpm -Uvh --force "{{qpc_rpm_local_path}}"
+  yum:
+    name: "{{qpc_rpm_local_path}}"
+    state: present
   become: true
   when: find_qpc_rpm_local.stat.exists == true
 

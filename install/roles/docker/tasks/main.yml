@@ -103,7 +103,9 @@
     - find_docker_rpm_local|bool
 
 - name: Install Docker from local path
-  shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
+  yum: 
+    name: "{{find_docker_rpm_local_path}}"
+    state: present
   become: true
   when:
     - not have_docker

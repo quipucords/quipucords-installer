@@ -78,6 +78,7 @@
   become: true
   when:
     - not have_epel_rpm
+    - not find_epel_rpm_local
 
 - name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
   yum:
@@ -86,3 +87,4 @@
   become: true
   when:
     - not have_epel_rpm
+    - not find_epel_rpm_local
