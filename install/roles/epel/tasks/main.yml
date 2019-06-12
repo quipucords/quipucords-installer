@@ -21,7 +21,7 @@
 - name: Check for EPEL rpm (RHEL/Centos)
   yum:
     name: epel-release
-    state: present
+    state: installed
   register: have_epel_rpm_raw
   become: true
   ignore_errors: yes
@@ -30,7 +30,7 @@
 
 - name: Set have_epel_rpm (RHEL/Centos)
   set_fact:
-    have_epel_rpm: "{{ have_epel_rpm_raw['stdout_lines']| length > 0 }}"
+    have_epel_rpm: true # "{{ have_epel_rpm_raw['stdout_lines']| length > 0 }}"
   when:
     - "'stdout_lines' in have_epel_rpm_raw"
 
