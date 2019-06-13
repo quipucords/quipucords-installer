@@ -9,15 +9,15 @@
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
 
-- name: Test for rpm command
-  shell: command -v rpm
-  register: have_rpm_raw
-  ignore_errors: yes
+# - name: Test for rpm command
+#   shell: command -v rpm
+#   register: have_rpm_raw
+#   ignore_errors: yes
 
-- name: Set have_rpm
-  set_fact:
-    have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
-    
+# - name: Set have_rpm
+#   set_fact:
+#     have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
+
 - name: Check for EPEL rpm (RHEL/Centos)
   yum:
     name: epel-release
@@ -25,12 +25,12 @@
   register: have_epel_rpm_raw
   become: true
   ignore_errors: yes
-  when:
-    - have_rpm|bool
+  # when:
+  #   - have_rpm|bool
 
 - name: Set have_epel_rpm (RHEL/Centos)
   set_fact:
-    have_epel_rpm: true # "{{ have_epel_rpm_raw['stdout_lines']| length > 0 }}"
+    have_epel_rpm: "{{ have_epel_rpm_raw['stdout_lines']| length > 0 }}"
   when:
     - "'stdout_lines' in have_epel_rpm_raw"
 
