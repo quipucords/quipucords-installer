@@ -89,6 +89,6 @@
   become: true
   ignore_errors: yes
   when:
-    - is_centos_7|bool
+    - is_rhel_centos_7|bool
     - not have_epel_rpm
     - not find_epel_rpm_local
