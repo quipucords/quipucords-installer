@@ -9,14 +9,14 @@
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
 
-# - name: Test for rpm command
-#   shell: command -v rpm
-#   register: have_rpm_raw
-#   ignore_errors: yes
+- name: Test for rpm command
+  shell: command -v rpm
+  register: have_rpm_raw
+  ignore_errors: yes
 
-# - name: Set have_rpm
-#   set_fact:
-#     have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
+- name: Set have_rpm
+  set_fact:
+    have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
 
 - name: Check for EPEL rpm (RHEL/Centos)
   yum:
@@ -25,8 +25,8 @@
   register: have_epel_rpm_raw
   become: true
   ignore_errors: yes
-  # when:
-  #   - have_rpm|bool
+  when:
+    - have_rpm|bool
 
 - name: Set have_epel_rpm (RHEL/Centos)
   set_fact:
@@ -76,8 +76,8 @@
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
     state: present
   become: true
+  ignore_errors: yes
   when:
-    - not have_epel_rpm
     - not find_epel_rpm_local
 
 - name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
@@ -85,6 +85,6 @@
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
   become: true
+  ignore_errors: yes
   when:
-    - not have_epel_rpm
     - not find_epel_rpm_local
