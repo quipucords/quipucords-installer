@@ -103,8 +103,9 @@
     - find_docker_rpm_local|bool
 
 - name: Install Docker from local path
-  yum: 
-    name: "{{find_docker_rpm_local_path}}"
+  # yum: 
+  #   name: "{{find_docker_rpm_local_path}}"
+  shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
   become: true
   when:
     - not have_docker
@@ -186,9 +187,10 @@
     - find_docker_rpm_local|bool
 
 - name: Install Docker from local path (RHEL/Centos 6)
-  yum:
-    name: "{{find_docker_rpm_local_path}}"
-    state: present
+  # yum:
+  #   name: "{{find_docker_rpm_local_path}}"
+  #   state: present
+  shell: rpm -Uvh --force "{{find_docker_rpm_local_path}}"
   become: true
   when:
     - is_rhel_centos_6|bool
