@@ -20,9 +20,6 @@
 
 - name: Check for EPEL rpm (RHEL/Centos)
   shell: rpm -qa | grep epel-release
-  # yum:
-  #   name: epel-release
-  #   state: present
   register: have_epel_rpm_raw
   become: true
   when:
@@ -63,9 +60,6 @@
     - find_epel_rpm_local|bool
 
 - name: Install EPEL from local path (RHEL/Centos)
-  # yum:
-  #   name: "{{find_epel_rpm_local_path}}"
-  #   state: present
   shell: rpm -Uvh --force "{{find_epel_rpm_local_path}}"
   become: true
   when:

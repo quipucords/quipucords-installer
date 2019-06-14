@@ -30,8 +30,6 @@
   when:
     - open_port|bool
 
-
-
 - name: Set the server version to install using user argument
   set_fact:
     install_flag_server_version: "{{ server_version }}"
