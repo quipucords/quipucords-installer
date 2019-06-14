@@ -14,6 +14,7 @@
 export PATH=$PATH:$ANSIBLE_HOME/bin
 PLAYBOOKFILE="qpc_playbook.yml"
 POSTGRES_VERSION='-e POSTGRES_VERSION=9.6.10'
+INSTALLER_VERSION='0.1.1'
 
 declare -a args
 args=("$*")
@@ -22,6 +23,9 @@ set -- ${args[@]}
 
 usage() {
     cat <<EOM
+    Quipucords Installer
+    Version: ${INSTALLER_VERSION}
+
     Install Quipucords server and command-line components.
 
     Usage:
