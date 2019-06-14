@@ -16,7 +16,7 @@
 
 - name: Set have_rpm
   set_fact:
-    have_rpm: "{{ have_rpm_raw.rc == 0 }}" 
+    have_rpm: "{{ have_rpm_raw.rc == 0 }}"
 
 - name: Check for EPEL rpm (RHEL/Centos)
   shell: rpm -qa | grep epel-release
