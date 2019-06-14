@@ -22,6 +22,7 @@
   shell: rpm -qa | grep epel-release
   register: have_epel_rpm_raw
   become: true
+  ignore_errors: yes
   when:
     - have_rpm|bool
 
