@@ -78,7 +78,7 @@ build-docker:
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 
 setup: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
-setup-release: create-test-dirs copy-config
+setup-release: create-test-dirs copy-vm-helper-files copy-config
 	mkdir -p test/downloaded_install
 	cd test/downloaded_install;curl -k -O -sSL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
 	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
