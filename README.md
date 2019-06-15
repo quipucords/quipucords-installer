@@ -39,7 +39,7 @@ git clone git@github.com:quipucords/quipucords-installer.git
 ```
 # <a name="test"></a> Test
 There are various options for testing your changes to the installation scripts.  You can test scripts from this repository or an official build.  First you need to launch the VMs configured with the installation files and docker images you wish to test.
-## Configuring the Virtual Machines
+## Launching the Virtual Machines
 First bring up the virtual machines using one of the methods below.
 
 ### Method 1: Testing local changes using a docker image build from source.
@@ -95,19 +95,54 @@ make test-all
 
 _Note_: 0.0.46 can be replaced by the version number you wish to test.
 
-## Installing QPC Inside the Virtual Machine
+## Configuring Virtual Machines
 The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
 
-### Configuration Scripts (internal)
-Create or obtain a tarball named `installer_config.tar.gz`.  The files in this tarball will automatically be copied inside the VMs mapped volumes.
+### Optional Secret Configuration
+Create or obtain a tarball named `installer_config.tar.gz`.  The files in this tarball will automatically be copied inside the VMs mapped volumes.  If you are testing rhel6 or rhel7 and have internal repositories, your `installer_config.tar.gz` should have the following structure:
+```
+- config
+    - rhel6
+        - rhel 6 repository files
+    - rhel7
+        - rhel 7 repository files
+```
 
-To configure use our internal scripts, do the following:
-1. `cd /quipucords_installer;sudo su`
-2. `make setup`
-3. `make install`
-4. `make add-qpc-data`
+The repository files will be copied to the `/etc/yum.repos.d/` directory in the virtual machine.
 
-This will configure repositories if needed, install the server and CLI, and add sample QPC artifacts.
+## Testing Online Installation
+To test online installation, do the following:
+```
+cd /quipucords_installer;sudo su
+make setup
+make install
+```
+Note:
+ - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
+ - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
+
+## Testing Offline Installation
+
+To test offline installation for RHEL or Centos 6, do the following:
+```
+cd /quipucords_installer;sudo su
+make setup
+offline-install-prep-6
+make install
+```
+
+To test offline installation for RHEL or Centos 7, do the following:
+```
+cd /quipucords_installer;sudo su
+make setup
+offline-install-prep-7
+make install
+```
+
+Note:
+ - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
+ - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
+
 
 # <a name="issues"></a> Issues
 To report bugs for Quipucords installer [open issues](https://github.com/quipucords/quipucords-installer/issues) against this repository in Github. Complete the issue template when opening a new bug to improve investigation and resolution time.

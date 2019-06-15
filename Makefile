@@ -21,6 +21,24 @@ create-test-dirs:
 	mkdir -p test/rhel7/install/
 	mkdir -p test/centos6/install/
 	mkdir -p test/centos7/install/
+	mkdir -p test/rhel6/config/rhel6
+	mkdir -p test/rhel7/config/rhel6
+	mkdir -p test/centos6/config/rhel6
+	mkdir -p test/centos7/config/rhel6
+	mkdir -p test/rhel6/config/rhel7
+	mkdir -p test/rhel7/config/rhel7
+	mkdir -p test/centos6/config/rhel7
+	mkdir -p test/centos7/config/rhel7
+	mkdir -p test/rhel6/scripts/
+	mkdir -p test/rhel7/scripts/
+	mkdir -p test/centos6/scripts/
+	mkdir -p test/centos7/scripts/
+
+copy-vm-helper-files:
+	cp -rf vm_helper_files/ test/centos6
+	cp -rf vm_helper_files/ test/centos7
+	cp -rf vm_helper_files/ test/rhel6
+	cp -rf vm_helper_files/ test/rhel7
 
 # Internal subcommands that the user should not call
 copy-config:
@@ -59,7 +77,7 @@ build-docker:
 	docker pull postgres:9.6.10
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 
-setup: create-test-dirs copy-config copy-install copy-packages
+setup: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
 setup-release: create-test-dirs copy-config
 	mkdir -p test/downloaded_install
 	cd test/downloaded_install;curl -k -O -sSL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
