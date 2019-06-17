@@ -123,21 +123,20 @@ Note:
 
 ## Testing Offline Installation
 
-To test offline installation for RHEL or Centos 6, do the following:
-```
-cd /quipucords_installer;sudo su
-make setup
-offline-install-prep-6
-make install
-```
+To test offline installation for RHEL or Centos 6, do the following (with internet connectivity):
 
-To test offline installation for RHEL or Centos 7, do the following:
-```
-cd /quipucords_installer;sudo su
-make setup
-offline-install-prep-7
-make install
-```
+1. Run: `cd /quipucords_installer;sudo su`
+2. Run: `make setup`
+3. Run: `make offline-install-prep-6`
+4. Disconnect from the network
+4. Run: `make install-offline version=<release_version>`
+
+To test offline installation for RHEL or Centos 7, do the following (with internet connectivity):
+1. Run: `cd /quipucords_installer;sudo su`
+2. Run: `make setup`
+3. Run: `make offline-install-prep-7`
+4. Disconnect from the network
+4. Run: `make install-offline version=<release_version>`
 
 Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
