@@ -92,9 +92,9 @@ else
 	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
 endif
 
-setup-local-online: create-test-dirs copy-install copy-vm-helper-files 
+setup-local-online: create-test-dirs copy-install copy-vm-helper-files copy-config
 
-setup-local-offline: create-test-dirs copy-install copy-vm-helper-files
+setup-local-offline: create-test-dirs copy-install copy-vm-helper-files copy-config
 ifeq ($(server_source),local)
 	$(MAKE) local-server-docker;
 else
