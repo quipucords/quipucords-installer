@@ -3,8 +3,8 @@ TOPDIR = $(shell pwd)
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
-	@echo "  setup-local-online                             Copy configuration, install, packages to OS specific folders"
-	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-online server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>      Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-offline server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>     Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  build-docker version=<release_version>         Build a docker image for quipucords source"
@@ -57,31 +57,31 @@ copy-install:
 
 # Internal subcommands that the user should not call
 local-server-docker:
-	@echo "Building quipucords $(SERVER_VERSION)"
+	@echo "Building quipucords $(server_version)"
 	cd ../quipucords;make build-ui
-	cd ../quipucords;docker -D build . -t quipucords:$(SERVER_VERSION)
-	cd ../quipucords;docker save -o quipucords_server_image.tar quipucords:$(SERVER_VERSION)
+	cd ../quipucords;docker -D build . -t quipucords:$(server_version)
+	cd ../quipucords;docker save -o quipucords_server_image.tar quipucords:$(server_version)
 	cd ../quipucords;gzip -f quipucords_server_image.tar
 	mkdir -p test/packages
 	mv ../quipucords/quipucords_server_image.tar.gz test/packages/
 
 # Internal subcommands that the user should not call
 release-server-docker:
-	@echo "Downloading quipucords $(SERVER_VERSION)"
+	@echo "Downloading quipucords $(server_version)"
 	mkdir -p test/packages
-ifeq ($(SERVER_VERSION),latest)
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/$(SERVER_VERSION)/download/quipucords_server_image.tar.gz
+ifeq ($(server_version),latest)
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/$(server_version)/download/quipucords_server_image.tar.gz
 else
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(SERVER_VERSION)/quipucords_server_image.tar.gz
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
 endif
 
 setup-local-online: create-test-dirs copy-install copy-vm-helper-files 
 
 setup-local-offline: create-test-dirs copy-install copy-vm-helper-files
-ifeq ($(SERVER_SOURCE),local)
+ifeq ($(server_source),local)
 	$(MAKE) local-server-docker;
 else
-ifeq ($(SERVER_SOURCE),release)
+ifeq ($(server_source),release)
 	$(MAKE) release-server-docker;
 else
 	@echo "Quipucords server source not defined.";
@@ -92,10 +92,10 @@ endif
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 	$(MAKE) copy-packages
 	# CLI Client
-	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(CLI_VERSION)/download/qpc.el6.noarch.rpm
+	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el6.noarch.rpm
 	cp -f test/packages/qpc.el6.noarch.rpm test/rhel6/install/packages/
 	cp -f test/packages/qpc.el6.noarch.rpm test/centos6/install/packages/
-	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(CLI_VERSION)/download/qpc.el7.noarch.rpm
+	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el7.noarch.rpm
 	cp -f test/packages/qpc.el7.noarch.rpm test/centos7/install/packages/
 	cp -f test/packages/qpc.el7.noarch.rpm test/rhel7/install/packages/
 	rm -rf test/packages
