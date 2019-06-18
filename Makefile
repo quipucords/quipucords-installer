@@ -13,7 +13,6 @@ help:
 	@echo "         server_version=<x.x.x>                  Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
-	@echo "  build-docker version=<release_version>         Build a docker image for quipucords source"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
 	@echo "  test-rhel-6                                    Launch the RHEL 6 VM for testing"
 	@echo "  test-rhel-7                                    Launch the RHEL 7 VM for testing"
