@@ -40,6 +40,12 @@ create-test-dirs:
 	mkdir -p test/centos6/scripts/
 	mkdir -p test/centos7/scripts/
 
+copy-vm-helper-files:
+	cp -rf vm_helper_files/ test/centos6
+	cp -rf vm_helper_files/ test/centos7
+	cp -rf vm_helper_files/ test/rhel6
+	cp -rf vm_helper_files/ test/rhel7
+
 # Internal subcommands that the user should not call
 copy-config:
 	mkdir -p test/helpers | true
@@ -51,12 +57,6 @@ copy-config:
 	cp -rf test/helpers/* test/centos6 | true
 	cp -rf test/helpers/* test/centos7 | true
 	rm -rf test/helpers | true
-
-copy-vm-helper-files:
-	cp -rf vm_helper_files/ test/centos6
-	cp -rf vm_helper_files/ test/centos7
-	cp -rf vm_helper_files/ test/rhel6
-	cp -rf vm_helper_files/ test/rhel7
 
 # Internal subcommands that the user should not call
 copy-packages:
