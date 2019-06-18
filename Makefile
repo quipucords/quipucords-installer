@@ -3,8 +3,14 @@ TOPDIR = $(shell pwd)
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
-	@echo "  setup-local-online server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>      Copy configuration, install, packages to OS specific folders"
-	@echo "  setup-local-offline server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>     Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-online "
+	@echo "         server_source=<local||release> \\"
+	@echo "         cli_version=<x.x.x> \\"
+	@echo "         server_version=<x.x.x>                  Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-offline \\"
+	@echo "         server_source=<local||release> \\"
+	@echo "         cli_version=<x.x.x> \\"
+	@echo "         server_version=<x.x.x>                  Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  build-docker version=<release_version>         Build a docker image for quipucords source"
@@ -34,6 +40,18 @@ create-test-dirs:
 	mkdir -p test/rhel7/scripts/
 	mkdir -p test/centos6/scripts/
 	mkdir -p test/centos7/scripts/
+
+# Internal subcommands that the user should not call
+copy-config:
+	mkdir -p test/helpers | true
+	tar -xvf installer_config.tar.gz | true
+	cp -rf installer_config/* test/helpers | true
+	rm -rf installer_config/ | true
+	cp -rf test/helpers/* test/rhel6 | true
+	cp -rf test/helpers/* test/rhel7 | true
+	cp -rf test/helpers/* test/centos6 | true
+	cp -rf test/helpers/* test/centos7 | true
+	rm -rf test/helpers | true
 
 copy-vm-helper-files:
 	cp -rf vm_helper_files/ test/centos6
