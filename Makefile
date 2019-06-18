@@ -116,7 +116,8 @@ endif
 	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el7.noarch.rpm
 	cp -f test/packages/qpc.el7.noarch.rpm test/centos7/install/packages/
 	cp -f test/packages/qpc.el7.noarch.rpm test/rhel7/install/packages/
-	rm -rf test/packages
+	rm -f test/packages/qpc.el7.noarch.rpm
+	rm -f test/packages/qpc.el6.noarch.rpm
 
 setup-release: create-test-dirs copy-vm-helper-files copy-config
 	mkdir -p test/downloaded_install
