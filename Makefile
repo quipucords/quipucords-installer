@@ -102,6 +102,7 @@ ifeq ($(server_source),release)
 	$(MAKE) release-server-docker;
 else
 	@echo "Quipucords server source not defined.";
+	exit 1;
 endif
 endif
 	# Postgres 
