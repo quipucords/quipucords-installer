@@ -92,44 +92,63 @@ endif
 # Internal subcommands that the user should not call
 copy-client:
 	@for os_version in 6 7 ; do \
-		set -x; \
-		curl -k -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		if [ "$(cli_version)" = "" ]; then \
+			curl -k -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		else \
+			curl -k -sSL https://github.com/quipucords/qpc/releases/download/$(cli_version)/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		fi; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/; \
-		set +x; \
 	done
 	rm -f test/packages/*.noarch.rpm
+
+# Internal subcommands that the user should not call
+download-installer:
+	mkdir -p test/downloaded_install
+ifeq ($(installer_version),)
+	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
+else
+	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz
+endif
+	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
+	xargs -n 1 cp -vrf test/downloaded_install/install<<<"test/rhel6/ test/rhel7/ test/centos6/ test/centos7/"
+	rm -rf test/downloaded_install
+
+download-server-image:
+	mkdir -p test/packages
+ifeq ($(server_version),)
+	cd test/packages;wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
+else
+	cd test/packages;wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
+endif
 
 setup-local-online: create-test-dirs copy-install copy-vm-helper-files copy-config
 
 setup-local-offline: create-test-dirs copy-install copy-vm-helper-files copy-config
-ifeq ($(server_source),local)
-	$(MAKE) local-server-docker;
-else
-ifeq ($(server_source),release)
-	$(MAKE) release-server-docker;
-else
-	@echo "Quipucords server source not defined.";
-	@echo "Setting release as default server source.";
-	$(MAKE) release-server-docker;
-endif
-endif
-	# Postgres 
-	docker pull postgres:9.6.10
-	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
-	$(MAKE) copy-packages
+# ifeq ($(server_source),local)
+# 	$(MAKE) local-server-docker;
+# else
+# ifeq ($(server_source),release)
+# 	$(MAKE) release-server-docker;
+# else
+# 	@echo "Quipucords server source not defined.";
+# 	@echo "Setting release as default server source.";
+# 	$(MAKE) release-server-docker;
+# endif
+# endif
+# 	# Postgres 
+# 	docker pull postgres:9.6.10
+# 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
+# 	$(MAKE) copy-packages
 	# CLI Client
 	$(MAKE) copy-client
 
-setup-release: create-test-dirs copy-vm-helper-files copy-config
-	mkdir -p test/downloaded_install
-	cd test/downloaded_install;curl -k -O -sSL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
-	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
-	cp -rf test/downloaded_install/install test/rhel6
-	cp -rf test/downloaded_install/install test/rhel7
-	cp -rf test/downloaded_install/install test/centos6
-	cp -rf test/downloaded_install/install test/centos7
-	rm -rf test/downloaded_install
+setup-release-online: create-test-dirs copy-vm-helper-files copy-config
+	$(MAKE) download-installer
+
+setup-release-offline: create-test-dirs copy-vm-helper-files copy-config
+	$(MAKE) download-installer
+	$(MAKE) download-server-image
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
 
