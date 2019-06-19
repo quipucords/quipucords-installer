@@ -3,14 +3,11 @@ TOPDIR = $(shell pwd)
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
-	@echo "  setup-local-online "
-	@echo "         server_source=<local||release> \\"
-	@echo "         cli_version=<x.x.x> \\"
-	@echo "         server_version=<x.x.x>                  Copy configuration, install, packages to OS specific folders"
-	@echo "  setup-local-offline \\"
-	@echo "         server_source=<local||release> \\"
-	@echo "         cli_version=<x.x.x> \\"
-	@echo "         server_version=<x.x.x>                  Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-online                             Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
+	@echo "         server_source=<local||release>                @param - defaults to release"
+	@echo "         cli_version=<x.x.x>                           @param - required"
+	@echo "         server_version=<x.x.x>                        @param - required"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
@@ -95,9 +92,11 @@ endif
 # Internal subcommands that the user should not call
 copy-client:
 	@for os_version in 6 7 ; do \
-		curl -k -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm;\
-		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/;\
-		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/;\
+		set -x; \
+		curl -k -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/; \
+		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/; \
+		set +x; \
 	done
 	rm -f test/packages/*.noarch.rpm
 
@@ -111,7 +110,7 @@ ifeq ($(server_source),release)
 	$(MAKE) release-server-docker;
 else
 	@echo "Quipucords server source not defined.";
-	@echo "Setting release as deault server source.";
+	@echo "Setting release as default server source.";
 	$(MAKE) release-server-docker;
 endif
 endif
