@@ -92,6 +92,15 @@ else
 	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
 endif
 
+# Internal subcommands that the user should not call
+copy-client:
+	@for os_version in 6 7 ; do \
+		curl -k -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm;\
+		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/;\
+		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/;\
+	done
+	rm -f test/packages/*.noarch.rpm
+
 setup-local-online: create-test-dirs copy-install copy-vm-helper-files copy-config
 
 setup-local-offline: create-test-dirs copy-install copy-vm-helper-files copy-config
@@ -102,7 +111,8 @@ ifeq ($(server_source),release)
 	$(MAKE) release-server-docker;
 else
 	@echo "Quipucords server source not defined.";
-	exit 1;
+	@echo "Setting release as deault server source.";
+	$(MAKE) release-server-docker;
 endif
 endif
 	# Postgres 
@@ -110,14 +120,7 @@ endif
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 	$(MAKE) copy-packages
 	# CLI Client
-	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el6.noarch.rpm
-	cp -f test/packages/qpc.el6.noarch.rpm test/rhel6/install/packages/
-	cp -f test/packages/qpc.el6.noarch.rpm test/centos6/install/packages/
-	cd test/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el7.noarch.rpm
-	cp -f test/packages/qpc.el7.noarch.rpm test/centos7/install/packages/
-	cp -f test/packages/qpc.el7.noarch.rpm test/rhel7/install/packages/
-	rm -f test/packages/qpc.el7.noarch.rpm
-	rm -f test/packages/qpc.el6.noarch.rpm
+	$(MAKE) copy-client
 
 setup-release: create-test-dirs copy-vm-helper-files copy-config
 	mkdir -p test/downloaded_install
