@@ -8,6 +8,12 @@ help:
 	@echo "         server_source=<local||release>                @param - defaults to release"
 	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
 	@echo "         server_version=<x.x.x>                        @param - required for local; defaults to latest if using release"
+	@echo "  setup-release-online                           Download and copy quipucords installer to OS specific folders"
+	@echo "         installer_version=<x.x.x>                     @param - defaults to latest"
+	@echo "  setup-release-offline                          Download and copy quipucords installer, server image and qpc client rpm to OS specific folders"
+	@echo "         installer_version=<x.x.x>                     @param - defaults to latest"
+	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
+	@echo "         server_version=<x.x.x>                        @param - defaults to latest"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
@@ -107,7 +113,7 @@ download-client:
 # Internal subcommands that the user should not call
 download-installer:
 	mkdir -p test/downloaded_install
-ifeq ($(installer_version),)
+ifeq ($(installer_version),$(filter $(installer_version),latest))
 	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
 else
 	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz
@@ -145,13 +151,14 @@ endif
 	# CLI Client
 	$(MAKE) download-client
 
-setup-release-online: create-test-dirs copy-vm-helper-files copy-config
+setup-release-online: create-test-dirs copy-vm-helper-files copy-config copy-packages
 	$(MAKE) download-installer
 
-setup-release-offline: create-test-dirs copy-vm-helper-files copy-config
+setup-release-offline: create-test-dirs copy-vm-helper-files copy-config copy-packages
 	$(MAKE) download-installer
 	$(MAKE) download-server-image
-	$(MAKE) copy-client
+	$(MAKE) download-client
+	$(MAKE) copy-packages
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
 
