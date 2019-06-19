@@ -122,6 +122,7 @@ endif
 	xargs -n 1 cp -vrf test/downloaded_install/install<<<"test/rhel6/ test/rhel7/ test/centos6/ test/centos7/"
 	rm -rf test/downloaded_install
 
+# Internal subcommands that the user should not call
 download-server-image:
 	mkdir -p test/packages
 ifeq ($(server_version),$(filter $(server_version),latest))
@@ -156,6 +157,8 @@ setup-release-offline: create-test-dirs copy-vm-helper-files copy-config copy-pa
 	$(MAKE) download-installer
 	$(MAKE) download-server-image
 	$(MAKE) download-client
+	docker pull postgres:9.6.10
+	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 	$(MAKE) copy-packages
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
