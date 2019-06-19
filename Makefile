@@ -91,7 +91,7 @@ else
 endif
 
 # Internal subcommands that the user should not call
-copy-client:
+download-client:
 	@for os_version in 6 7 ; do \
 		set -x; \
 		if [[ "$(cli_version)" = "" || "$(cli_version)" = "latest" ]]; then \
@@ -143,7 +143,7 @@ endif
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 	$(MAKE) copy-packages
 	# CLI Client
-	$(MAKE) copy-client
+	$(MAKE) download-client
 
 setup-release-online: create-test-dirs copy-vm-helper-files copy-config
 	$(MAKE) download-installer
