@@ -6,8 +6,8 @@ help:
 	@echo "  setup-local-online                             Copy configuration, install, packages to OS specific folders"
 	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "         server_source=<local||release>                @param - defaults to release"
-	@echo "         cli_version=<x.x.x>                           @param - required"
-	@echo "         server_version=<x.x.x>                        @param - required"
+	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
+	@echo "         server_version=<x.x.x>                        @param - required for local; defaults to latest if using release"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
@@ -81,11 +81,12 @@ local-server-docker:
 
 # Internal subcommands that the user should not call
 release-server-docker:
-	@echo "Downloading quipucords $(server_version)"
 	mkdir -p test/packages
-ifeq ($(server_version),latest)
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/$(server_version)/download/quipucords_server_image.tar.gz
+ifeq ($(server_version),$(filter $(server_version),latest))
+	@echo "Downloading quipucords latest"
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
 else
+	@echo "Downloading quipucords $(server_version)"
 	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
 endif
 
@@ -93,7 +94,11 @@ endif
 copy-client:
 	@for os_version in 6 7 ; do \
 		set -x; \
-		curl -k -sSL https://github.com/quipucords/qpc/releases/$(cli_version)/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		if [[ "$(cli_version)" = "" || "$(cli_version)" = "latest" ]]; then \
+			curl -k -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		else \
+			curl -k -sSL https://github.com/quipucords/qpc/releases/download/$(cli_version)/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+		fi; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/; \
 		set +x; \
