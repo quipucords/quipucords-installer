@@ -6,8 +6,8 @@ help:
 	@echo "  setup-local-online                             Copy configuration, install, packages to OS specific folders"
 	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "         server_source=<local||release>                @param - defaults to release"
-	@echo "         cli_version=<x.x.x>                           @param - required"
-	@echo "         server_version=<x.x.x>                        @param - required"
+	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
+	@echo "         server_version=<x.x.x>                        @param - required for local; defaults to latest if using release"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
@@ -81,18 +81,20 @@ local-server-docker:
 
 # Internal subcommands that the user should not call
 release-server-docker:
-	@echo "Downloading quipucords $(server_version)"
 	mkdir -p test/packages
-ifeq ($(server_version),latest)
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/$(server_version)/download/quipucords_server_image.tar.gz
+ifeq ($(server_version),$(filter $(server_version),latest))
+	@echo "Downloading quipucords latest"
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
 else
+	@echo "Downloading quipucords $(server_version)"
 	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
 endif
 
 # Internal subcommands that the user should not call
 copy-client:
 	@for os_version in 6 7 ; do \
-		if [ "$(cli_version)" = "" ]; then \
+		set -x; \
+		if [[ "$(cli_version)" = "" || "$(cli_version)" = "latest" ]]; then \
 			curl -k -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
 		else \
 			curl -k -sSL https://github.com/quipucords/qpc/releases/download/$(cli_version)/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
@@ -116,7 +118,7 @@ endif
 
 download-server-image:
 	mkdir -p test/packages
-ifeq ($(server_version),)
+ifeq ($(server_version),$(filter $(server_version),latest))
 	cd test/packages;wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
 else
 	cd test/packages;wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
@@ -125,21 +127,21 @@ endif
 setup-local-online: create-test-dirs copy-install copy-vm-helper-files copy-config
 
 setup-local-offline: create-test-dirs copy-install copy-vm-helper-files copy-config
-# ifeq ($(server_source),local)
-# 	$(MAKE) local-server-docker;
-# else
-# ifeq ($(server_source),release)
-# 	$(MAKE) release-server-docker;
-# else
-# 	@echo "Quipucords server source not defined.";
-# 	@echo "Setting release as default server source.";
-# 	$(MAKE) release-server-docker;
-# endif
-# endif
-# 	# Postgres 
-# 	docker pull postgres:9.6.10
-# 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
-# 	$(MAKE) copy-packages
+ifeq ($(server_source),local)
+	$(MAKE) local-server-docker;
+else
+ifeq ($(server_source),release)
+	$(MAKE) release-server-docker;
+else
+	@echo "Quipucords server source not defined.";
+	@echo "Setting release as default server source.";
+	$(MAKE) release-server-docker;
+endif
+endif
+	# Postgres 
+	docker pull postgres:9.6.10
+	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
+	$(MAKE) copy-packages
 	# CLI Client
 	$(MAKE) copy-client
 
@@ -149,6 +151,7 @@ setup-release-online: create-test-dirs copy-vm-helper-files copy-config
 setup-release-offline: create-test-dirs copy-vm-helper-files copy-config
 	$(MAKE) download-installer
 	$(MAKE) download-server-image
+	$(MAKE) copy-client
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
 
