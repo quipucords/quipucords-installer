@@ -4,7 +4,7 @@ TOPDIR = $(shell pwd)
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@echo "  setup-local-online                             Copy configuration, install, packages to OS specific folders"
-	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc rpm. Copy configuration, install, packages to OS specific folders"
+	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc client rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "         server_source=<local||release>                @param - defaults to release"
 	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
 	@echo "         server_version=<x.x.x>                        @param - required for local; defaults to latest if using release"
@@ -144,11 +144,9 @@ else
 	$(MAKE) release-server-docker;
 endif
 endif
-	# Postgres 
 	docker pull postgres:9.6.10
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
 	$(MAKE) copy-packages
-	# CLI Client
 	$(MAKE) download-client
 
 setup-release-online: create-test-dirs copy-vm-helper-files copy-config copy-packages
