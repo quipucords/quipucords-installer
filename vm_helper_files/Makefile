@@ -16,6 +16,13 @@ help:
 
 setup:
 	scripts/setup_repos.sh
+	@if grep -q -i "release 7" /etc/redhat-release; then \
+		echo "Running 7"; \
+		$(MAKE) offline-install-prep-7; \
+	else \
+		echo "Running 6"; \
+		$(MAKE) offline-install-prep-6; \
+	fi
 
 install:
 	cd install;./install.sh
@@ -29,7 +36,7 @@ install-version:
 clean:
 	scripts/cleanup.sh
 
-offline-install-prep-6: setup
+offline-install-prep-6:
 	cd install/packages/; curl -k -O -sSl http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm
 	cd install/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el6.noarch.rpm
 	yum install -y yum-utils
@@ -39,7 +46,7 @@ offline-install-prep-6: setup
 	yum install -y libcgroup
 	yum install -y xz
 
-offline-install-prep-7: setup
+offline-install-prep-7:
 	cd install/packages/; curl -k -O -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el7.noarch.rpm
 	yum install -y docker
 	yum install -y epel-release
