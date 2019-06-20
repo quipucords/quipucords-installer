@@ -42,19 +42,19 @@ There are various options for testing your changes to the installation scripts. 
 ## Launching the Virtual Machines
 First bring up the virtual machines using one of the methods below.
 
-### Method 1: Testing local changes using a docker image build from source.
+### Method 1: Testing local changes offline and using a docker image build from source.
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords.git
 git clone git@github.com:quipucords/quipucords-ui.git
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
-Build the docker image and test with the local install scripts on all supported OS's run the following.
+Build the docker image, download `qpc` CLI and test with the local install scripts on all supported OS's run the following.
 ```
 make setup-local-offline server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>
 make test-all
 ```
-`server_source` should be equal to either `local` or `release` (defaults to `release`) and put the corresponding version numbers for `cli_version` and `server_version` (both defaults to `latest`).
+`server_source` should be set to either `local` or `release` (defaults to `release`) and put the corresponding version numbers for `cli_version` and `server_version` (both defaults to `latest`).
 
 If you make changes to the installation scripts and want to test them you can run:
 ```
@@ -63,7 +63,7 @@ make refresh
 There is no need to restart the VM.
 
 
-### Method 2: Testing local changes using release docker image
+### Method 2: Testing local changes online and using release docker image
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
