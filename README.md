@@ -51,10 +51,10 @@ git clone git@github.com:quipucords/quipucords-installer.git
 ```
 Build the docker image and test with the local install scripts on all supported OS's run the following.
 ```
-make build-docker version=0.0.46
-make setup
+make setup-local-offline server_source=<local||release> cli_version=<x.x.x> server_version=<x.x.x>
 make test-all
 ```
+`server_source` should be equal to either `local` or `release` (defaults to `release`) and put the corresponding version numbers for `cli_version` and `server_version` (both defaults to `latest`).
 
 If you make changes to the installation scripts and want to test them you can run:
 ```
@@ -71,7 +71,7 @@ git clone git@github.com:quipucords/quipucords-installer.git
 
 To test your local scripts on all supported OS's run the following.
 ```
-make setup
+make setup-local-online
 make test-all
 ```
 
