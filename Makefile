@@ -7,7 +7,7 @@ help:
 	@echo "  setup-local-offline                            Download/Build qpc server and postgres images. Download qpc client rpm. Copy configuration, install, packages to OS specific folders"
 	@echo "         server_source=<local||release>                @param - defaults to release"
 	@echo "         cli_version=<x.x.x>                           @param - defaults to latest"
-	@echo "         server_version=<x.x.x>                        @param - required for local; defaults to latest if using release"
+	@echo "         server_version=<x.x.x>                        @param - required if server source is local; defaults to latest if using release"
 	@echo "  setup-release                                  Download latest official install scripts from GitHub.  Copy configuration, install, packages to OS specific folders"
 	@echo "  refresh                                        Recopy configuration, install, packages to OS specific folders"
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
