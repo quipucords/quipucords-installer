@@ -84,10 +84,10 @@ release-server-docker:
 	mkdir -p test/packages
 ifeq ($(server_version),$(filter $(server_version),latest))
 	@echo "Downloading quipucords latest"
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz -O quipucords_server_image.tar.gz
 else
 	@echo "Downloading quipucords $(server_version)"
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
+	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz -O quipucords_server_image.tar.gz
 endif
 
 # Internal subcommands that the user should not call
@@ -109,7 +109,12 @@ setup-local-online: create-test-dirs copy-install copy-vm-helper-files copy-conf
 
 setup-local-offline: create-test-dirs copy-install copy-vm-helper-files copy-config
 ifeq ($(server_source),local)
+ifeq ($(server_version),)
+	@echo "Server version is not provided. Exiting...";
+	@exit 1;
+else
 	$(MAKE) local-server-docker;
+endif
 else
 ifeq ($(server_source),release)
 	$(MAKE) release-server-docker;
