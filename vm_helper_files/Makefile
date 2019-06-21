@@ -8,8 +8,12 @@ help:
 	@echo "  setup                                              Configure yum repos as needed"
 	@echo "  offline-install-prep                               Install required dependencies for offline install"
 	@echo "  install                                            Install with defaults"
-	@echo "  install-offline version=<release_version>          Perform an offline installation"
-	@echo "  install-version version=<release_version>          Install a specific version using version parameter"
+	@echo "  install-offline                                    Perform an offline installation"
+	@echo "           server_version=<x.x.x>                        @param - required"
+	@echo "           cli_version=<x.x.x>                           @param - required"
+	@echo "  install-version                                    Install a specific version of the server and the client"
+	@echo "           server_version=<x.x.x>                        @param - required"
+	@echo "           cli_version=<x.x.x>                           @param - required"
 	@echo "  clean                                              Remove docker containers and images.  Also, qpc cli."
 
 
@@ -38,10 +42,10 @@ install: setup
 	cd install;./install.sh
 
 install-offline: setup offline-install-prep
-	cd install;./install.sh -e install_offline=true -e server_version=$(version) -e cli_version=$(version)
+	cd install;./install.sh -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install-version: setup
-	cd install;./install.sh -e server_version=$(version) -e cli_version=$(version)
+	cd install;./install.sh -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 clean:
 	scripts/cleanup.sh
