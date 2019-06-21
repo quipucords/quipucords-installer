@@ -34,13 +34,13 @@ offline-install-prep:
 	yum install -y yum-utils
 	yum install -y ansible
 
-install: setup offline-install-prep
+install: setup
 	cd install;./install.sh
 
 install-offline: setup offline-install-prep
 	cd install;./install.sh -e install_offline=true -e server_version=$(version) -e cli_version=$(version)
 
-install-version: setup offline-install-prep
+install-version: setup
 	cd install;./install.sh -e server_version=$(version) -e cli_version=$(version)
 
 clean:
