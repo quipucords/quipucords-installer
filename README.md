@@ -58,9 +58,9 @@ make test-all
 - `server_source` 
   - Contains `local` or `release` value. Defaults to `release`. Supply `local` to build the server docker image from a local quipucords repository, or `release` to use release server docker image. 
 - `cli_version`
-  - Contains the released version of the `qpc` client.. Defaults to `latest`. Supply the client version number you want to use. 
+  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
 - `server_version` 
-  - Contains Quipucords server version number. Defaults to `latest`. Supply the server version number you want to use.
+  - Contains Quipucords server version number. Required if `server_source` is `local`. If `server_source` is `release`, then defaults to `latest`. Supply the server version number you want to use.
 
 If you make changes to the installation scripts and want to test them you can run:
 ```
@@ -68,7 +68,7 @@ make refresh
 ```
 There is no need to restart the VM.
 
-*Note:* If you are switching from doing an offline test to online, then you should run `make clean` on the quipucords-installer repository folder before starting the online installation.
+**Warning:** If you are switching from doing an offline test to online, then you should run `make clean` on the quipucords-installer repository folder before starting the online installation.
 
 
 ### Method 2: Testing local install script with internet connectivity
