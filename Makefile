@@ -17,28 +17,17 @@ help:
 # Internal subcommands that the user should not call
 create-test-dirs:
 	mkdir -p test/packages
-	mkdir -p test/rhel6/install/
-	mkdir -p test/rhel7/install/
-	mkdir -p test/centos6/install/
-	mkdir -p test/centos7/install/
-	mkdir -p test/rhel6/config/rhel6
-	mkdir -p test/rhel7/config/rhel6
-	mkdir -p test/centos6/config/rhel6
-	mkdir -p test/centos7/config/rhel6
-	mkdir -p test/rhel6/config/rhel7
-	mkdir -p test/rhel7/config/rhel7
-	mkdir -p test/centos6/config/rhel7
-	mkdir -p test/centos7/config/rhel7
-	mkdir -p test/rhel6/scripts/
-	mkdir -p test/rhel7/scripts/
-	mkdir -p test/centos6/scripts/
-	mkdir -p test/centos7/scripts/
+	@for os in rhel6 rhel7 centos6 centos7; do \
+		set -x; \
+		mkdir -p test/$$os/install/; \
+		mkdir -p test/$$os/config/rhel6; \
+		mkdir -p test/$$os/config/rhel7; \
+		mkdir -p test/$$os/scripts/; \
+		set +x; \
+	done
 
 copy-vm-helper-files:
-	cp -rf vm_helper_files/ test/centos6
-	cp -rf vm_helper_files/ test/centos7
-	cp -rf vm_helper_files/ test/rhel6
-	cp -rf vm_helper_files/ test/rhel7
+	xargs -n 1 cp -vrf vm_helper_files/<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
 
 # Internal subcommands that the user should not call
 copy-config:
@@ -46,25 +35,16 @@ copy-config:
 	tar -xvf installer_config.tar.gz | true
 	cp -rf installer_config/* test/helpers | true
 	rm -rf installer_config/ | true
-	cp -rf test/helpers/* test/rhel6 | true
-	cp -rf test/helpers/* test/rhel7 | true
-	cp -rf test/helpers/* test/centos6 | true
-	cp -rf test/helpers/* test/centos7 | true
+	xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7" | true
 	rm -rf test/helpers | true
 
 # Internal subcommands that the user should not call
 copy-packages:
-	cp -rf test/packages/ test/rhel6/install/packages/
-	cp -rf test/packages/ test/rhel7/install/packages/
-	cp -rf test/packages/ test/centos6/install/packages/
-	cp -rf test/packages/ test/centos7/install/packages/
+	xargs -n 1 cp -vrf test/packages/<<<"test/rhel6/install/packages/ test/rhel7/install/packages/ test/centos6/install/packages/ test/centos7/install/packages/"
 
 # Internal subcommands that the user should not call
 copy-install:
-	cp -rf install test/rhel6
-	cp -rf install test/rhel7
-	cp -rf install test/centos6
-	cp -rf install test/centos7
+	xargs -n 1 cp -vrf install<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
 
 build-docker:
 	echo "Building quipucords $(version)"
