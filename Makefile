@@ -37,10 +37,11 @@ copy-config:
 	@for os_dir in rhel6 rhel7 centos6 centos7; do \
 		set -x; \
 		rsync -av --progress test/helpers/* test/$$os_dir --exclude config | true; \
+		if [[ $$os_dir = rhel6 || $$os_dir = rhel7 ]]; then \
+			cp -rf test/helpers/config/$$os_dir/* test/$$os_dir/config/repos/; \
+		fi; \
 		set +x; \
 	done
-	cp -rf test/helpers/config/rhel6/* test/rhel6/config/repos/
-	cp -rf test/helpers/config/rhel7/* test/rhel7/config/repos/
 	rm -rf test/helpers | true
 
 # Internal subcommands that the user should not call
