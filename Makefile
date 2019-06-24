@@ -31,12 +31,17 @@ copy-vm-helper-files:
 
 # Internal subcommands that the user should not call
 copy-config:
-	mkdir -p test/helpers | true
-	tar -xvf installer_config.tar.gz | true
-	cp -rf installer_config/* test/helpers | true
-	rm -rf installer_config/ | true
-	xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
-	rm -rf test/helpers | true
+	@if [ -e installer_config.tar.gz ]; then \
+		mkdir -p test/helpers | true; \
+		tar -xvf installer_config.tar.gz | true; \
+		cp -rf installer_config/* test/helpers | true; \
+		rm -rf installer_config/ | true; \
+		xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"; \
+		rm -rf test/helpers | true; \
+	else \
+		echo "installer_config.tar.gz does not exist"; \
+		exit 1; \
+	fi
 
 # Internal subcommands that the user should not call
 copy-packages:
