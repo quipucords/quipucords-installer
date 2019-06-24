@@ -35,7 +35,7 @@ copy-config:
 	tar -xvf installer_config.tar.gz | true
 	cp -rf installer_config/* test/helpers | true
 	rm -rf installer_config/ | true
-	xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7" | true
+	xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
 	rm -rf test/helpers | true
 
 # Internal subcommands that the user should not call
