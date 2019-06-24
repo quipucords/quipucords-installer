@@ -19,10 +19,5 @@ fi
 
 if [[ $is_rhel == "true" ]]
 then
-    if [[ $rpm_version == "el6" ]]
-    then
-        sudo cp -rf config/rhel6/*.repo /etc/yum.repos.d/
-    else
-        sudo cp -rf config/rhel7/*.repo /etc/yum.repos.d/
-    fi
+    sudo cp -rf config/repos/*.repo /etc/yum.repos.d/
 fi
