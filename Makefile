@@ -20,7 +20,8 @@ create-test-dirs:
 	@for os in rhel6 rhel7 centos6 centos7; do \
 		set -x; \
 		mkdir -p test/$$os/install/; \
-		mkdir -p test/$$os/config/repos/; \
+		mkdir -p test/$$os/config/rhel6; \
+		mkdir -p test/$$os/config/rhel7; \
 		mkdir -p test/$$os/scripts/; \
 		set +x; \
 	done
@@ -34,14 +35,7 @@ copy-config:
 	tar -xvf installer_config.tar.gz | true
 	cp -rf installer_config/* test/helpers | true
 	rm -rf installer_config/ | true
-	@for os_dir in rhel6 rhel7 centos6 centos7; do \
-		set -x; \
-		rsync -av --progress test/helpers/* test/$$os_dir --exclude config | true; \
-		if [[ $$os_dir = rhel6 || $$os_dir = rhel7 ]]; then \
-			cp -rf test/helpers/config/$$os_dir/* test/$$os_dir/config/repos/; \
-		fi; \
-		set +x; \
-	done
+	xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7" | true
 	rm -rf test/helpers | true
 
 # Internal subcommands that the user should not call
