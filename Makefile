@@ -34,7 +34,11 @@ copy-config:
 	tar -xvf installer_config.tar.gz | true
 	cp -rf installer_config/* test/helpers | true
 	rm -rf installer_config/ | true
-	xargs -n 1 cp -vrf test/helpers/scripts<<<"test/rhel6 test/rhel7 test/centos6 test/centos7" | true
+	@for os_dir in rhel6 rhel7 centos6 centos7; do \
+		set -x; \
+		rsync -av --progress test/helpers/* test/$$os_dir --exclude config | true; \
+		set +x; \
+	done
 	cp -rf test/helpers/config/rhel6/* test/rhel6/config/repos/
 	cp -rf test/helpers/config/rhel7/* test/rhel7/config/repos/
 	rm -rf test/helpers | true
