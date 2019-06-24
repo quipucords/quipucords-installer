@@ -49,7 +49,7 @@ git clone git@github.com:quipucords/quipucords.git
 git clone git@github.com:quipucords/quipucords-ui.git
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
-Build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's run the following.
+To build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's, run the following:
 ```
 make setup-local-offline server_source=release cli_version=0.9.0 server_version=0.9.0
 make test-all
