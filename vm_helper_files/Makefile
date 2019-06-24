@@ -41,7 +41,7 @@ offline-install-prep:
 install: setup
 	cd install;./install.sh
 
-install-offline: setup offline-install-prep
+install-offline: setup
 	cd install;./install.sh -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install-version: setup
