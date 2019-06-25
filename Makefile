@@ -75,7 +75,7 @@ copy-install:
 	cp -rf install test/centos7
 
 # Internal subcommands that the user should not call
-local-server-docker:
+local-server-image:
 	@echo "Building quipucords $(server_version)"
 	cd ../quipucords;make build-ui
 	cd ../quipucords;docker -D build . -t quipucords:$(server_version)
@@ -83,9 +83,10 @@ local-server-docker:
 	cd ../quipucords;gzip -f quipucords_server_image.tar
 	mkdir -p test/packages
 	mv ../quipucords/quipucords_server_image.tar.gz test/packages/
+	$(MAKE) download-postgres
 
 # Internal subcommands that the user should not call
-release-server-docker:
+download-server-image:
 	mkdir -p test/packages
 ifeq ($(server_version),$(filter $(server_version),latest))
 	@echo "Downloading quipucords latest"
@@ -94,6 +95,7 @@ else
 	@echo "Downloading quipucords $(server_version)"
 	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz -O quipucords_server_image.tar.gz
 endif
+	$(MAKE) download-postgres
 
 # Internal subcommands that the user should not call
 download-client:
@@ -123,15 +125,6 @@ endif
 	rm -rf test/downloaded_install
 
 # Internal subcommands that the user should not call
-download-server-image:
-	mkdir -p test/packages
-ifeq ($(server_version),$(filter $(server_version),latest))
-	cd test/packages;wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz
-else
-	cd test/packages;wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz
-endif
-
-# Internal subcommands that the user should not call
 download-postgres:
 	docker pull postgres:9.6.10
 	cd test/packages;docker save -o postgres.9.6.10.tar postgres:9.6.10
@@ -144,18 +137,17 @@ ifeq ($(server_version),)
 	@echo "Server version is not provided. Exiting...";
 	@exit 1;
 else
-	$(MAKE) local-server-docker;
+	$(MAKE) local-server-image;
 endif
 else
 ifeq ($(server_source),release)
-	$(MAKE) release-server-docker;
+	$(MAKE) download-server-image;
 else
 	@echo "Quipucords server source not defined.";
 	@echo "Setting release as default server source.";
-	$(MAKE) release-server-docker;
+	$(MAKE) download-server-image;
 endif
 endif
-	$(MAKE) download-postgres
 	$(MAKE) copy-packages
 	$(MAKE) download-client
 
@@ -166,7 +158,6 @@ setup-release-offline: create-test-dirs copy-vm-helper-files copy-config copy-pa
 	$(MAKE) download-installer
 	$(MAKE) download-server-image
 	$(MAKE) download-client
-	$(MAKE) download-postgres
 	$(MAKE) copy-packages
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages

@@ -89,19 +89,39 @@ make refresh
 ```
 There is no need to restart the VM.
 
-### Method 3: Testing official release
+### Method 3: Testing official release install script without internet connectivity
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
 
-To test your local scripts on all supported OS's run the following.
+To test the release scripts on all supported OS's, run the following. This command will download Quipucords server docker image, installer, `qpc` client and copy them to OS specific folders.
 ```
-make setup-release version=0.0.46
+make setup-release-offline installer_version=0.9.0 cli_version=0.9.0 server_version=0.9.0
 make test-all
 ```
+**Options:**
+- `installer_version`
+  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use. 
+- `cli_version`
+  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
+- `server_version` 
+  - Contains Quipucords server version number. Defaults to `latest`. Supply the server version number you want to use.
 
-_Note_: 0.0.46 can be replaced by the version number you wish to test.
+### Method 4: Testing official release install script with internet connectivity
+First obtain all the required repositories.
+```
+git clone git@github.com:quipucords/quipucords-installer.git
+```
+
+To test the release scripts on all supported OS's, run the following.
+```
+make setup-release-online installer_version=0.9.0
+make test-all
+```
+**Options:**
+- `installer_version`
+  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use. 
 
 ## Configuring Virtual Machines
 The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
