@@ -37,18 +37,18 @@ To develop the Quipucords installer, begin by cloning the repository.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
+# <a name="test"></a> Testing
 
-# <a name="test"></a> Testing Releases
-## Testing local installation scripts
-This method is used when you are testing installation scripts that have not been released.
-
-### Setup
+## Setup
 - First obtain all the required repositories
 ```
 git clone git@github.com:quipucords/quipucords.git
 git clone git@github.com:quipucords/quipucords-ui.git
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
+
+## Testing local installation scripts
+This method is used when you are testing installation scripts that have not been released.
 
 ### Testing offline installation
 To build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's, run the following:
@@ -87,12 +87,6 @@ There is no need to restart the VM.
 
 ## Testing released installation scripts
 This method is used when you are testing installation scripts that have been released.  They will be available on GitHub.
-
-### Setup
-- First obtain all the required repositories
-```
-git clone git@github.com:quipucords/quipucords-installer.git
-```
 
 ### Testing offline installation
 To test the release scripts on all supported OS's, run the following. This command will download Quipucords server docker image, installer, `qpc` client and copy them to OS specific folders.
