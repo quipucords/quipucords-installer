@@ -36,7 +36,7 @@ copy-config:
 		tar -xvf installer_config.tar.gz | true; \
 		cp -rf installer_config/* test/helpers | true; \
 		rm -rf installer_config/ | true; \
-		for dest in test/rhel7 test/rhel6 test/centos6 test/centos7 ; do cp -vrf test/helpers/* "$$dest" ; done | true; \
+		for dest in test/rhel7 test/rhel6 test/centos6 test/centos7 ; do cp -vrf test/helpers/* $$dest | true; done; \
 		rm -rf test/helpers | true; \
 	else \
 		echo "installer_config.tar.gz does not exist"; \
@@ -44,7 +44,7 @@ copy-config:
 
 # Internal subcommands that the user should not call
 copy-packages:
-	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/packages/ "test/$$os/install/packages/" ; done
+	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/packages/ test/$$os/install/packages/ ; done
 
 # Internal subcommands that the user should not call
 copy-install:
@@ -71,7 +71,6 @@ setup-release: create-test-dirs copy-vm-helper-files copy-config
 	cp -rf test/downloaded_install/install test/centos6
 	cp -rf test/downloaded_install/install test/centos7
 	rm -rf test/downloaded_install
-
 
 refresh: setup
 
