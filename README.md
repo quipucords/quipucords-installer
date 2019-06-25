@@ -37,18 +37,20 @@ To develop the Quipucords installer, begin by cloning the repository.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
-# <a name="test"></a> Test
-There are various options for testing your changes to the installation scripts.  You can test scripts from this repository or an official build.  First you need to launch the VMs configured with the installation files and docker images you wish to test.
-## Launching the Virtual Machines
-First bring up the virtual machines using one of the methods below.
 
-### Method 1: Testing local install script without internet connectivity
-First obtain all the required repositories.
+# <a name="test"></a> Testing Releases
+## Testing local installation scripts
+This method is used when you are testing installation scripts that have not been released.
+
+### Setup
+- First obtain all the required repositories
 ```
 git clone git@github.com:quipucords/quipucords.git
 git clone git@github.com:quipucords/quipucords-ui.git
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
+
+### Testing offline installation
 To build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's, run the following:
 ```
 make setup-local-offline server_source=release cli_version=0.9.0 server_version=0.9.0
@@ -70,13 +72,7 @@ There is no need to restart the VM.
 
 **Warning:** If you are switching from doing an offline test to online, then you should run `make clean` on the quipucords-installer repository folder before starting the online installation.
 
-
-### Method 2: Testing local install script with internet connectivity
-First obtain all the required repositories.
-```
-git clone git@github.com:quipucords/quipucords-installer.git
-```
-
+### Testing online installation
 To test your local scripts on all supported OS's run the following.
 ```
 make setup-local-online
@@ -89,12 +85,16 @@ make refresh
 ```
 There is no need to restart the VM.
 
-### Method 3: Testing official release install script without internet connectivity
-First obtain all the required repositories.
+## Testing released installation scripts
+This method is used when you are testing installation scripts that have been released.  They will be available on GitHub.
+
+### Setup
+- First obtain all the required repositories
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
 
+### Testing offline installation
 To test the release scripts on all supported OS's, run the following. This command will download Quipucords server docker image, installer, `qpc` client and copy them to OS specific folders.
 ```
 make setup-release-offline installer_version=0.9.0 cli_version=0.9.0 server_version=0.9.0
@@ -107,13 +107,7 @@ make test-all
   - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
 - `server_version` 
   - Contains Quipucords server version number. Defaults to `latest`. Supply the server version number you want to use.
-
-### Method 4: Testing official release install script with internet connectivity
-First obtain all the required repositories.
-```
-git clone git@github.com:quipucords/quipucords-installer.git
-```
-
+### Testing online installation
 To test the release scripts on all supported OS's, run the following.
 ```
 make setup-release-online installer_version=0.9.0
@@ -122,7 +116,7 @@ make test-all
 **Options:**
 - `installer_version`
   - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use. 
-
+  
 ## Configuring Virtual Machines
 The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
 
