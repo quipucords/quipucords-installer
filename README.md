@@ -37,7 +37,7 @@ To develop the Quipucords installer, begin by cloning the repository.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
-# <a name="test"></a> Testing
+# <a name="test"></a> Test
 
 ## Setup
 - First obtain all the required repositories
