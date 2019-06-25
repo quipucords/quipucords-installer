@@ -42,19 +42,25 @@ There are various options for testing your changes to the installation scripts. 
 ## Launching the Virtual Machines
 First bring up the virtual machines using one of the methods below.
 
-### Method 1: Testing local changes using a docker image build from source.
+### Method 1: Testing local install script without internet connectivity
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords.git
 git clone git@github.com:quipucords/quipucords-ui.git
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
-Build the docker image and test with the local install scripts on all supported OS's run the following.
+To build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's, run the following:
 ```
-make build-docker version=0.0.46
-make setup
+make setup-local-offline server_source=release cli_version=0.9.0 server_version=0.9.0
 make test-all
 ```
+**Options:**
+- `server_source` 
+  - Contains `local` or `release` value. Defaults to `release`. Supply `local` to build the server docker image from a local quipucords repository, or `release` to use release server docker image. 
+- `cli_version`
+  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
+- `server_version` 
+  - Contains Quipucords server version number. Required if `server_source` is `local`. If `server_source` is `release`, then defaults to `latest`. Supply the server version number you want to use.
 
 If you make changes to the installation scripts and want to test them you can run:
 ```
@@ -62,8 +68,10 @@ make refresh
 ```
 There is no need to restart the VM.
 
+**Warning:** If you are switching from doing an offline test to online, then you should run `make clean` on the quipucords-installer repository folder before starting the online installation.
 
-### Method 2: Testing local changes using release docker image
+
+### Method 2: Testing local install script with internet connectivity
 First obtain all the required repositories.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
@@ -71,7 +79,7 @@ git clone git@github.com:quipucords/quipucords-installer.git
 
 To test your local scripts on all supported OS's run the following.
 ```
-make setup
+make setup-local-online
 make test-all
 ```
 
