@@ -27,7 +27,7 @@ create-test-dirs:
 	done
 
 copy-vm-helper-files:
-	xargs -n 1 cp -vrf vm_helper_files/<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
+	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf vm_helper_files/ test/$$os; done
 
 # Internal subcommands that the user should not call
 copy-config:
@@ -36,20 +36,19 @@ copy-config:
 		tar -xvf installer_config.tar.gz | true; \
 		cp -rf installer_config/* test/helpers | true; \
 		rm -rf installer_config/ | true; \
-		xargs -n 1 cp -vrf test/helpers/*<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"; \
+		for dest in test/rhel7 test/rhel6 test/centos6 test/centos7 ; do cp -vrf test/helpers/* "$$dest" ; done | true; \
 		rm -rf test/helpers | true; \
 	else \
 		echo "installer_config.tar.gz does not exist"; \
-		exit 1; \
 	fi
 
 # Internal subcommands that the user should not call
 copy-packages:
-	xargs -n 1 cp -vrf test/packages/<<<"test/rhel6/install/packages/ test/rhel7/install/packages/ test/centos6/install/packages/ test/centos7/install/packages/"
+	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/packages/ "test/$$os/install/packages/" ; done
 
 # Internal subcommands that the user should not call
 copy-install:
-	xargs -n 1 cp -vrf install<<<"test/rhel6 test/rhel7 test/centos6 test/centos7"
+	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf install test/$$os; done
 
 build-docker:
 	echo "Building quipucords $(version)"
