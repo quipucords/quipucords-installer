@@ -38,6 +38,7 @@ To develop the Quipucords installer, begin by cloning the repository.
 git clone git@github.com:quipucords/quipucords-installer.git
 ```
 # <a name="test"></a> Test
+There are various options testing your changes to the installation scripts. You can test scripts from this repository or an official build.
 
 ## Setup
 - First obtain all the required repositories
@@ -126,7 +127,7 @@ Create or obtain a tarball named `installer_config.tar.gz`.  The files in this t
 
 The repository files will be copied to the `/etc/yum.repos.d/` directory in the virtual machine.
 
-## Testing Online Installation
+## Vagrant: Testing Online Installation
 To test online installation, do the following:
 ```
 cd /quipucords_installer;sudo su
@@ -137,18 +138,17 @@ Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
  - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
 
-## Testing Offline Installation
+## Vagrant: Testing Offline Installation
 
 To test offline installation for RHEL or Centos 6/7, do the following (with internet connectivity):
 
 1. Run: `cd /quipucords_installer;sudo su`
 2. Run: `make setup`
-3. Run: `make offline-install-prep-6`
+3. Run: `make offline-install-prep`
 4. Disconnect from the network
-4. Run: `make install-offline version=<release_version>`
+4. Run: `make install-offline server_version=<server_version> cli_version=<cli_version>`
 
 Note:
- - For CentOS/RHEL 7 you should use `make offline-install-prep-7` for step 3.
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
  - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
 
