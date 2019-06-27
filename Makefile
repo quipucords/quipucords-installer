@@ -98,9 +98,9 @@ download-client:
 download-installer:
 	mkdir -p test/downloaded_install
 ifeq ($(installer_version),$(filter $(installer_version),latest))
-	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz
+	cd test/downloaded_install;curl -k -sSL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz -o quipucords_install.tar.gz
 else
-	cd test/downloaded_install;wget https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz
+	cd test/downloaded_install;curl -k -sSL https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz -o quipucords_install.tar.gz
 endif
 	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
 	xargs -n 1 cp -vrf test/downloaded_install/install<<<"test/rhel6/ test/rhel7/ test/centos6/ test/centos7/"
@@ -145,19 +145,19 @@ setup-release-offline: create-test-dirs copy-vm-helper-files copy-config copy-pa
 
 refresh: create-test-dirs copy-vm-helper-files copy-config copy-install copy-packages
 
-test-all: refresh
+test-all:
 	./launch_vms.sh
 
-test-rhel-6: refresh
+test-rhel-6:
 	vagrant up vrhel6;vagrant ssh vrhel6
 
-test-rhel-7: refresh
+test-rhel-7:
 	vagrant up vrhel7;vagrant ssh vrhel7
 
-test-centos-6: refresh
+test-centos-6:
 	vagrant up vcentos6;vagrant ssh vcentos6
 
-test-centos-7: refresh
+test-centos-7:
 	vagrant up vcentos7;vagrant ssh vcentos7
 
 clean:
