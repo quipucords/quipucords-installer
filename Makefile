@@ -73,10 +73,10 @@ local-server-image: download-postgres
 download-server-image: download-postgres
 ifeq ($(server_version),$(filter $(server_version),latest))
 	@echo "Downloading quipucords latest"
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz -O quipucords_server_image.tar.gz
+	cd test/packages; curl -k -SL https://github.com/quipucords/quipucords/releases/latest/download/quipucords_server_image.tar.gz -o quipucords_server_image.tar.gz
 else
 	@echo "Downloading quipucords $(server_version)"
-	cd test/packages; wget https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz -O quipucords_server_image.tar.gz
+	cd test/packages; curl -k -SL https://github.com/quipucords/quipucords/releases/download/$(server_version)/quipucords_server_image.tar.gz -o quipucords_server_image.tar.gz
 endif
 
 # Internal subcommands that the user should not call
@@ -84,9 +84,9 @@ download-client:
 	@for os_version in 6 7 ; do \
 		set -x; \
 		if [[ "$(cli_version)" = "" || "$(cli_version)" = "latest" ]]; then \
-			curl -k -sSL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+			curl -k -SL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
 		else \
-			curl -k -sSL https://github.com/quipucords/qpc/releases/download/$(cli_version)/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
+			curl -k -SL https://github.com/quipucords/qpc/releases/download/$(cli_version)/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
 		fi; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/rhel$$os_version/install/packages/; \
 		cp -f test/packages/qpc.el$$os_version.noarch.rpm test/centos$$os_version/install/packages/; \
@@ -98,12 +98,12 @@ download-client:
 download-installer:
 	mkdir -p test/downloaded_install
 ifeq ($(installer_version),$(filter $(installer_version),latest))
-	cd test/downloaded_install;curl -k -sSL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz -o quipucords_install.tar.gz
+	cd test/downloaded_install;curl -k -SL https://github.com/quipucords/quipucords-installer/releases/latest/download/quipucords_install.tar.gz -o quipucords_install.tar.gz
 else
-	cd test/downloaded_install;curl -k -sSL https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz -o quipucords_install.tar.gz
+	cd test/downloaded_install;curl -k -SL https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz -o quipucords_install.tar.gz
 endif
 	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
-	xargs -n 1 cp -vrf test/downloaded_install/install<<<"test/rhel6/ test/rhel7/ test/centos6/ test/centos7/"
+	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/downloaded_install/install test/$$os/; done
 	rm -rf test/downloaded_install
 
 # Internal subcommands that the user should not call

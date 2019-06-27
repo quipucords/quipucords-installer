@@ -92,7 +92,7 @@ This method is used when you are testing installation scripts that have been rel
 ### Testing offline installation
 To test the release scripts on all supported OS's, run the following. This command will download Quipucords server docker image, installer, `qpc` client and copy them to OS specific folders.
 ```
-make setup-release-offline installer_version=0.9.0 cli_version=0.9.0 server_version=0.9.0
+make setup-release-offline installer_version=0.1.1 cli_version=0.9.0 server_version=0.9.0
 make test-all
 ```
 **Options:**
@@ -105,7 +105,7 @@ make test-all
 ### Testing online installation
 To test the release scripts on all supported OS's, run the following.
 ```
-make setup-release-online installer_version=0.9.0
+make setup-release-online installer_version=0.1.1
 make test-all
 ```
 **Options:**
