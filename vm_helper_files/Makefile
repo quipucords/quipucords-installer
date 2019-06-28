@@ -5,6 +5,7 @@ TOPDIR = $(shell pwd)
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
+	@echo "  install-help                                       Runs install.sh help"
 	@echo "  setup                                              Configure yum repos as needed"
 	@echo "  offline-install-prep                               Install required dependencies for offline install"
 	@echo "  install                                            Install with defaults"
@@ -17,10 +18,13 @@ help:
 	@echo "  clean                                              Remove docker containers and images.  Also, qpc cli."
 
 
+install-help:
+	./install/install.sh --help
+
 setup:
 	scripts/setup_repos.sh
 
-offline-install-prep:
+offline-install-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
 		yum install -y docker; \
@@ -41,7 +45,7 @@ offline-install-prep:
 install: setup
 	cd install;./install.sh
 
-install-offline: setup
+install-offline:
 	cd install;./install.sh -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install-version: setup
