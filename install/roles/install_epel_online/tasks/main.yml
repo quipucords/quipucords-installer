@@ -9,15 +9,6 @@
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
 
-- name: Test for rpm command
-  shell: command -v rpm
-  register: have_rpm_raw
-  ignore_errors: yes
-
-- name: Set have_rpm
-  set_fact:
-    have_rpm: "{{ have_rpm_raw.rc == 0 }}"
-
 - name: Check for EPEL rpm (RHEL/Centos)
   yum:
     name: epel-release
@@ -40,35 +31,6 @@
   when:
     - have_epel_rpm is not defined
 
-- name: Find installable local epel rpm (RHEL/Centos)
-  find:
-    paths: "{{ pkg_install_dir }}"
-    patterns: 'epel*.rpm'
-  register: find_epel_rpm_local_raw
-  when:
-    - not have_epel_rpm
-
-- name: Set find_epel_rpm_local (RHEL/Centos)
-  set_fact:
-    find_epel_rpm_local: "{{ find_epel_rpm_local_raw['matched'] == 1 }}"
-  when:
-    - find_epel_rpm_local_raw is defined
-    - "'matched' in find_epel_rpm_local_raw"
-
-- name: Set find_epel_rpm_local_path (RHEL/Centos)
-  set_fact:
-    find_epel_rpm_local_path: "{{ find_epel_rpm_local_raw['files'][0]['path'] }}"
-  when:
-    - find_epel_rpm_local is defined
-    - find_epel_rpm_local|bool
-
-- name: Install EPEL from local path (RHEL/Centos)
-  shell: rpm -Uvh --force "{{find_epel_rpm_local_path}}"
-  become: true
-  when:
-    - not have_epel_rpm
-    - find_epel_rpm_local|bool
-
 - name: Install EPEL for RHEL 6 from internet (RHEL/Centos 6)
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
@@ -77,7 +39,6 @@
   when:
     - is_rhel_centos_6|bool
     - not have_epel_rpm
-    - not find_epel_rpm_local
 
 - name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
   yum:
@@ -87,4 +48,3 @@
   when:
     - is_rhel_centos_7|bool
     - not have_epel_rpm
-    - not find_epel_rpm_local
