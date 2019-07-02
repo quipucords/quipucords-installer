@@ -16,6 +16,8 @@
   register: have_epel_raw
   become: true
   ignore_errors: yes
+  when:
+    - have_yum|bool
 
 - name: Set have_epel (RHEL/Centos)
   set_fact:
