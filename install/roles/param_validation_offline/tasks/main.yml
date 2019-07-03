@@ -16,7 +16,7 @@
   fail:
     msg: "{{ qpc_rpm_local_path }} file not found and required for an offline installation"
   when:
-    - not find_qpc_rpm_local
+    - not find_qpc_rpm_local.stat.exists
   
 - name: Check if local quipucords server image exists
   stat:
@@ -27,7 +27,7 @@
   fail:
     msg: "{{ server_image_local_path }} file not found and required for an offline installation"
   when:
-    - not find_server_image_local
+    - not find_server_image_local.stat.exists 
 
 - name: Check if local postgres image exists
   stat:
@@ -38,4 +38,4 @@
   fail:
     msg: "{{ postgres_image_local_path }} file not found and required for an offline installation"
   when:
-    - not find_postgres_image_local
+    - not find_postgres_image_local.stat.exists

@@ -18,8 +18,8 @@
       inspect_job_timeout: 10800
       ansible_log_level: 0
   roles:
-    - install_prep
     - param_validation
+    - install_prep
     - role: param_validation_offline
       when: install_offline|lower == 'true'
     - epel
