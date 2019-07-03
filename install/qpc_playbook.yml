@@ -19,7 +19,8 @@
       ansible_log_level: 0
   roles:
     - prep
-    - install_epel_online
+    - role: install_epel_online
+      when: install_offline|lower == 'false'
     - role: docker
       when: install_server|lower == 'true'
     - role: qpc_server
