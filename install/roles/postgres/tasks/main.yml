@@ -1,0 +1,109 @@
+---
+
+
+- name: Check for Postgres docker image presence
+  shell: docker images | grep postgres | grep "{{ POSTGRES_VERSION }}"
+  become: true
+  register: postgres_docker_image_raw
+  ignore_errors: yes
+
+- name: Set Postgres docker image presence to false
+  set_fact:
+    postgres_docker_image_present: false
+  when:
+    - postgres_docker_image_raw.rc != 0
+
+- name: Set Postgres docker image presence to true if output is not empty
+  set_fact:
+    postgres_docker_image_present: "{{ postgres_docker_image_raw['stdout_lines']|length > 0 }}"
+  when:
+    - postgres_docker_image_raw.rc == 0
+    - "'stdout_lines' in postgres_docker_image_raw"
+
+- name: Set path to local Postgres docker image tar
+  set_fact:
+    postgres_image_local_path: "{{ pkg_install_dir }}postgres.{{POSTGRES_VERSION}}.tar"
+  when:
+    - postgres_image_local_path is not defined  
+
+- name: Check if local Postgres docker image tar exists
+  stat:
+    path: "{{postgres_image_local_path}}"
+  register: find_postgres_local_image
+
+- name: Default that docker load was not attempted for Postgres
+  set_fact:
+    load_docker_postgres_attempted: false
+
+- name: Docker load was attempted for Postgres
+  set_fact:
+    load_docker_postgres_attempted: true
+  when:
+    - not postgres_docker_image_present
+    - find_postgres_local_image.stat.exists == true
+
+- name: Load Postgres image into local Docker registry
+  shell: docker load -i "{{postgres_image_local_path}}"
+  become: true
+  when:
+    - not postgres_docker_image_present
+    - find_postgres_local_image.stat.exists == true
+
+- name: Check for Postgres docker image presence
+  shell: docker images | grep postgres | grep "{{ POSTGRES_VERSION }}"
+  become: true
+  register: postgres_docker_image_raw
+  ignore_errors: yes
+  when:
+    load_docker_postgres_attempted|bool
+
+- name: Set Postgres docker image presence to false
+  set_fact:
+    postgres_docker_image_present: false
+  when:
+    - load_docker_postgres_attempted|bool
+    - postgres_docker_image_raw.rc != 0
+
+- name: Set Postgres docker image presence to true if output is not empty
+  set_fact:
+    postgres_docker_image_present: "{{ postgres_docker_image_raw['stdout_lines']|length > 0 }}"
+  when:
+    - load_docker_postgres_attempted|bool
+    - postgres_docker_image_raw.rc == 0
+    - "'stdout_lines' in postgres_docker_image_raw"
+
+- name: Make sure Postgres docker image loaded (it successfully loaded if skipped)
+  fail:
+    msg: "The Postgres DB's docker image was not found in the output of the docker images command."
+  when:
+    - load_docker_postgres_attempted|bool
+    - not postgres_docker_image_present
+
+- name: Check if Postgres server already running
+  shell: docker ps -a -f name="qpc-db" | grep "qpc-db"
+  become: true
+  register: postgres_ps_raw
+  ignore_errors: yes
+  
+- name: Remove running Postgres server container
+  shell: docker rm -f qpc-db
+  become: true
+  ignore_errors: yes
+  when:
+    - postgres_ps_raw['stdout_lines'] | length > 0
+
+- name: Start Postgres container with docker volume (RHEL 6 & Centos 6)
+  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+
+- name: Start Postgres container with docker volume (RHEL 7, Centos 7)
+  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+  become: true
+  when:
+    - is_rhel_centos_7|bool
+
+- name: Waiting for Postgres to spin up
+  pause:
+    seconds: 30

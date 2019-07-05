@@ -22,6 +22,7 @@
     - epel
     - role: docker
       when: install_server|lower == 'true'
+    - postgres
     - role: qpc_server
       when: install_server|lower == 'true'
     - role: qpc_cli
