@@ -18,8 +18,12 @@
       inspect_job_timeout: 10800
       ansible_log_level: 0
   roles:
-    - prep
-    - epel
+    - param_validation
+    - install_prep
+    - role: param_validation_offline
+      when: install_offline|lower == 'true'
+    - role: install_epel_online
+      when: install_offline|lower == 'false'
     - role: docker
       when: install_server|lower == 'true'
     - postgres

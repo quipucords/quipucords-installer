@@ -1,33 +1,5 @@
 ---
 
-- name: Validate install_server is set to true or false
-  fail:
-    msg: "{{ install_server }} is invalid value for install_server.  Must be equal to true or false"
-  when:
-    - not install_server|lower == 'true'
-    - not install_server|lower == 'false'
-
-- name: Validate install_cli is set to true or false
-  fail:
-    msg: "{{ install_cli }} is invalid value for install_cli.  Must be equal to true or false"
-  when:
-    - not install_cli|lower == 'true'
-    - not install_cli|lower == 'false'
-
-- name: Validate install_offline is set to true or false
-  fail:
-    msg: "{{ install_offline }} is invalid value for install_offline.  Must be equal to true or false"
-  when:
-    - not install_offline|lower == 'true'
-    - not install_offline|lower == 'false'
-
-- name: Checking if server_version is defined when install_offline is true
-  fail:
-    msg: "server_version must be set when install_offline=true"
-  when:
-    - install_offline|lower == 'true'
-    - server_version is not defined
-
 - name: Set operating system information
   set_fact:
     is_rhel_centos_6: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '6') }}"
@@ -59,3 +31,44 @@
   when:
     - have_selinux_raw.rc == 0
 
+- name: Set qpc version (RHEL/CentOS 6)
+  set_fact:
+    qpc_package_name: "qpc.el6.noarch.rpm"
+  when:
+    - qpc_package_name is not defined
+    - is_rhel_centos_6|bool
+
+- name: Set qpc version (RHEL/CentOS 7)
+  set_fact:
+    qpc_package_name: "qpc.el7.noarch.rpm"
+  when:
+    - qpc_package_name is not defined
+    - is_rhel_centos_7|bool
+
+- name: Set qpc_rpm_local_path
+  set_fact:
+    qpc_rpm_local_path: "{{ pkg_install_dir }}{{ qpc_package_name }}"
+
+- name: Set server_image_filename
+  set_fact:
+    server_image_filename: "quipucords_server_image.tar.gz"
+  when:
+    - server_image_filename is not defined
+
+- name: Set server_image_local_path 
+  set_fact:
+    server_image_local_path: "{{ pkg_install_dir }}{{ server_image_filename }}"
+  when:
+    - server_image_local_path is not defined
+  
+- name: Set postgres_image_filename
+  set_fact:
+    postgres_image_filename: "postgres.{{ POSTGRES_VERSION }}.tar"
+  when:
+    - postgres_image_filename is not defined
+
+- name: Set postgres_image_local_path
+  set_fact:
+    postgres_image_local_path: "{{ pkg_install_dir }}{{ postgres_image_filename }}"
+  when:
+    - postgres_image_local_path is not defined
