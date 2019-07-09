@@ -68,15 +68,3 @@
     - load_docker_postgres_attempted|bool
     - not postgres_docker_image_present
 
-- name: Check if Postgres server already running
-  shell: docker ps -a -f name="qpc-db" | grep "qpc-db"
-  become: true
-  register: postgres_ps_raw
-  ignore_errors: yes
-  
-- name: Remove running Postgres server container
-  shell: docker rm -f qpc-db
-  become: true
-  ignore_errors: yes
-  when:
-    - postgres_ps_raw['stdout_lines'] | length > 0
