@@ -1,0 +1,23 @@
+---
+
+- name: Validate install_server is set to true or false
+  fail:
+    msg: "{{ install_server }} is invalid value for install_server.  Must be equal to true or false"
+  when:
+    - not install_server|lower == 'true'
+    - not install_server|lower == 'false'
+
+- name: Validate install_cli is set to true or false
+  fail:
+    msg: "{{ install_cli }} is invalid value for install_cli.  Must be equal to true or false"
+  when:
+    - not install_cli|lower == 'true'
+    - not install_cli|lower == 'false'
+  
+- name: Validate install_offline is set to true or false
+  fail:
+    msg: "{{ install_offline }} is invalid value for install_offline.  Must be equal to true or false"
+  when:
+    - not install_offline|lower == 'true'
+    - not install_offline|lower == 'false'
+

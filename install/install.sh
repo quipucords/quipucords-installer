@@ -84,45 +84,6 @@ else
   fi
 fi
 
-offline_check() {
-  echo 'Checking if required files exist for an offline installation.'
-  pkg_dir='packages/'
-  for i in "${args[@]}"; do
-    if [[ "$i" == *"pkg_install_dir"* ]]; then
-      pkg_dir="$(cut -d'=' -f2 <<<"$i")"
-    fi
-  done
-  server_image_path="$pkg_dir/quipucords_server_image.tar.gz"
-  postgres_image_path="$pkg_dir/postgres.$(cut -d'=' -f2 <<<"$POSTGRES_VERSION").tar"
-  declare -a required_images=($server_image_path $postgres_image_path)
-  for i in "${required_images[@]}"; do
-    if [ ! -f "$i" ]; then
-      echo "$i is required for an offline installation."
-      unset required_images
-      exit 1
-    fi
-  done
-  unset required_images
-  cli_rpm_path="$pkg_dir/qpc.$rpm_version.noarch.rpm"
-  if [ ! -f "$cli_rpm_path" ]; then
-    echo "WARNING: $cli_rpm_path was not found, but could be configured through satellite."
-  fi
-  echo "Checks passed continuing with installation."
-}
-
-for i in "${args[@]}"; do
-  if [[ "$i" == *"offline"* ]]; then
-    if [[ "$i" == *"true"* ]]; then
-      offline_check;
-    elif [[ "$i" == *"false"* ]]; then
-      echo 'Performing an online installation because install_offline=false'
-    else
-      echo $i 'is an invalid option'
-      usage;
-    fi
-  fi
-done
-
 if [ $RHEL7 ]; then
   echo "Trying to install RHEL7 dependencies..."
   sudo subscription-manager repos --enable="rhel-7-server-extras-rpms" || true
