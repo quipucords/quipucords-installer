@@ -21,3 +21,16 @@
     - not install_offline|lower == 'true'
     - not install_offline|lower == 'false'
 
+- name: Validate use_supervisord is set to true or false
+  fail:
+    msg: "{{ use_supervisord }} is invalid value for use_supervisord.  Must be equal to true or false"
+  when:
+    - not use_supervisord|lower == 'true'
+    - not use_supervisord|lower == 'false'
+
+- name: Validate open_port is set to true or false
+  fail:
+    msg: "{{ open_port }} is invalid value for open_port.  Must be equal to true or false"
+  when:
+    - not open_port|lower == 'true'
+    - not open_port|lower == 'false'

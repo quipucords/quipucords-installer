@@ -5,19 +5,20 @@
     server_install_dir: "{{ ansible_env['SERVER_DIR'] | default(ansible_env['HOME'] + '/quipucords') }}"
   when: server_install_dir is not defined
 
-- name: Validate use_supervisord is set to true or false
-  fail:
-    msg: "{{ use_supervisord }} is invalid value for use_supervisord.  Must be equal to true or false"
-  when:
-    - not use_supervisord|lower == 'true'
-    - not use_supervisord|lower == 'false'
+- name: Create server home directory
+  file:
+    path: "{{server_install_dir}}"
+    state: directory
 
-- name: Validate open_port is set to true or false
-  fail:
-    msg: "{{ open_port }} is invalid value for open_port.  Must be equal to true or false"
-  when:
-    - not open_port|lower == 'true'
-    - not open_port|lower == 'false'
+- name: Create server log directory
+  file:
+    path: "{{server_install_dir}}/log"
+    state: directory
+
+- name: Create server sshkeys directory
+  file:
+    path: "{{server_install_dir}}/sshkeys"
+    state: directory
 
 - name: Open port in firewall on host machine for Quipucords server
   iptables:
@@ -30,59 +31,20 @@
   when:
     - open_port|bool
 
-- name: Set the server version to install using user argument
+- name: Default directory mounting to empty string
   set_fact:
-    install_flag_server_version: "{{ server_version }}"
-  when:
-    - server_version is defined
+    dir_mount_selinux: ""
+
+- name: Set dir_mount_selinux to add ":z" if selinux_on is true
+  set_fact:
+    dir_mount_selinux: ":z"
+  when: selinux_on|bool
 
 - name: Set the server docker image tag to user specified version
   set_fact:
     server_image_tag: "{{ install_flag_server_version }}"
   when:
     - install_flag_server_version is defined
-
-- name: Default the server docker tag to unknown
-  set_fact:
-    server_image_tag: "unknown"
-  when:
-    - install_flag_server_version is not defined
-
-- name: Query GitHub for the latest release information
-  uri:
-    url: https://github.com/quipucords/quipucords/releases/latest/download/release_info.json
-    validate_certs: no
-    return_content: yes
-  retries: 5
-  delay: 5
-  register: github_release_response
-  until: github_release_response.status == 200 or github_release_response.status == 401
-  changed_when: false
-  when:
-    - install_flag_server_version is not defined
-
-- name: Load JSON release info
-  set_fact:
-    github_release_info: "{{ github_release_response.content | from_json }}"
-  when:
-    - install_flag_server_version is not defined
-    - github_release_response is defined
-    - github_release_response.content is defined
-
-- name: Parse release version from github_release_info JSON
-  set_fact:
-    github_release: "{{ github_release_info.version }}"
-  when:
-    - install_flag_server_version is not defined
-    - github_release_info is defined
-    - github_release_info.version is defined
-
-- name: Override default server_image_tag value with release value
-  set_fact:
-    server_image_tag: "{{ github_release }}"
-  when:
-    - install_flag_server_version is not defined
-    - github_release is defined
 
 - name: Set the Quipucords release server image file name
   set_fact:
@@ -100,15 +62,6 @@
   set_fact:
     server_image_and_tag: "{{server_docker_image_name}}:{{server_image_tag}}"
   when: server_image_and_tag is not defined
-
-- name: Default directory mounting to empty string
-  set_fact:
-    dir_mount_selinux: ""
-
-- name: Set dir_mount_selinux to add ":z" if selinux_on is true
-  set_fact:
-    dir_mount_selinux: ":z"
-  when: selinux_on|bool
 
 - name: Check for Quipucords server docker image presence
   shell: docker images | grep "{{ server_docker_image_name }}" | grep "{{ server_image_tag }}"
@@ -147,18 +100,3 @@
   when:
     - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
-
-- name: Create server home directory
-  file:
-    path: "{{server_install_dir}}"
-    state: directory
-
-- name: Create server log directory
-  file:
-    path: "{{server_install_dir}}/log"
-    state: directory
-
-- name: Create server sshkeys directory
-  file:
-    path: "{{server_install_dir}}/sshkeys"
-    state: directory
