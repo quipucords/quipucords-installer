@@ -1,0 +1,23 @@
+---
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+  become: true
+
+- name: Setup chkconfig to start docker (RHEL/Centos 6)
+  shell: chkconfig docker on
+  become: true
+  ignore_errors: yes
+  when:
+    - is_rhel_centos_6|bool
+    - have_chkconfig
+
+- name: Setup systemctl to start docker (RHEL/Centos 7)
+  shell: systemctl enable docker
+  become: true
+  ignore_errors: yes
+  when:
+    - is_rhel_centos_7|bool
+    - have_systemctl|bool

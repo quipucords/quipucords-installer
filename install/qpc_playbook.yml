@@ -24,7 +24,9 @@
       when: install_offline|lower == 'true'
     - role: install_epel_online
       when: install_offline|lower == 'false'
-    - role: docker
+    - role: install_docker_online
+      when: install_server|lower == 'true'
+    - role: setup_docker
       when: install_server|lower == 'true'
     - role: postgres_offline
       when: install_offline|lower == 'true'
