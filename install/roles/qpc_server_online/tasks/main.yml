@@ -11,7 +11,6 @@
   set_fact:
     server_github_release_url: "https://github.com/quipucords/quipucords/releases/latest/download"
   when:
-    - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
     - install_flag_server_version is not defined
 
@@ -19,7 +18,6 @@
   set_fact:
     quipucords_server_container_image_url: "{{ server_github_release_url }}/{{ github_server_filename }}"
   when:
-    - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
 
 - name: Obtain Quipucords server container image from GitHub
@@ -29,12 +27,4 @@
     mode: 0644
     timeout: 300
   when:
-    - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
-
-- name: Rename Quipucords server docker image to version specific cache name
-  command: mv "{{ pkg_install_dir }}{{ github_server_filename }}" "{{qpc_server_local_path}}"
-  when:
-    - find_qpc_server_local.stat.exists == false
-    - not quipucords_docker_image_present
-

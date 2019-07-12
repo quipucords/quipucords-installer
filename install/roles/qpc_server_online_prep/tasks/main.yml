@@ -1,11 +1,5 @@
 ---
 
-- name: Default the server docker tag to unknown
-  set_fact:
-    server_image_tag: "unknown"
-  when:
-    - install_flag_server_version is not defined
-
 - name: Query GitHub for the latest release information
   uri:
     url: https://github.com/quipucords/quipucords/releases/latest/download/release_info.json

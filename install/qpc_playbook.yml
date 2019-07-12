@@ -30,17 +30,17 @@
       when: install_offline|lower == 'true'
     - postgres
     - role: qpc_server_online_prep
-      when: install_offline|lower == 'false'
-    - qpc_server_common_prep
+      when: 
+        - install_offline|lower == 'false'
+        - install_server|lower == 'true'
+    - role: qpc_server_common_prep
+      when: install_server|lower == 'true'
     - role: qpc_server_online
       when: 
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: qpc_server_offline
-      when: 
-        - install_offline|lower == 'true'
-        - install_server|lower == 'true'
-    - qpc_server_start
+    - role: qpc_server_start
+      when: install_server|lower == 'true'
     - role: qpc_cli
       when: install_cli|lower == 'true'
     - role: validate_install

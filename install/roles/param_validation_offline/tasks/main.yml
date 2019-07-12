@@ -1,6 +1,6 @@
 ---
 
-- name: Checking if server_version is set value when install_offline is true
+- name: Checking if server_version is defined when install_offline is true
   fail:
     msg: "server_version must be set when install_offline=true"
   when:

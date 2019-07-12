@@ -79,18 +79,17 @@
   set_fact:
     quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
   when:
-    - server_image_tag != 'unknown'
     - quipucords_docker_image_raw.rc == 0
     - "'stdout_lines' in quipucords_docker_image_raw"
 
 - name: Set path to local Quipucords docker image tar.gz
   set_fact:
-    qpc_server_local_path: "{{ pkg_install_dir }}{{ release_cache_server_filename }}"
-  when: qpc_server_local_path is not defined
+    qpc_server_version_filename: "{{ pkg_install_dir }}{{ release_cache_server_filename }}"
+  when: qpc_server_version_filename is not defined
 
 - name: Check if local server docker image tar.gz exists
   stat:
-    path: "{{qpc_server_local_path}}"
+    path: "{{ qpc_server_version_filename }}"
   register: find_qpc_server_local
 
 - name: Create local packages directory if it does not exist

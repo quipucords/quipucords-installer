@@ -73,7 +73,7 @@
   when:
     - postgres_image_local_path is not defined
   
-- name: Set the server version to install using user argument
+- name: Set install_flag_server_version to server_version
   set_fact:
     install_flag_server_version: "{{ server_version }}"
   when:

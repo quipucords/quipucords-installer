@@ -1,5 +1,10 @@
 ---
 
+- name: Rename Quipucords server docker image to version specific cache name
+  command: mv "{{ pkg_install_dir }}{{ github_server_filename }}" "{{ qpc_server_version_filename }}"
+  when:
+    - not quipucords_docker_image_present
+
 - name: Default that docker load was not attempted for Quipucords server
   set_fact:
     load_quipucords_docker_server_attempted: false
@@ -11,7 +16,7 @@
     - not quipucords_docker_image_present
 
 - name: Load Quipucords image into local Docker registry
-  shell: docker load -i "{{qpc_server_local_path}}"
+  shell: docker load -i "{{ qpc_server_version_filename }}"
   become: true
   when:
     - not quipucords_docker_image_present
@@ -36,7 +41,6 @@
     quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
   when:
     - load_quipucords_docker_server_attempted|bool
-    - server_image_tag != 'unknown'
     - quipucords_docker_image_raw.rc == 0
     - "'stdout_lines' in quipucords_docker_image_raw"
 
