@@ -4,7 +4,6 @@
   set_fact:
     server_github_release_url: "https://github.com/quipucords/quipucords/releases/download/{{ install_flag_server_version }}"
   when:
-    - find_qpc_server_local.stat.exists == false
     - not quipucords_docker_image_present
     - install_flag_server_version is defined
 
