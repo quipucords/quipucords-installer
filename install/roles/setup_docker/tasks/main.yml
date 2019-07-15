@@ -1,5 +1,23 @@
 ---
 
+- name: Test for chkconfig command
+  shell: command -v chkconfig
+  register: have_chkconfig_raw
+  ignore_errors: yes
+
+- name: Set have_chkconfig
+  set_fact:
+    have_chkconfig: "{{ have_chkconfig_raw.rc == 0 }}"
+
+- name: Test for systemctl command
+  shell: command -v systemctl
+  register: have_systemctl_raw
+  ignore_errors: yes
+
+- name: Set have_systemctl
+  set_fact:
+    have_systemctl: "{{ have_systemctl_raw.rc == 0 }}"
+
 - name: Start Docker
   service:
     name: docker
