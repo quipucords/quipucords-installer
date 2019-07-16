@@ -58,11 +58,11 @@ make setup-local-offline server_source=release cli_version=0.9.0 server_version=
 make test-all
 ```
 **Options:**
-- `server_source` 
-  - Contains `local` or `release` value. Defaults to `release`. Supply `local` to build the server docker image from a local quipucords repository, or `release` to use release server docker image. 
+- `server_source`
+  - Contains `local` or `release` value. Defaults to `release`. Supply `local` to build the server docker image from a local quipucords repository, or `release` to use release server docker image.
 - `cli_version`
-  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
-- `server_version` 
+  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use.
+- `server_version`
   - Contains Quipucords server version number. Required if `server_source` is `local`. If `server_source` is `release`, then defaults to `latest`. Supply the server version number you want to use.
 
 If you make changes to the installation scripts and want to test them you can run:
@@ -97,10 +97,10 @@ make test-all
 ```
 **Options:**
 - `installer_version`
-  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use. 
+  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use.
 - `cli_version`
-  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use. 
-- `server_version` 
+  - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use.
+- `server_version`
   - Contains Quipucords server version number. Defaults to `latest`. Supply the server version number you want to use.
 ### Testing online installation
 To test the release scripts on all supported OS's, run the following.
@@ -110,8 +110,8 @@ make test-all
 ```
 **Options:**
 - `installer_version`
-  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use. 
-  
+  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use.
+
 ## Configuring Virtual Machines
 The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
 
@@ -130,7 +130,7 @@ The repository files will be copied to the `/etc/yum.repos.d/` directory in the 
 ## Vagrant: Testing Online Installation
 To test online installation, do the following:
 ```
-cd /quipucords_installer;sudo su
+clear;cd /quipucords_installer;sudo su
 make setup
 make install
 ```
@@ -142,11 +142,13 @@ Note:
 
 To test offline installation for RHEL or Centos 6/7, do the following (with internet connectivity):
 
-1. Run: `cd /quipucords_installer;sudo su`
-2. Run: `make setup`
-3. Run: `make offline-install-prep`
-4. Disconnect from the network
-4. Run: `make install-offline server_version=<server_version> cli_version=<cli_version>`
+```
+clear;cd /quipucords_installer;sudo su
+make setup
+make offline-install-prep
+# Disconnect from the network
+make install-offline server_version=<server_version> cli_version=<cli_version>
+```
 
 Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
