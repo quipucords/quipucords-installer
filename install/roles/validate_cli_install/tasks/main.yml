@@ -1,0 +1,12 @@
+---
+
+- name: Test for qpc command
+  shell: command -v qpc
+  register: have_qpc_raw
+  ignore_errors: yes
+
+- name: Check have_qpc_raw
+  fail:
+    msg: "qpc command not found"
+  when:
+    - have_qpc_raw.rc != 0

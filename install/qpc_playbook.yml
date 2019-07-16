@@ -33,7 +33,17 @@
     - postgres
     - role: qpc_server
       when: install_server|lower == 'true'
+    - role: qpc_cli_offline
+      when: 
+        - install_cli|lower == 'true'
+        - install_offline|lower == 'true'
+    - role: qpc_cli_online
+      when:
+        - install_cli|lower == 'true'
+        - install_offline|lower == 'false'
     - role: qpc_cli
+      when: install_cli|lower == 'true'
+    - role: validate_cli_install
       when: install_cli|lower == 'true'
     - role: validate_install
       when: install_server|lower == 'true'
