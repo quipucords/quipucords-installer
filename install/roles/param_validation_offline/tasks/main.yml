@@ -3,9 +3,13 @@
 - name: Checking if server_version is defined when install_offline is true
   fail:
     msg: "server_version must be set when install_offline=true"
-  when:
-    - install_offline|lower == 'true'
+  when: 
     - server_version is not defined
+
+- name: Check if server_version has value when it is defined
+  fail:
+    msg: "server_version is defined but is an empty string"
+  when: server_version is defined and server_version|length == 0
 
 - name: Check if local qpc rpm exists
   stat:

@@ -1,0 +1,95 @@
+---
+
+- name: Set server directory
+  set_fact:
+    server_install_dir: "{{ ansible_env['SERVER_DIR'] | default(ansible_env['HOME'] + '/quipucords') }}"
+  when: server_install_dir is not defined
+
+- name: Create server home directory
+  file:
+    path: "{{server_install_dir}}"
+    state: directory
+
+- name: Create server log directory
+  file:
+    path: "{{server_install_dir}}/log"
+    state: directory
+
+- name: Create server sshkeys directory
+  file:
+    path: "{{server_install_dir}}/sshkeys"
+    state: directory
+
+- name: Open port in firewall on host machine for Quipucords server
+  iptables:
+    chain: INPUT
+    destination_port: "{{ server_port }}"
+    protocol: tcp
+    jump: ACCEPT
+  become: true
+  ignore_errors: yes
+  when:
+    - open_port|bool
+
+- name: Default directory mounting to empty string
+  set_fact:
+    dir_mount_selinux: ""
+
+- name: Set dir_mount_selinux to add ":z" if selinux_on is true
+  set_fact:
+    dir_mount_selinux: ":z"
+  when: selinux_on|bool
+
+- name: Set the server docker image tag to user specified version
+  set_fact:
+    server_image_tag: "{{ install_flag_server_version }}"
+  when:
+    - install_flag_server_version is defined
+
+- name: Set the Quipucords release server image file name
+  set_fact:
+    github_server_filename: "quipucords_server_image.tar.gz"
+
+- name: Set the Quipucords release server image file name
+  set_fact:
+    release_cache_server_filename: "quipucords.{{ server_image_tag }}.tar.gz"
+
+- name: Set server docker image name
+  set_fact:
+    server_docker_image_name: "quipucords"
+
+- name: Set Quipucords docker image and tag
+  set_fact:
+    server_image_and_tag: "{{server_docker_image_name}}:{{server_image_tag}}"
+  when: server_image_and_tag is not defined
+
+- name: Check for Quipucords server docker image presence
+  shell: docker images | grep "{{ server_docker_image_name }}" | grep "{{ server_image_tag }}"
+  become: true
+  register: quipucords_docker_image_raw
+  ignore_errors: yes
+
+- name: Set Quipucords docker image presence to false
+  set_fact:
+    quipucords_docker_image_present: false
+  when:
+    - quipucords_docker_image_raw.rc != 0
+
+- name: Set Quipucords docker image presence to true if output is not empty
+  set_fact:
+    quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
+  when:
+    - quipucords_docker_image_raw.rc == 0
+    - "'stdout_lines' in quipucords_docker_image_raw"
+
+- name: Set path to local Quipucords docker image tar.gz
+  set_fact:
+    qpc_server_version_filename: "{{ pkg_install_dir }}{{ release_cache_server_filename }}"
+  when: qpc_server_version_filename is not defined
+
+- name: Create local packages directory if it does not exist
+  file:
+    path: "{{ pkg_install_dir }}"
+    state: directory
+  when:
+    - not quipucords_docker_image_present
