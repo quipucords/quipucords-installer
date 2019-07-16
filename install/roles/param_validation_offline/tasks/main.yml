@@ -1,45 +1,57 @@
 ---
 
-- name: Checking if server_version is defined when install_offline is true
+- name: Check if server_version is defined when install_offline is true
   fail:
     msg: "server_version must be set when install_offline=true"
   when: 
+    - install_server|lower == 'true'
     - server_version is not defined
 
 - name: Check if server_version has value when it is defined
   fail:
     msg: "server_version is defined but is an empty string"
-  when: server_version is defined and server_version|length == 0
+  when:
+    - install_server|lower == 'true' 
+    - server_version is defined and server_version|length == 0
 
 - name: Check if local qpc rpm exists
   stat:
     path: "{{ qpc_rpm_local_path }}"
   register: find_qpc_rpm_local
+  when:
+    - install_cli|lower == 'true'
 
 - name: Require qpc rpm file or error out
   fail:
     msg: "{{ qpc_rpm_local_path }} file not found and required for an offline installation"
   when:
+    - install_cli|lower == 'true'
     - not find_qpc_rpm_local.stat.exists
   
 - name: Check if local quipucords server image exists
   stat:
     path: "{{ server_image_local_path }}"
   register: find_server_image_local
+  when:
+    - install_server|lower == 'true' 
 
 - name: Require server image file or error out
   fail:
     msg: "{{ server_image_local_path }} file not found and required for an offline installation"
   when:
+    - install_server|lower == 'true' 
     - not find_server_image_local.stat.exists 
 
 - name: Check if local postgres image exists
   stat:
     path: "{{ postgres_image_local_path }}"
   register: find_postgres_image_local
+  when:
+    - install_server|lower == 'true' 
 
 - name: Require postgres image file or error out
   fail:
     msg: "{{ postgres_image_local_path }} file not found and required for an offline installation"
   when:
+    - install_server|lower == 'true' 
     - not find_postgres_image_local.stat.exists
