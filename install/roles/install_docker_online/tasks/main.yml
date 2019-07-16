@@ -1,0 +1,101 @@
+---
+
+- name: Test for docker command
+  shell: command -v docker
+  register: have_docker_raw
+  ignore_errors: yes
+
+- name: Set have_docker
+  set_fact:
+    have_docker: "{{ have_docker_raw.rc == 0 }}"
+
+- name: Install yum-utils (RHEL/Centos)
+  yum:
+    name: yum-utils
+    state: present
+  become: true
+  when:
+    - not have_docker
+
+- name: Install device-mapper-persistent-data (RHEL/Centos)
+  yum:
+    name: device-mapper-persistent-data
+    state: present
+  become: true
+  when:
+    - not have_docker
+
+- name: Install lvm2 (RHEL/Centos)
+  yum:
+    name: lvm2
+    state: present
+  become: true
+  when:
+    - not have_docker
+
+- name: Install libcgroup (RHEL 6)
+  yum:
+    name: libcgroup
+    state: present
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+    - not have_docker
+
+- name: Install xz (RHEL 6)
+  yum:
+    name: xz
+    state: present
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+    - not have_docker
+
+- name: Install libselinux-python (RHEL/Centos 6)
+  yum:
+    name: libselinux-python
+    state: present
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+    - selinux_on
+    - ansible_selinux_python_present is defined and ansible_selinux_python_present == false
+    - not have_docker
+
+- name: Add Docker CE repository (Centos 7)
+  yum_repository:
+    name: docker-ce
+    description: Docker CE repo
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    gpgcheck: yes
+  become: true
+  when:
+    - is_centos_7|bool
+    - not have_docker
+
+- name: Install the latest version of docker (RHEL 7)
+  yum:
+    name: docker
+    state: latest
+  become: true
+  when:
+    - is_rhel7|bool
+    - not have_docker
+
+- name: Install the latest version of docker-ce (Centos 7)
+  yum:
+    name: docker-ce
+    state: latest
+  become: true
+  when:
+    - is_centos_7|bool
+    - not have_docker
+
+- name: Install Docker Engine for (Centos/RHEL 6)
+  yum:
+    name: http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm
+    state: present
+  when:
+    - is_rhel_centos_6|bool
+    - not have_docker
