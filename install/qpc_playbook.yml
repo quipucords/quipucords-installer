@@ -19,11 +19,8 @@
       ansible_log_level: 0
   roles:
     - validate_common
-    - deprecated_install_prep_common
     - role: validate_offline
       when: install_offline|lower == 'true'
-    - role: deprecated_install_epel_online
-      when: install_offline|lower == 'false'
     - role: install_docker_online
       when: install_server|lower == 'true'
     - role: start_docker_common

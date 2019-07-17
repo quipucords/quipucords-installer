@@ -1,5 +1,45 @@
 ---
 
+- name: Check if EPEL is installed with yum (RHEL/Centos)
+  yum:
+    name: epel-release
+    state: installed
+  register: have_epel_raw
+  become: true
+  ignore_errors: yes
+  when:
+    - have_yum|bool
+
+- name: Set have_epel (RHEL/Centos)
+  set_fact:
+    have_epel: "{{ 'epel-release is already installed' in have_epel_raw['results'][0] }}"
+  when:
+    - "'results' in have_epel_raw"
+
+- name: Default have_epel (RHEL/Centos)
+  set_fact:
+    have_epel: false
+  when:
+    - have_epel is not defined
+
+- name: Install EPEL for RHEL 6 from internet (RHEL/Centos 6)
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+    state: present
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+    - not have_epel
+
+- name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  become: true
+  when:
+    - is_rhel_centos_7|bool
+    - not have_epel
+
 - name: Set install_flag_cli_version to cli_version passed by user
   set_fact:
     install_flag_cli_version: "{{ cli_version }}"

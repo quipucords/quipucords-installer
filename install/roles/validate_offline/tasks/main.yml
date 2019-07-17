@@ -14,6 +14,10 @@
     - install_server|lower == 'true' 
     - server_version is defined and server_version|length == 0
 
+- name: Set qpc_rpm_local_path
+  set_fact:
+    qpc_rpm_local_path: "{{ pkg_install_dir }}{{ qpc_package_name }}"
+
 - name: Check if local qpc rpm exists
   stat:
     path: "{{ qpc_rpm_local_path }}"
@@ -28,6 +32,18 @@
     - install_cli|lower == 'true'
     - not find_qpc_rpm_local.stat.exists
   
+- name: Set server_image_filename
+  set_fact:
+    server_image_filename: "quipucords_server_image.tar.gz"
+  when:
+    - server_image_filename is not defined
+
+- name: Set server_image_local_path 
+  set_fact:
+    server_image_local_path: "{{ pkg_install_dir }}{{ server_image_filename }}"
+  when:
+    - server_image_local_path is not defined
+
 - name: Check if local quipucords server image exists
   stat:
     path: "{{ server_image_local_path }}"
@@ -41,6 +57,18 @@
   when:
     - install_server|lower == 'true' 
     - not find_server_image_local.stat.exists 
+
+- name: Set postgres_image_filename
+  set_fact:
+    postgres_image_filename: "postgres.{{ POSTGRES_VERSION }}.tar"
+  when:
+    - postgres_image_filename is not defined
+
+- name: Set postgres_image_local_path
+  set_fact:
+    postgres_image_local_path: "{{ pkg_install_dir }}{{ postgres_image_filename }}"
+  when:
+    - postgres_image_local_path is not defined
 
 - name: Check if local postgres image exists
   stat:
