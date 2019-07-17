@@ -84,7 +84,16 @@ else
   fi
 fi
 
-if [ $RHEL7 ]; then
+for arg in $args; do
+  if [[ $arg != "-e" ]]; then
+    IFS='=' read -r -a temp_arr <<< "$arg"
+    key=${temp_arr[0]}
+    value=${temp_arr[1]}
+    printf -v $key "$value"
+  fi
+done
+
+if [[ ($RHEL7) && ($install_offline = "false") ]]; then
   echo "Trying to install RHEL7 dependencies..."
   sudo subscription-manager repos --enable="rhel-7-server-extras-rpms" || true
   sudo subscription-manager repos --enable="rhel-7-server-optional-rpms" || true
