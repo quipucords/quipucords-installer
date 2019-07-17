@@ -18,45 +18,45 @@
       inspect_job_timeout: 10800
       ansible_log_level: 0
   roles:
-    - param_validation
-    - install_prep
-    - role: param_validation_offline
+    - validate_common
+    - deprecated_install_prep_common
+    - role: validate_offline
       when: install_offline|lower == 'true'
-    - role: install_epel_online
+    - role: deprecated_install_epel_online
       when: install_offline|lower == 'false'
     - role: install_docker_online
       when: install_server|lower == 'true'
-    - role: setup_docker
+    - role: start_docker_common
       when: install_server|lower == 'true'
-    - role: postgres_offline
+    - role: install_postgres_offline
       when:
         - install_offline|lower == 'true'
         - install_server|lower == 'true'
-    - role: postgres
+    - role: start_postgres_common
       when: install_server|lower == 'true'
-    - role: qpc_server_online_prep
+    - role: prep_server_online
       when:
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: qpc_server_common_prep
+    - role: prep_server_common
       when: install_server|lower == 'true'
-    - role: qpc_server_online
+    - role: install_server_online
       when:
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: qpc_server_start
+    - role: start_server_common
       when: install_server|lower == 'true'
-    - role: qpc_cli_offline
+    - role: install_cli_offline
       when:
         - install_cli|lower == 'true'
         - install_offline|lower == 'true'
-    - role: qpc_cli_online
+    - role: install_cli_online
       when:
         - install_cli|lower == 'true'
         - install_offline|lower == 'false'
-    - role: qpc_cli
+    - role: config_cli_online
       when: install_cli|lower == 'true'
     - role: validate_cli_install
       when: install_cli|lower == 'true'
-    - role: validate_install
+    - role: validate_server_install
       when: install_server|lower == 'true'
