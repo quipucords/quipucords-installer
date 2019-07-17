@@ -54,7 +54,7 @@
       when:
         - install_cli|lower == 'true'
         - install_offline|lower == 'false'
-    - role: config_cli_online
+    - role: config_cli_common
       when: install_cli|lower == 'true'
     - role: validate_cli_install
       when: install_cli|lower == 'true'
