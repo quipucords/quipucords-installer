@@ -1,7 +1,7 @@
 ---
 
 - name: Rename Quipucords server docker image to version specific cache name
-  command: mv "{{ pkg_install_dir }}{{ github_server_filename }}" "{{ qpc_server_version_filename }}"
+  command: cp "{{ pkg_install_dir }}{{ github_server_filename }}" "{{ qpc_server_version_filename }}"
   when:
     - not quipucords_docker_image_present
 
