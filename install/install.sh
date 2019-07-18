@@ -93,7 +93,7 @@ for arg in $args; do
   fi
 done
 
-if [[ ($RHEL7) && ($install_offline = "false") ]]; then
+if [[ ($RHEL7) && (-z "$install_offline") ]] || [[ ($RHEL7) && ($install_offline = "false") ]]; then
   echo "Trying to install RHEL7 dependencies..."
   sudo subscription-manager repos --enable="rhel-7-server-extras-rpms" || true
   sudo subscription-manager repos --enable="rhel-7-server-optional-rpms" || true
