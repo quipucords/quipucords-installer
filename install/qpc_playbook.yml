@@ -11,6 +11,7 @@
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
+      container_command: 'docker'
       server_http_timeout: 120
       dbms_user: 'postgres'
       dbms_password: 'password'
@@ -22,9 +23,13 @@
     - role: validate_offline
       when: install_offline|lower == 'true'
     - role: install_docker_online
-      when: install_server|lower == 'true'
+      when:
+        - install_server|lower == 'true'
+        - container_command|lower == 'docker'
     - role: start_docker_common
-      when: install_server|lower == 'true'
+      when:
+        - install_server|lower == 'true'
+        - container_command|lower == 'docker'
     - role: install_postgres_offline
       when:
         - install_offline|lower == 'true'
