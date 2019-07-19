@@ -1,5 +1,5 @@
 %global stream_name quipucords
-%global ver 0.0.0
+%global ver 0.1.2
 ####
 %global src_name %{stream_name}-installer
 %global egg_name %{stream_name}_installer
