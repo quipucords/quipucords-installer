@@ -15,8 +15,6 @@ Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
 
-BuildRequires: python3-devel
-BuildRequires: python3-setuptools
 %if "%{stream_name}" == "discovery"
 Requires: ansible
 Requires: podman
@@ -30,24 +28,13 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %setup -q
 
 %build
-%{__python3} setup.py build
 
 %install
-%{__python3} setup.py install --skip-build --root %{buildroot}
-find %{buildroot}%{python3_sitelib} \
-     -name '*.py' \
-     -exec sed -i -e '1{/^#!/d}' {} \;
 
 %files
 %defattr(-,root,root,-)
 %doc README.md AUTHORS.md
 %license LICENSE
-%{python3_sitelib}/%{egg_name}-%{version}-py3.?.egg-info/
-%if "%{stream_name}" == "discovery"
-%{python3_sitelib}/%{src_name}/
-%else
-%{python3_sitelib}/install
-%endif
 
 %changelog
 * Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.9.0

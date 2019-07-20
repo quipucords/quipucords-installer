@@ -1,4 +1,0 @@
-recursive-include discovery-installer *
-include LICENSE
-include AUTHORS.md
-include README.md
