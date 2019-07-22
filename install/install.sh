@@ -69,8 +69,9 @@ if [ ! -f /etc/redhat-release ]; then
   exit 1
 fi
 
-if dnf --version > /dev/null 2>&1; then
-  echo "Installation on Fedora not supported."
+OS_RELEASE=$(cat /etc/*-release)
+if [[ ($OS_RELEASE != *"CentOS"*) && ($OS_RELEASE != *"Red Hat Enterprise Linux"*) ]]; then
+  echo "Installation supported only on CentOS and RHEL."
   exit 1
 else
   PKG_MGR=yum
