@@ -42,7 +42,8 @@
     is_centos_7: "{{ (ansible_distribution == 'CentOS') and (ansible_distribution_major_version == '7') }}"
     is_rhel_centos_7: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '7') }}"
 
-- fail:
+- name: Error on operating system information
+  fail:
     msg: "This is not a supported system for installation. Must be RHEL 6/7, CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7)
 

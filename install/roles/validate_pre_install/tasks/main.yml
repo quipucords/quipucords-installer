@@ -1,0 +1,10 @@
+---
+
+- name: Validate common
+#   import_tasks:
+#     - validate_common.yml
+
+- name: Validate offline
+  import_tasks:
+    - validate_offline.yml
+  when: install_offline|lower == 'true'

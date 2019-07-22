@@ -1,0 +1,19 @@
+---
+
+- name: Install qpc server online
+  import_tasks:
+    - prep_server_online.yml
+    - prep_server_common.yml
+    - install_server_online.yml
+    - start_server_common.yml
+  when:
+    - install_server|lower == 'true'
+    - install_offline|lower == 'false'
+
+- name: Install qpc server offline
+  import_tasks:
+    - prep_server_common.yml
+    - start_server_common.yml
+  when:
+    - install_server|lower == 'true'
+    - install_offline|lower == 'true'

@@ -1,0 +1,14 @@
+---
+
+- name: Install Postgres offline
+  import_tasks:
+    - install_postgres_offline.yml
+  when:
+    - install_offline|lower == 'true'
+    - install_server|lower == 'true'
+
+- name: Start Postgres
+  import_tasks:
+    - start_postgres_common.yml
+  when:
+    - install_server|lower == 'true'

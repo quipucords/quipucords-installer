@@ -1,0 +1,15 @@
+---
+
+- name: Install Docker online
+  import_tasks:
+    - install_docker_online.yml
+  when:
+    - install_server|lower == 'true'
+    - container_command|lower == 'docker'
+
+- name: Start Docker 
+  import_tasks:
+    - start_docker_common.yml
+  when:
+    - install_server|lower == 'true'
+    - container_command|lower == 'docker'

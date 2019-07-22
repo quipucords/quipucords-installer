@@ -1,0 +1,17 @@
+---
+
+- name: Install qpc cli offline
+  import_tasks:
+    - install_cli_offline.yml
+    - config_cli_common.yml
+  when: 
+    - install_cli|lower == 'true'
+    - install_offline|lower == 'offline'
+
+- name: Install qpc cli online
+  import_tasks:
+    - install_cli_online.yml
+    - config_cli_common.yml
+  when:
+    - install_cli|lower == 'true'
+    - install_offline|lower == 'online'

@@ -1,0 +1,11 @@
+---
+
+- name: Validate qpc cli installation
+  import_tasks:
+    - validate_cli_install.yml
+  when: install_cli|lower == 'true'
+
+- name: Validate qpc server installation
+  import_tasks:
+    - validate_server_install.yml
+  when: install_server|lower == 'true'

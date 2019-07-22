@@ -67,4 +67,3 @@
   when:
     - load_docker_postgres_attempted|bool
     - not postgres_docker_image_present
-
