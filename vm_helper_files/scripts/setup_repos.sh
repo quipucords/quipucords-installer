@@ -8,8 +8,10 @@ fi
 
 if grep -q -i "release 7" /etc/redhat-release; then
     rpm_version="el7"
-else
+elif grep -q -i "release 6" /etc/redhat-release; then
     rpm_version="el6"
+else
+    rpm_version="el8"
 fi
 
 if grep -q -i "Red Hat" /etc/redhat-release; then
@@ -22,7 +24,12 @@ then
     if [[ $rpm_version == "el6" ]]
     then
         sudo cp -rf config/rhel6/*.repo /etc/yum.repos.d/
-    else
+    elif [[ $rpm_version == "el7" ]]
+    then
         sudo cp -rf config/rhel7/*.repo /etc/yum.repos.d/
+    else
+        sudo cp -rf config/rhel8/*.repo /etc/yum.repos.d/
+        sudo subscription-manager register
+        sudo subscription-manager attach
     fi
 fi

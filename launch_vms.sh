@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 export SCRIPT_HOME=$PWD
-declare -a arr=("centos6" "centos7" "rhel6" "rhel7")
+declare -a arr=("centos6" "centos7" "rhel6" "rhel7" "rhel8")
 
 # OSX only
 [ `uname -s` != "Darwin" ] && echo 'OS X Only' &&return

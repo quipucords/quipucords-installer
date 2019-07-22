@@ -34,7 +34,7 @@ offline-install-prep: setup
 		yum install -y epel-release; \
 		yum install -y python36; \
 		yum install -y python36-requests; \
-	else \
+	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
 		yum install -y xz; \
 		cd install/packages/; curl -k -O -sSl http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm; \
