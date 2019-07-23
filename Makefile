@@ -25,7 +25,7 @@ help:
 # Internal subcommands that the user should not call
 create-test-dirs:
 	mkdir -p test/packages
-	@for os in rhel6 rhel7 centos6 centos7; do \
+	@for os in rhel6 rhel7 rhel8 centos6 centos7; do \
 		set -x; \
 		mkdir -p test/$$os/install/; \
 		mkdir -p test/$$os/config/rhel6; \
@@ -35,7 +35,7 @@ create-test-dirs:
 	done
 
 copy-vm-helper-files:
-	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf vm_helper_files/ test/$$os; done
+	for os in rhel6 rhel7 rhel8 centos6 centos7 ; do cp -vrf vm_helper_files/ test/$$os; done
 
 # Internal subcommands that the user should not call
 copy-config:
@@ -45,7 +45,7 @@ copy-config:
 		tar -xvf installer_config.tar.gz | true; \
 		cp -rf installer_config/* test/helpers | true; \
 		rm -rf installer_config/ | true; \
-		for dest in test/rhel7 test/rhel6 test/centos6 test/centos7 ; do cp -vrf test/helpers/* $$dest | true; done; \
+		for dest in test/rhel8 test/rhel7 test/rhel6 test/centos6 test/centos7 ; do cp -vrf test/helpers/* $$dest | true; done; \
 		rm -rf test/helpers | true; \
 		set +x; \
 	else \
@@ -54,11 +54,11 @@ copy-config:
 
 # Internal subcommands that the user should not call
 copy-packages:
-	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/packages/ test/$$os/install/packages/ ; done
+	for os in rhel6 rhel7 rhel8 centos6 centos7 ; do cp -vrf test/packages/ test/$$os/install/packages/ ; done
 
 # Internal subcommands that the user should not call
 copy-install:
-	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf install test/$$os; done
+	for os in rhel6 rhel7 rhel8 centos6 centos7 ; do cp -vrf install test/$$os; done
 
 # Internal subcommands that the user should not call
 local-server-image: download-postgres
@@ -103,7 +103,7 @@ else
 	cd test/downloaded_install;curl -k -SL https://github.com/quipucords/quipucords-installer/releases/download/$(installer_version)/quipucords_install.tar.gz -o quipucords_install.tar.gz
 endif
 	cd test/downloaded_install;tar -xzf quipucords_install.tar.gz
-	for os in rhel6 rhel7 centos6 centos7 ; do cp -vrf test/downloaded_install/install test/$$os/; done
+	for os in rhel6 rhel7 rhel8 centos6 centos7 ; do cp -vrf test/downloaded_install/install test/$$os/; done
 	rm -rf test/downloaded_install
 
 # Internal subcommands that the user should not call
@@ -153,6 +153,9 @@ test-rhel-6:
 
 test-rhel-7:
 	vagrant up vrhel7;vagrant ssh vrhel7
+
+test-rhel-8:
+	vagrant up vrhel8;vagrant ssh vrhel8
 
 test-centos-6:
 	vagrant up vcentos6;vagrant ssh vcentos6
