@@ -1,0 +1,14 @@
+---
+
+- name: Run test 'hello-world' container
+  shell: podman run hello-world
+  register: podman_active
+  become: true
+  ignore_errors: yes
+  when: have_podman|bool
+
+- name: Check the output of test container
+  fail:
+    msg: "Podman not running"
+  ignore_errors: true
+  when: not podman_active
