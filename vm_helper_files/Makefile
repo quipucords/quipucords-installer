@@ -25,22 +25,31 @@ setup:
 	scripts/setup_repos.sh
 
 offline-install-prep: setup
-	yum install -y libcgroup
-	yum install -y yum-utils
-	yum install -y ansible
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
 		yum install -y docker; \
 		yum install -y epel-release; \
 		yum install -y python36; \
 		yum install -y python36-requests; \
 	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
 		yum install -y xz; \
 		cd install/packages/; curl -k -O -sSl http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm; \
 		rpm -Uvh --force "docker-engine-1.7.1-1.el6.x86_64.rpm"; \
 		yum install -y python34; \
 		yum install -y python34-requests; \
+	else \
+		echo "Running 8"; \
+		yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm; \
+		yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm; \
+		yum install -y podman; \
+		yum install -y python36; \
 	fi
 
 install: setup

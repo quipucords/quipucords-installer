@@ -38,6 +38,7 @@
     - role: validate_podman_install
       when:
         - install_server|lower == 'true'
+        - install_offline|lower == 'false'
         - container_command|lower == 'podman'
     - role: install_postgres_offline
       when:

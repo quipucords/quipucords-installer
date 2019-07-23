@@ -69,20 +69,14 @@ if [ ! -f /etc/redhat-release ]; then
   exit 1
 fi
 
-OS_RELEASE=$(cat /etc/*-release)
-if [[ ($OS_RELEASE != *"CentOS"*) && ($OS_RELEASE != *"Red Hat Enterprise Linux"*) ]]; then
-  echo "Installation supported only on CentOS and RHEL."
-  exit 1
-else
-  PKG_MGR=yum
-  if grep -q -i "release 7" /etc/redhat-release; then
-    rpm_version="el7"
-    if grep -q -i "Red Hat" /etc/redhat-release; then
-      RHEL7=true
-    fi
-  else
-    rpm_version="el6"
+PKG_MGR=yum
+if grep -q -i "release 7" /etc/redhat-release; then
+  rpm_version="el7"
+  if grep -q -i "Red Hat" /etc/redhat-release; then
+    RHEL7=true
   fi
+elif grep -q -i "release 6" /etc/redhat-release; then
+  rpm_version="el6"
 fi
 
 for arg in $args; do
@@ -105,7 +99,13 @@ command -v ansible > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Ansible prerequisite could not be found. Trying to install ansible..."
-  sudo "${PKG_MGR}" install -y ansible
+  if [[ ($rpm_version == "el7") || ($rpm_version == "el6") ]]; then
+    sudo "${PKG_MGR}" install -y ansible
+  else
+    sudo "${PKG_MGR}" install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm
+    sudo "${PKG_MGR}" install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm
+  fi
+  
   command -v ansible > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo ""

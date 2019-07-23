@@ -29,7 +29,5 @@ then
         sudo cp -rf config/rhel7/*.repo /etc/yum.repos.d/
     else
         sudo cp -rf config/rhel8/*.repo /etc/yum.repos.d/
-        sudo subscription-manager register
-        sudo subscription-manager attach
     fi
 fi

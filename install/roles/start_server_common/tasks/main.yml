@@ -1,42 +1,42 @@
 ---
 
-- name: Rename Quipucords server docker image to version specific cache name
+- name: Rename Quipucords server {{ container_command }} image to version specific cache name
   command: cp "{{ pkg_install_dir }}{{ github_server_filename }}" "{{ qpc_server_version_filename }}"
   when:
     - not quipucords_docker_image_present
 
-- name: Default that docker load was not attempted for Quipucords server
+- name: Default that {{ container_command }} load was not attempted for Quipucords server
   set_fact:
     load_quipucords_docker_server_attempted: false
 
-- name: Docker load was attempted for Quipucords server
+- name: "{{ container_command }} load was attempted for Quipucords server"
   set_fact:
     load_quipucords_docker_server_attempted: true
   when:
     - not quipucords_docker_image_present
 
-- name: Load Quipucords image into local Docker registry
-  shell: docker load -i "{{ qpc_server_version_filename }}"
+- name: Load Quipucords image into local {{ container_command }} registry
+  shell: "{{ container_command }} load -i {{ qpc_server_version_filename }}"
   become: true
   when:
     - not quipucords_docker_image_present
 
-- name: Check for Quipucords server docker image presence
-  shell: docker images | grep "{{ server_docker_image_name }}" | grep "{{ server_image_tag }}"
+- name: Check for Quipucords server {{ container_command }} image presence
+  shell: "{{ container_command }} images | grep {{ server_docker_image_name }} | grep {{ server_image_tag }}"
   become: true
   register: quipucords_docker_image_raw
   ignore_errors: yes
   when:
     load_quipucords_docker_server_attempted|bool
 
-- name: Set Quipucords docker image presence to false
+- name: Set Quipucords {{ container_command }} image presence to false
   set_fact:
     quipucords_docker_image_present: false
   when:
     - load_quipucords_docker_server_attempted|bool
     - quipucords_docker_image_raw.rc != 0
 
-- name: Set Quipucords docker image presence to true if output is not empty
+- name: Set Quipucords {{ container_command }} image presence to true if output is not empty
   set_fact:
     quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
   when:
@@ -44,26 +44,27 @@
     - quipucords_docker_image_raw.rc == 0
     - "'stdout_lines' in quipucords_docker_image_raw"
 
-- name: Make sure Quipucords server docker image loaded (it successfully loaded if skipped)
+- name: Make sure Quipucords server {{ container_command }} image loaded (it successfully loaded if skipped)
   fail:
-    msg: "The Quipucord server's docker image was not found in the output of the docker images command."
+    msg: "The Quipucord server's {{ container_command }} image was not found in the output of the {{ container_command }} images command."
   when:
     - load_quipucords_docker_server_attempted|bool
     - not quipucords_docker_image_present
 
 - name: Check for QPC server is already running
-  shell: docker ps -a -f name="{{ server_name }}" | grep "{{server_name}}"
+  shell: "{{ container_command }} ps -a -f name={{ server_name }} | grep {{server_name}}"
   become: true
   register: qpc_ps_raw
   ignore_errors: yes
 
 - name: Remove running QPC server container
-  shell: docker rm -f "{{server_name}}"
+  shell: "{{ container_command }} rm -f {{server_name}}"
   become: true
   ignore_errors: yes
   when:
     - qpc_ps_raw['stdout_lines'] | length > 0
 
-- name: Start Quipucords server linked to Postgres Docker container
-  shell: docker run --name "{{ server_name }}" --link qpc-db:qpc-link -d -e USE_SUPERVISORD="{{ use_supervisord }}" -e QPC_SERVER_TIMEOUT="{{ server_http_timeout }}" -e QPC_DBMS_USER="{{ dbms_user }}" -e QPC_DBMS_PASSWORD="{{ dbms_password }}" -e QPC_DBMS_HOST="qpc-db" -e ANSIBLE_LOG_LEVEL="{{ ansible_log_level }}" -e NETWORK_CONNECT_JOB_TIMEOUT="{{ connect_job_timeout }}" -e NETWORK_INSPECT_JOB_TIMEOUT="{{ inspect_job_timeout }}" -p "{{ server_port }}":443 -v "{{ server_install_dir }}"/sshkeys:/sshkeys"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/data:/var/data"{{ dir_mount_selinux }}" -v "{{ server_install_dir }}"/log:/var/log"{{ dir_mount_selinux }}" -i "{{ server_image_and_tag }}"
+- name: Start Quipucords server linked to Postgres {{ container_command }} container
+  shell: "{{ container_command }} run --name {{ server_name }} --link qpc-db:qpc-link -d -e USE_SUPERVISORD={{ use_supervisord }} -e QPC_SERVER_TIMEOUT={{ server_http_timeout }} -e QPC_DBMS_USER={{ dbms_user }} -e QPC_DBMS_PASSWORD={{ dbms_password }} -e QPC_DBMS_HOST='qpc-db' -e ANSIBLE_LOG_LEVEL={{ ansible_log_level }} -e NETWORK_CONNECT_JOB_TIMEOUT={{ connect_job_timeout }} -e NETWORK_INSPECT_JOB_TIMEOUT={{ inspect_job_timeout }} -p {{ server_port }}:443 -v {{ server_install_dir }}/sshkeys:/sshkeys{{ dir_mount_selinux }} -v {{ server_install_dir }}/data:/var/data{{ dir_mount_selinux }} -v {{ server_install_dir }}/log:/var/log{{ dir_mount_selinux }} -i {{ server_image_and_tag }}"
   become: true
+  when: (is_rhel_centos_6 or is_rhel_centos_7)

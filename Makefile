@@ -18,6 +18,7 @@ help:
 	@echo "  test-all                                       Launch VMs for all supported Operating Systems"
 	@echo "  test-rhel-6                                    Launch the RHEL 6 VM for testing"
 	@echo "  test-rhel-7                                    Launch the RHEL 7 VM for testing"
+	@echo "  test-rhel-8                                    Launch the RHEL 8 VM for testing"
 	@echo "  test-centos-6                                  Launch the CentOS 6 VM for testing"
 	@echo "  test-centos-7                                  Launch the CentOS 7 VM for testing"
 	@echo "  clean                                          Cleanup configure files and destroy VMs"
