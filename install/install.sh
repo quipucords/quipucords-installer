@@ -71,12 +71,12 @@ fi
 
 PKG_MGR=yum
 if grep -q -i "release 7" /etc/redhat-release; then
-  rpm_version="el7"
+  dist="el7"
   if grep -q -i "Red Hat" /etc/redhat-release; then
     RHEL7=true
   fi
 elif grep -q -i "release 6" /etc/redhat-release; then
-  rpm_version="el6"
+  dist="el6"
 fi
 
 for arg in $args; do
@@ -99,7 +99,7 @@ command -v ansible > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Ansible prerequisite could not be found. Trying to install ansible..."
-  if [[ ($rpm_version == "el7") || ($rpm_version == "el6") ]]; then
+  if [[ ($dist == "el7") || ($dist == "el6") ]]; then
     sudo "${PKG_MGR}" install -y ansible
   else
     sudo "${PKG_MGR}" install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm

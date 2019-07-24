@@ -50,6 +50,7 @@ offline-install-prep: setup
 		yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm; \
 		yum install -y podman; \
 		yum install -y python36; \
+		yum install -y python3-requests; \
 	fi
 
 install: setup
