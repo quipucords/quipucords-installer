@@ -49,6 +49,11 @@
     msg: "The installer is not supported on RHEL 8 yet. It is an upcoming update."
   when: is_rhel_centos_8|bool
 
+- name: Fail if container_command is 'podman'
+  fail:
+    msg: "Podman is not supported yet. It is an upcoming update."
+  when: container_command == 'podman'
+
 - fail:
     msg: "This is not a supported system for installation. Must be RHEL 6/7/8, CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7)
