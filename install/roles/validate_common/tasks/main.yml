@@ -44,9 +44,14 @@
     is_rhel8: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '8') }}"
     is_rhel_centos_8: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '8') }}"
 
+- name: Fail on RHEL 8 since the installer is not set up to support RHEL 8 yet
+  fail:
+    msg: "The installer is not supported on RHEL 8 yet. It is an upcoming update."
+  when: is_rhel_centos_8|bool
+
 - fail:
     msg: "This is not a supported system for installation. Must be RHEL 6/7/8, CentOS 6/7."
-  when: not (is_rhel_centos_6 or is_rhel_centos_7 or is_rhel_centos_8)
+  when: not (is_rhel_centos_6 or is_rhel_centos_7)
 
 - name: Set container_command to podman if RHEL 8
   set_fact:
