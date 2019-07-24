@@ -50,7 +50,7 @@
   when: container_command == 'podman'
 
 - fail:
-    msg: "This is not a supported system for installation. Must be RHEL 6/7, CentOS 6/7."
+    msg: "This is not a supported system for installation. Must be RHEL 6/7 or CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7)
 
 - name: Set container_command to podman if RHEL 8
