@@ -102,8 +102,10 @@ if [ $? -ne 0 ]; then
   if [[ ($dist == "el7") || ($dist == "el6") ]]; then
     sudo "${PKG_MGR}" install -y ansible
   else
-    sudo "${PKG_MGR}" install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm
-    sudo "${PKG_MGR}" install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm
+    sudo subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true
+    sudo subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true
+    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+    sudo "${PKG_MGR}" install -y ansible
   fi
   
   command -v ansible > /dev/null 2>&1
