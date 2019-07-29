@@ -104,8 +104,8 @@ if [ $? -ne 0 ]; then
   else
     sudo subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true
     sudo subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true
-    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
-    sudo "${PKG_MGR}" install -y ansible
+    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms || true
+    sudo "${PKG_MGR}" install -y ansible || true
   fi
   
   command -v ansible > /dev/null 2>&1
