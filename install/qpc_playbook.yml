@@ -12,6 +12,7 @@
       server_port: '9443'
       server_name: 'quipucords'
       container_command: 'docker'
+      pod_name: 'qpc_pod'
       server_http_timeout: 120
       dbms_user: 'postgres'
       dbms_password: 'password'
@@ -38,7 +39,6 @@
     - role: validate_podman_install
       when:
         - install_server|lower == 'true'
-        - install_offline|lower == 'false'
         - container_command|lower == 'podman'
     - role: install_postgres_offline
       when:

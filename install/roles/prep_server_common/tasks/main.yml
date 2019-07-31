@@ -20,6 +20,16 @@
     path: "{{server_install_dir}}/sshkeys"
     state: directory
 
+- name: Create server data directory
+  file:
+    path: "{{server_install_dir}}/data"
+    state: directory
+
+- name: Create server qpc-data directory
+  file:
+    path: "{{server_install_dir}}/qpc-data"
+    state: directory
+
 - name: Open port in firewall on host machine for Quipucords server
   iptables:
     chain: INPUT

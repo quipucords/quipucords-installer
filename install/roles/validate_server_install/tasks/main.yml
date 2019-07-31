@@ -1,5 +1,10 @@
 ---
 
+- name: Set port mapping to 443 (RHEL 8)
+  set_fact:
+    server_port: '443'
+  when: is_rhel8|bool
+
 - name: Ping quipucords server to validate it is up
   uri:
     url: https://127.0.0.1:{{ server_port}}/api/v1/status
