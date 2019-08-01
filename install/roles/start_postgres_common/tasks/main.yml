@@ -31,7 +31,7 @@
   when: network_pod_created is not defined
 
 - name: Create a pod for network between the server and postgres database (RHEL 8)
-  shell: "{{ container_command }} pod create --name {{ pod_name }} -p 0.0.0.0:{{ server_port }}:443 -p 5432"
+  shell: "{{ container_command }} pod create --name {{ pod_name }} -p {{ server_port }}:443 -p 5432"
   become: true
   when:
     - is_rhel8|bool

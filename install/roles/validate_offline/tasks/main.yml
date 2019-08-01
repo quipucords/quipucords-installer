@@ -14,11 +14,6 @@
     - install_server|lower == 'true' 
     - server_version is defined and server_version|length == 0
 
-- name: Set install_cli to false on RHEL 8
-  set_fact:
-    install_cli: 'false'
-  when: is_rhel8|bool
-
 - name: Set qpc_rpm_local_path
   set_fact:
     qpc_rpm_local_path: "{{ pkg_install_dir }}{{ qpc_package_name }}"

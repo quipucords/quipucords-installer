@@ -107,3 +107,8 @@
 - name: Set have_yum
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
+
+- name: Set install_cli to false on RHEL 8
+  set_fact:
+    install_cli: 'false'
+  when: is_rhel8|bool

@@ -9,7 +9,7 @@
   set_fact:
     have_podman: "{{ have_podman_raw.rc == 0 }}"
 
-- name: Check the output of test container
+- name: Fail if podman command not found
   fail:
     msg: "Podman command not found"
   ignore_errors: true
