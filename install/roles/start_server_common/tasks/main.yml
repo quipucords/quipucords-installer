@@ -70,6 +70,6 @@
   when: (is_rhel_centos_6 or is_rhel_centos_7)
 
 - name: Start Quipucords server linked to Postgres {{ container_command }} container (RHEL 8)
-  shell: "{{ container_command }} run --name {{ server_name }} --net=host --pod {{ pod_name }} -d -e USE_SUPERVISORD={{ use_supervisord }} -e QPC_DBMS_USER={{ dbms_user }} -e QPC_DBMS_PASSWORD={{ dbms_password }} -p {{ server_port }}:443 -v {{ server_install_dir }}/sshkeys:/sshkeys{{ dir_mount_selinux }} -v {{ server_install_dir }}/data:/var/data{{ dir_mount_selinux }} -v {{ server_install_dir }}/log:/var/log{{ dir_mount_selinux }} {{ server_image_and_tag }}"
+  shell: "{{ container_command }} run --name {{ server_name }} --pod {{ pod_name }} -d -e USE_SUPERVISORD={{ use_supervisord }} -e QPC_DBMS_USER={{ dbms_user }} -e QPC_DBMS_PASSWORD={{ dbms_password }} -v {{ server_install_dir }}/sshkeys:/sshkeys{{ dir_mount_selinux }} -v {{ server_install_dir }}/data:/var/data{{ dir_mount_selinux }} -v {{ server_install_dir }}/log:/var/log{{ dir_mount_selinux }} {{ server_image_and_tag }}"
   become: true
   when: is_rhel8|bool
