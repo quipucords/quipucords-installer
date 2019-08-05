@@ -41,10 +41,22 @@
     is_rhel7: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '7') }}"
     is_centos_7: "{{ (ansible_distribution == 'CentOS') and (ansible_distribution_major_version == '7') }}"
     is_rhel_centos_7: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '7') }}"
+    is_rhel8: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '8') }}"
+    is_rhel_centos_8: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '8') }}"
+
+- name: Fail if container_command is 'podman'
+  fail:
+    msg: "Podman is not supported yet. It is an upcoming update."
+  when: container_command == 'podman'
 
 - fail:
-    msg: "This is not a supported system for installation. Must be RHEL 6/7, CentOS 6/7."
+    msg: "This is not a supported system for installation. Must be RHEL 6/7 or CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7)
+
+- name: Set container_command to podman if RHEL 8
+  set_fact:
+    container_command: "podman"
+  when: is_rhel_centos_8|bool
 
 - name: Get local package directory
   set_fact:

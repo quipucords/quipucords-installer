@@ -26,4 +26,11 @@ Vagrant.configure("2") do |config|
     centos7.vm.network "forwarded_port", guest: 9443, host: 8753
     centos7.vm.synced_folder "./test/centos7/", "/quipucords_installer", :mount_options => ["dmode=777", "fmode=777"]
   end
+
+  config.vm.define "vrhel8" do |rhel8|
+    rhel8.vm.box = "generic/rhel8"
+    rhel8.vm.hostname = "vrhel8"
+    rhel8.vm.network "forwarded_port", guest: 9443, host: 8754, host_ip:"127.0.0.1"
+    rhel8.vm.synced_folder "./test/rhel8/", "/quipucords_installer", :mount_options => ["dmode=777", "fmode=777"]
+  end
 end

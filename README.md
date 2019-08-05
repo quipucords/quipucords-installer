@@ -123,6 +123,8 @@ Create or obtain a tarball named `installer_config.tar.gz`.  The files in this t
         - rhel 6 repository files
     - rhel7
         - rhel 7 repository files
+    - rhel8
+        - rhel 8 repository files
 ```
 
 The repository files will be copied to the `/etc/yum.repos.d/` directory in the virtual machine.
@@ -140,7 +142,7 @@ Note:
 
 ## Vagrant: Testing Offline Installation
 
-To test offline installation for RHEL or Centos 6/7, do the following (with internet connectivity):
+To test offline installation for RHEL 6/7/8 or Centos 6/7, do the following (with internet connectivity):
 
 ```
 clear;cd /quipucords_installer;sudo su

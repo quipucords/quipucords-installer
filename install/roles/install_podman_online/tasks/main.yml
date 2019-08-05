@@ -1,0 +1,19 @@
+---
+
+- name: Test for podman command
+  shell: command -v podman
+  register: have_podman_raw
+  ignore_errors: yes
+
+- name: Set have_podman
+  set_fact:
+    have_podman: "{{ have_podman_raw.rc == 0 }}"
+
+- name: Install the latest version of podman (RHEL/CentOS 8)
+  yum:
+    name: podman
+    state: latest
+  become: true
+  when:
+    - is_rhel_centos_8|bool
+    - not have_podman

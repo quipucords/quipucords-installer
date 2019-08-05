@@ -69,19 +69,14 @@ if [ ! -f /etc/redhat-release ]; then
   exit 1
 fi
 
-if dnf --version > /dev/null 2>&1; then
-  echo "Installation on Fedora not supported."
-  exit 1
-else
-  PKG_MGR=yum
-  if grep -q -i "release 7" /etc/redhat-release; then
-    rpm_version="el7"
-    if grep -q -i "Red Hat" /etc/redhat-release; then
-      RHEL7=true
-    fi
-  else
-    rpm_version="el6"
+PKG_MGR=yum
+if grep -q -i "release 7" /etc/redhat-release; then
+  dist="el7"
+  if grep -q -i "Red Hat" /etc/redhat-release; then
+    RHEL7=true
   fi
+elif grep -q -i "release 6" /etc/redhat-release; then
+  dist="el6"
 fi
 
 for arg in $args; do
@@ -104,7 +99,15 @@ command -v ansible > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Ansible prerequisite could not be found. Trying to install ansible..."
-  sudo "${PKG_MGR}" install -y ansible
+  if [[ ($dist == "el7") || ($dist == "el6") ]]; then
+    sudo "${PKG_MGR}" install -y ansible
+  else
+    sudo subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true
+    sudo subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true
+    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms || true
+    sudo "${PKG_MGR}" install -y ansible || true
+  fi
+  
   command -v ansible > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo ""

@@ -1,26 +1,26 @@
 ---
 
-- name: Check if Postgres server docker container already running
-  shell: docker ps -a -f name="qpc-db" | grep "qpc-db"
+- name: Check if Postgres server {{ container_command }} container already running
+  shell: "{{ container_command }} ps -a -f name='qpc-db' | grep 'qpc-db'"
   become: true
   register: postgres_ps_raw
   ignore_errors: yes
 
-- name: Remove running Postgres server docker container
-  shell: docker rm -f qpc-db
+- name: Remove running Postgres server {{ container_command }} container
+  shell: "{{ container_command }} rm -f qpc-db"
   become: true
   ignore_errors: yes
   when:
     - postgres_ps_raw['stdout_lines'] | length > 0
 
-- name: Start Postgres container with docker volume (RHEL 6 & Centos 6)
-  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+- name: Start Postgres container with {{ container_command }} volume (RHEL 6, Centos 6)
+  shell: "{{ container_command }} run --name qpc-db  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v /var/lib/docker/volumes/qpc-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
   become: true
   when:
     - is_rhel_centos_6|bool
 
-- name: Start Postgres container with docker volume (RHEL 7, Centos 7)
-  shell: docker run --name qpc-db  -e POSTGRES_USER="{{dbms_user}}" -e POSTGRES_PASSWORD="{{dbms_password}}" -v qpc-data:/var/lib/postgresql/data -d postgres:"{{POSTGRES_VERSION}}"
+- name: Start Postgres container with {{ container_command }} volume (RHEL 7, Centos 7)
+  shell: "{{ container_command }} run --name qpc-db  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v qpc-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
   become: true
   when:
     - is_rhel_centos_7|bool

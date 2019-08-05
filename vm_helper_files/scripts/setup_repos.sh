@@ -6,23 +6,19 @@ if [ ! -f /etc/redhat-release ]; then
   exit 1
 fi
 
-if grep -q -i "release 7" /etc/redhat-release; then
-    rpm_version="el7"
-else
-    rpm_version="el6"
-fi
-
 if grep -q -i "Red Hat" /etc/redhat-release; then
     is_rhel="true"
 fi
 
-
 if [[ $is_rhel == "true" ]]
 then
-    if [[ $rpm_version == "el6" ]]
-    then
+    if grep -q -i "release 7" /etc/redhat-release; then
+        sudo cp -rf config/rhel7/*.repo /etc/yum.repos.d/
+    elif grep -q -i "release 6" /etc/redhat-release; then
         sudo cp -rf config/rhel6/*.repo /etc/yum.repos.d/
     else
-        sudo cp -rf config/rhel7/*.repo /etc/yum.repos.d/
+        sudo cp -rf config/rhel8/*.repo /etc/yum.repos.d/
+        sudo yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm || true
+        sudo yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm || true
     fi
 fi

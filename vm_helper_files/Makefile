@@ -25,22 +25,34 @@ setup:
 	scripts/setup_repos.sh
 
 offline-install-prep: setup
-	yum install -y libcgroup
-	yum install -y yum-utils
-	yum install -y ansible
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
 		yum install -y docker; \
 		yum install -y epel-release; \
 		yum install -y python36; \
 		yum install -y python36-requests; \
-	else \
+	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
 		yum install -y xz; \
 		cd install/packages/; curl -k -O -sSl http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm; \
 		rpm -Uvh --force "docker-engine-1.7.1-1.el6.x86_64.rpm"; \
 		yum install -y python34; \
 		yum install -y python34-requests; \
+	else \
+		echo "Running 8"; \
+		subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true; \
+		subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true; \
+		subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms; \
+		yum install -y ansible; \
+		yum install -y podman; \
+		yum install -y python36; \
+		yum install -y python3-requests; \
 	fi
 
 install: setup
