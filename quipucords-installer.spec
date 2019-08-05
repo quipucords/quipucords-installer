@@ -1,4 +1,5 @@
 %global stream_name quipucords
+%global cmd_name qpc
 %global ver 0.1.2
 ####
 %global src_name %{stream_name}-installer
@@ -32,12 +33,14 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %install
 mkdir -p %{buildroot}/%{_libdir}
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
+install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/deploy/%{cmd_name}-installer.1 %{buildroot}%{_mandir}/man1/%{cmd_name}-installer.1
 
 %files
 %defattr(-,root,root,-)
 %doc README.md AUTHORS.md
 %license LICENSE
 /%{_libdir}/%{src_name}-%{version}
+%{_mandir}/man1/%{cmd_name}-installer.1.gz
 
 %changelog
 * Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.9.0
