@@ -15,6 +15,8 @@ Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
 
+# Downstream rpmbuilder bombs when there are no BuildRequires
+BuildRequires: ansible
 %if "%{stream_name}" == "discovery"
 Requires: ansible
 Requires: podman
@@ -27,14 +29,15 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %prep
 %setup -q
 
-%build
-
 %install
+mkdir -p %{buildroot}/%{_libdir}
+cp -rf %{_builddir}/%{src_name}-%{version}/ %{buildroot}/%{_libdir}/%{src_name}-%{version}
 
 %files
 %defattr(-,root,root,-)
 %doc README.md AUTHORS.md
 %license LICENSE
+/%{_libdir}/%{src_name}-%{version}
 
 %changelog
 * Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.9.0
