@@ -31,7 +31,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %install
 mkdir -p %{buildroot}/%{_libdir}
-cp -rf %{_builddir}/%{src_name}-%{version}/ %{buildroot}/%{_libdir}/%{src_name}-%{version}
+cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 
 %files
 %defattr(-,root,root,-)
