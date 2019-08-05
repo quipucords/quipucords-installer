@@ -1,0 +1,37 @@
+.\" Manpage for qpc-installer
+.\" Contact quipucords@redhat.com to correct errors or typos.
+.TH man 8 "05 Aug 2019" "1.2.0"
+.SH NAME
+qpc-installer
+.SH SYNOPSIS
+qpc-installer install
+.SH DESCRIPTION
+Installer for quipucords
+.SH USAGE
+qpc-installer install
+.SH OPTIONS
+-e | --extra-vars  set additional variables as key=value
+Extra Variables:
+    * Skip install for server:
+         -e install_server=false
+    * Skip install for CLI:
+         -e install_cli=false
+    * Perform an offline install
+         -e install_offline=true
+    * Quipucords server version to install (defaults to the latest release):
+         -e server_version=0.0.46
+    * QPC cli version to install (defaults to the latest release):
+         -e cli_version=0.0.46
+    * Specify if the Quipucords server port should be opened in the host firewall (defaults to true):
+         -e open_port=false
+    * Quipucords server port (defaults to 9443):
+         -e server_port=8443
+    * Postgres db user (defaults to 'postgres'):
+         -e dbms_user=postgres
+    * Postgres db password (defaults to 'password')
+         -e dbms_password=password
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Cody Myers (cmyers@redhat.com)
+
