@@ -15,9 +15,9 @@ Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
 
+%if "%{stream_name}" == "discovery"
 # Downstream rpmbuilder bombs when there are no BuildRequires
 BuildRequires: ansible
-%if "%{stream_name}" == "discovery"
 Requires: ansible
 Requires: podman
 Requires: python3-requests
