@@ -30,12 +30,12 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %setup -q
 
 %install
+rm -rf $RPM_BUILD_ROOT
 mkdir -p %{buildroot}/%{_libdir}
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
-%if "%{stream_name}" == "discovery"
 cp -f %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name} %{_bindir}/%{src_name}
-%endif
+
 
 %files
 %defattr(-,root,root,-)
