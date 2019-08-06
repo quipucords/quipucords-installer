@@ -32,7 +32,8 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %install
 mkdir -p %{buildroot}/%{_libdir}
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
-install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/deploy/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
+install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
+mv -f %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name} %{_bindir}/%{src_name}
 
 %files
 %defattr(-,root,root,-)
@@ -40,6 +41,7 @@ install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/deploy/%{src_
 %license LICENSE
 /%{_libdir}/%{src_name}-%{version}
 %{_mandir}/man1/%{src_name}.1.gz
+%{_bindir}/%{src_name}
 
 %changelog
 * Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.9.0
