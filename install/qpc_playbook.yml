@@ -11,6 +11,7 @@
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
+      db_name: 'qpc-db'
       container_command: 'docker'
       server_http_timeout: 120
       dbms_user: 'postgres'
