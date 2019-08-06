@@ -18,6 +18,5 @@ then
         sudo cp -rf config/rhel6/*.repo /etc/yum.repos.d/
     else
         sudo cp -rf config/rhel8/*.repo /etc/yum.repos.d/
-        sudo sh /quipucords_installer/scripts/install_ansible.sh || true
     fi
 fi

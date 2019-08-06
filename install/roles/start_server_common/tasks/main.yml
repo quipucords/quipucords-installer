@@ -76,7 +76,7 @@
   when: container_command == 'podman'
 
 - name: Start Postgres container with {{ container_command }} volume (RHEL 8/Podman)
-  shell: "{{ container_command }} run --name qpc-db --network=container:quipucords  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v qpc-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
+  shell: "{{ container_command }} run --name qpc-db --network=container:quipucords  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
   become: true
   when: container_command == 'podman'
 

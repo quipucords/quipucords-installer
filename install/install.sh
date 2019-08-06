@@ -99,14 +99,7 @@ command -v ansible > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Ansible prerequisite could not be found. Trying to install ansible..."
-  if [[ ($dist == "el7") || ($dist == "el6") ]]; then
-    sudo "${PKG_MGR}" install -y ansible
-  else
-    sudo subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true
-    sudo subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true
-    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms || true
-    sudo "${PKG_MGR}" install -y ansible || true
-  fi
+  sudo "${PKG_MGR}" install -y ansible
   
   command -v ansible > /dev/null 2>&1
   if [ $? -ne 0 ]; then
