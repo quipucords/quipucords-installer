@@ -33,7 +33,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 mkdir -p %{buildroot}/%{_libdir}
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
-mv -f %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name} %{_bindir}/%{src_name}
+cp -f %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name} %{_bindir}/%{src_name}
 
 %files
 %defattr(-,root,root,-)
