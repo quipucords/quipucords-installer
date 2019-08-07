@@ -25,12 +25,6 @@
     path: "{{server_install_dir}}/data"
     state: directory
 
-- name: Create server db-data directory
-  file:
-    path: "{{server_install_dir}}/db-data"
-    state: directory
-  when: container_command == 'podman'
-
 - name: Open port in firewall on host machine for Quipucords server
   iptables:
     chain: INPUT
