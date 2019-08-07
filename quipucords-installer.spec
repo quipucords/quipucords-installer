@@ -33,7 +33,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{_bindir}
 pushd %{_builddir}/%{src_name}-*
-sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}"?g' install/%{src_name}
+sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
 popd
