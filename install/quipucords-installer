@@ -12,7 +12,12 @@
 #===============================================================================
 
 export PATH=$PATH:$ANSIBLE_HOME/bin
+#Note: The playbook path with be sed replaced in the spec file
+# to match the location of where the package is being installed.
 PLAYBOOKFILE="qpc_playbook.yml"
+PLAYBOOKPATH=""
+PLAYBOOK=$PLAYBOOKPATH/$PLAYBOOKFILE
+
 POSTGRES_VERSION='-e POSTGRES_VERSION=9.6.10'
 INSTALLER_VERSION='BUILD_VERSION_PLACEHOLDER'
 
@@ -107,7 +112,7 @@ if [ $? -ne 0 ]; then
     sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms || true
     sudo "${PKG_MGR}" install -y ansible || true
   fi
-  
+
   command -v ansible > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo ""
@@ -120,11 +125,11 @@ fi
 
 if [[ $EUID -ne 0 ]]
 then
-  echo ansible-playbook $PLAYBOOKFILE -v -K $*
-  ansible-playbook $PLAYBOOKFILE -v -K $*
+  echo ansible-playbook $PLAYBOOK -v -K $*
+  ansible-playbook $PLAYBOOK -v -K $*
 else
-  echo ansible-playbook $PLAYBOOKFILE -v $*
-  ansible-playbook $PLAYBOOKFILE -v $*
+  echo ansible-playbook $PLAYBOOK -v $*
+  ansible-playbook $PLAYBOOK -v $*
 fi
 
 if [ $? -eq 0 ]
