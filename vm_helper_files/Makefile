@@ -46,9 +46,6 @@ offline-install-prep: setup
 		yum install -y python34-requests; \
 	else \
 		echo "Running 8"; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true; \
-		subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms; \
 		yum install -y ansible; \
 		yum install -y podman; \
 		yum install -y python36; \
