@@ -56,13 +56,13 @@ offline-install-prep: setup
 	fi
 
 install: setup
-	cd install;./install.sh
+	cd install;./quipucords-installer
 
 install-offline:
-	cd install;./install.sh -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
+	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install-version: setup
-	cd install;./install.sh -e server_version=$(server_version) -e cli_version=$(cli_version)
+	cd install;./quipucords-installer -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 clean:
 	scripts/cleanup.sh
