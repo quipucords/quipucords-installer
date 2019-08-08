@@ -170,7 +170,7 @@ clean:
 	rm -rf test
 
 manpage:
-	@mkdir -p build
+	mkdir -p build
 	pandoc docs/man.rst \
 	  --standalone -t man -o build/qupucords-installer.1 \
 	  --variable=section:1 \
