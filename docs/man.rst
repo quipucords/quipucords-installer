@@ -81,62 +81,57 @@ If you choose the offline option to run the installer, you will need to obtain t
 Packages
 ~~~~~~~~
 
-**Quipucords Server**
+    *Quipucords Server*
 
-Required Name: ``quipucords_server_image.tar.gz``
+        Required Name: ``quipucords_server_image.tar.gz``
+            https://github.com/quipucords/quipucords/releases
 
-  https://github.com/quipucords/quipucords/releases
+    *Postgres*
 
+        Required Name: ``postgres.9.6.10.tar``
+        The postgres image tar can be created with docker:
+        ``
+        docker pull postgres:9.6.10
+        docker save -o postgres.9.6.10.tar postgres:9.6.10
+        ``
 
-**Postgres**
+    *QPC CLI*
 
-Required Name: ``postgres.9.6.10.tar``
-
-The postgres image tar can be created with docker:
-
-``
-# docker pull postgres:9.6.10
-# docker save -o postgres.9.6.10.tar postgres:9.6.10
-``
-
-**QPC CLI**
-
-Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
-Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
-
-    https://github.com/quipucords/qpc/releases
+        Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
+        Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
+            https://github.com/quipucords/qpc/releases
 
 Package Location:
 ~~~~~~~~~~~~~~~~~
 
 A packages directory will need to be created under one of the following paths depending on your system.
 
-```
-mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
-# {lib} is your library version either lib or lib64
-# {x.y.z} is the version of your installer
-```
+  ``
+  mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
+  # {lib} is your library version either lib or lib64
+  # {x.y.z} is the version of your installer
+  ``
 
 The packages above will then need to be moved to this directory so that the installer can find them.
 
-```
-mv path/to/quipucords_server_image.tar.gz /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
-```
+  ``
+  mv path/to/quipucords_server_image.tar.gz /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
+  ``
 
 Run Offline Installation:
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-```
-quipucords-installer -e install_offline=true -e server_version=0.9.0  -e cli_vesion=0.9.0
-```
+  ``
+  quipucords-installer -e install_offline=true -e server_version=0.9.0  -e cli_vesion=0.9.0
+  ``
 
 Specific Version Install
 ------------------------
 The basic install will always install the latest release; however, you may choose to install an older version of the quipucords server or the qpc cli.
 
-```
-quipucords-installer -e server_version=0.9.0  -e cli_vesion=0.9.0
-```
+  ``
+  quipucords-installer -e server_version=0.9.0  -e cli_vesion=0.9.0
+  ``
 
 Only CLI/Server Install
 -----------------------
@@ -145,16 +140,16 @@ The basic installation will install the quipucords server and the qpc cli at the
 Server only
 ~~~~~~~~~~~
 
-```
-quipucords-installer -e install_cli=false
-```
+  ``
+  quipucords-installer -e install_cli=false
+  ``
 
 Cli only
 ~~~~~~~~
 
-```
-quipucords-installer -e install server=false
-```
+  ``
+  quipucords-installer -e install server=false
+  ``
 
 Authors
 -------
