@@ -171,7 +171,7 @@ clean:
 
 manpage:
 	pandoc docs/man.rst \
-	  --standalone -t man -o install/qupucords-installer.1 \
+	  --standalone -t man -o install/quipucords-installer.1 \
 	  --variable=section:1 \
 	  --variable=date:'June 6, 2019' \
 	  --variable=footer:'version 0.9.1' \
