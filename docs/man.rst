@@ -73,6 +73,17 @@ Optional flags can be set to control extra-variables passed to the ansible playb
 
   Specifies the database password for postgres. Defaults to password.
 
+``-e server_username=cody``
+
+  Quipucords server username. Defaults to admin.
+
+``-e server_password=c0dy``
+
+  Quipucords server password. Defaults to qpcpassw0rd.
+
+``server_user_email=cody@hotmail.com``
+
+  Quipucords server user email. Defaults to admin@example.com.
 
 Offline Install
 ---------------
