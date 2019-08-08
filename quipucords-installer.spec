@@ -16,33 +16,33 @@ Source0: %{src_name}-%{version}.tar.gz
 BuildArch: noarch
 BuildRequires: pandoc
 #Common Requirements
-# Requires: ansible
+Requires: ansible
 
-# %if 0%{el8}
-# Requires: python3
-# Requires: python3-requests
-# %endif
+%if 0%{el8}
+Requires: python3
+Requires: python3-requests
+%endif
 
-# # Quipucords (Upstream)
-# %if "%{stream_name}" == "quipucords"
-# BuildRequires: pandoc
-# Requires: epel-release
-# %if 0%{?el6}
-# Requires: python34
-# Requires: python34
-# %endif
-# %if 0%{el7}
-# Requires: python36
-# Requires: python36-requests
-# %endif
-# %endif
+# Quipucords (Upstream)
+%if "%{stream_name}" == "quipucords"
+BuildRequires: pandoc
+Requires: epel-release
+%if 0%{?el6}
+Requires: python34
+Requires: python34
+%endif
+%if 0%{el7}
+Requires: python36
+Requires: python36-requests
+%endif
+%endif
 
-# # Discovery (Downstream)
-# %if "%{stream_name}" == "discovery"
-# # Downstream rpmbuilder bombs when there are no BuildRequires
-# BuildRequires: ansible
-# Requires: podman
-# %endif
+# Discovery (Downstream)
+%if "%{stream_name}" == "discovery"
+# Downstream rpmbuilder bombs when there are no BuildRequires
+BuildRequires: ansible
+Requires: podman
+%endif
 
 
 %description
