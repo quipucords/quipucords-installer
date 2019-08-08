@@ -51,6 +51,19 @@ git clone git@github.com:quipucords/quipucords-installer.git
 ## Testing local installation scripts
 This method is used when you are testing installation scripts that have not been released.
 
+### Testing online installation
+To test your local scripts on all supported OS's run the following.
+```
+make setup-local-online
+make test-all
+```
+
+If you make changes to the installation scripts and want to test them you can run:
+```
+make refresh
+```
+There is no need to restart the VM.
+
 ### Testing offline installation
 To build the docker image, download the `qpc` client and test with the local install scripts on all supported OS's, run the following:
 ```
@@ -73,21 +86,18 @@ There is no need to restart the VM.
 
 **Warning:** If you are switching from doing an offline test to online, then you should run `make clean` on the quipucords-installer repository folder before starting the online installation.
 
-### Testing online installation
-To test your local scripts on all supported OS's run the following.
-```
-make setup-local-online
-make test-all
-```
-
-If you make changes to the installation scripts and want to test them you can run:
-```
-make refresh
-```
-There is no need to restart the VM.
-
 ## Testing released installation scripts
 This method is used when you are testing installation scripts that have been released.  They will be available on GitHub.
+
+### Testing online installation
+To test the release scripts on all supported OS's, run the following.
+```
+make setup-release-online installer_version=0.1.1
+make test-all
+```
+**Options:**
+- `installer_version`
+  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use.
 
 ### Testing offline installation
 To test the release scripts on all supported OS's, run the following. This command will download Quipucords server docker image, installer, `qpc` client and copy them to OS specific folders.
@@ -102,15 +112,6 @@ make test-all
   - Contains the released version of the `qpc` client. Defaults to `latest`. Supply the client version number you want to use.
 - `server_version`
   - Contains Quipucords server version number. Defaults to `latest`. Supply the server version number you want to use.
-### Testing online installation
-To test the release scripts on all supported OS's, run the following.
-```
-make setup-release-online installer_version=0.1.1
-make test-all
-```
-**Options:**
-- `installer_version`
-  - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use.
 
 ## Configuring Virtual Machines
 The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
