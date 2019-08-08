@@ -18,7 +18,6 @@ BuildRequires: pandoc
 #Common Requirements
 Requires: ansible
 
-# Quipucords (Upstream)
 %if "%{stream_name}" == "quipucords"
 BuildRequires: pandoc
 Requires: epel-release
@@ -26,7 +25,7 @@ Requires: epel-release
 Requires: python34
 Requires: python34
 %endif
-%if 0%{el7}
+%if 0%{?el7}
 Requires: python36
 Requires: python36-requests
 %endif
