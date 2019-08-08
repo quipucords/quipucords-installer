@@ -51,11 +51,6 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %prep
 %setup -q
 
-%if "%{stream_name}" == "quipucords"
-%build
-make manpage
-%endif
-
 %install
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{_bindir}
@@ -63,11 +58,14 @@ pushd %{_builddir}/%{src_name}-*
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
+%if "%{stream_name}" == "quipucords"
+make manpage
+%endif
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 chmod 755 %{buildroot}%{_bindir}/%{src_name}
 
-install -D -p -m 644 build/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
+install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name}.1 %{buildroot}%
 
 %files
 %defattr(-,root,root,-)
