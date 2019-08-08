@@ -7,3 +7,4 @@ installer_config_dev/
 .vagrant/
 qpc_playbook.retry
 build/
+.vscode/

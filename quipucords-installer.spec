@@ -14,7 +14,9 @@ URL: http://github.com/quipucords/quipucords
 Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
-
+%if "%{stream_name}" == "quipucords"
+BuildRequires: pandoc
+%endif
 %if "%{stream_name}" == "discovery"
 # Downstream rpmbuilder bombs when there are no BuildRequires
 BuildRequires: ansible
