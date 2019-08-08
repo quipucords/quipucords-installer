@@ -6,5 +6,5 @@ installer_config/
 installer_config_dev/
 .vagrant/
 qpc_playbook.retry
-build/
+quipucords-installer.1
 .vscode/
