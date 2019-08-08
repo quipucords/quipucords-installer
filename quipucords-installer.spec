@@ -14,7 +14,6 @@ URL: http://github.com/quipucords/quipucords
 Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
-BuildRequires: pandoc
 #Common Requirements
 Requires: ansible
 
