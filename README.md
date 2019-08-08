@@ -156,6 +156,12 @@ Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
  - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
 
+ ## Creating the man page
+ After installing [pandoc](https://pandoc.org/installing.html) locally, run the following command:
+
+```
+ make manpage
+```
 
 # <a name="issues"></a> Issues
 To report bugs for Quipucords installer [open issues](https://github.com/quipucords/quipucords-installer/issues) against this repository in Github. Complete the issue template when opening a new bug to improve investigation and resolution time.
