@@ -21,6 +21,7 @@ help:
 	@echo "  test-rhel-8                                    Launch the RHEL 8 VM for testing"
 	@echo "  test-centos-6                                  Launch the CentOS 6 VM for testing"
 	@echo "  test-centos-7                                  Launch the CentOS 7 VM for testing"
+	@echo "  manpage                                        Create the manpage"
 	@echo "  clean                                          Cleanup configure files and destroy VMs"
 
 # Internal subcommands that the user should not call
@@ -167,3 +168,12 @@ test-centos-7:
 clean:
 	vagrant destroy -f
 	rm -rf test
+
+manpage:
+	@mkdir -p build
+	pandoc docs/man.rst \
+	  --standalone -t man -o build/qupucords-installer.1 \
+	  --variable=section:1 \
+	  --variable=date:'June 6, 2019' \
+	  --variable=footer:'version 0.9.1' \
+	  --variable=header:'quipucords-installer'
