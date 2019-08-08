@@ -18,11 +18,6 @@ BuildRequires: pandoc
 #Common Requirements
 Requires: ansible
 
-%if 0%{el8}
-Requires: python3
-Requires: python3-requests
-%endif
-
 # Quipucords (Upstream)
 %if "%{stream_name}" == "quipucords"
 BuildRequires: pandoc
@@ -42,6 +37,8 @@ Requires: python36-requests
 # Downstream rpmbuilder bombs when there are no BuildRequires
 BuildRequires: ansible
 Requires: podman
+Requires: python3
+Requires: python3-requests
 %endif
 
 
