@@ -51,11 +51,11 @@ Optional flags can be set to control extra-variables passed to the ansible playb
 
 ``-e server_version=0.0.46``
 
-  Contains the semantic versioning format (x.y.z) of the quipucords server you want installed.
+  Contains the semantic versioning format (x.y.z) of the quipucords server you want installed. Required if ``install_offline=true`` and ``install_server=true``.
 
 ``-e cli_vesion=0.0.46``
 
-  Contains the semantic versioning format (x.y.z) of the qpc cli you want installed.
+  Contains the semantic versioning format (x.y.z) of the qpc cli you want installed. Required if ``install_offline=true`` and ``install_cli=true``.
 
 ``-e open_port=false``
 
