@@ -16,10 +16,9 @@ Source0: %{src_name}-%{version}.tar.gz
 BuildArch: noarch
 #Common Requirements
 Requires: ansible
-
 %if "%{stream_name}" == "quipucords"
 BuildRequires: pandoc
-Requires: epel-release
+PreReq: epel-release
 %if 0%{?el6}
 Requires: python34
 Requires: python34
