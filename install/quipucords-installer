@@ -75,21 +75,6 @@ then
   usage;
 fi
 
-if [ ! -f /etc/redhat-release ]; then
-  echo "/etc/redhat-release not found. You need to run this on a Red Hat based OS."
-  exit 1
-fi
-
-PKG_MGR=yum
-if grep -q -i "release 7" /etc/redhat-release; then
-  dist="el7"
-  if grep -q -i "Red Hat" /etc/redhat-release; then
-    RHEL7=true
-  fi
-elif grep -q -i "release 6" /etc/redhat-release; then
-  dist="el6"
-fi
-
 for arg in $args; do
   if [[ $arg != "-e" ]]; then
     IFS='=' read -r -a temp_arr <<< "$arg"
@@ -98,36 +83,6 @@ for arg in $args; do
     printf -v $key "$value"
   fi
 done
-
-if [[ ($RHEL7) && (-z "$install_offline") ]] || [[ ($RHEL7) && ($install_offline = "false") ]]; then
-  echo "Trying to install RHEL7 dependencies..."
-  sudo subscription-manager repos --enable="rhel-7-server-extras-rpms" || true
-  sudo subscription-manager repos --enable="rhel-7-server-optional-rpms" || true
-fi
-
-echo "Checking if ansible is installed..."
-command -v ansible > /dev/null 2>&1
-
-if [ $? -ne 0 ]; then
-  echo "Ansible prerequisite could not be found. Trying to install ansible..."
-  if [[ ($dist == "el7") || ($dist == "el6") ]]; then
-    sudo "${PKG_MGR}" install -y ansible
-  else
-    sudo subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true
-    sudo subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true
-    sudo subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms || true
-    sudo "${PKG_MGR}" install -y ansible || true
-  fi
-
-  command -v ansible > /dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    echo ""
-    echo "Installation failed. Ansible prerequisite could not be installed."
-    echo "Follow installation documentation for installing Ansible."
-    unset args
-    exit 1
-  fi
-fi
 
 if [[ $EUID -ne 0 ]]
 then
