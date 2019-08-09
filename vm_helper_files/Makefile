@@ -6,8 +6,6 @@ TOPDIR = $(shell pwd)
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@echo "  install-help                                       Runs quipucords-installer help"
-	@echo "  setup                                              Configure yum repos as needed"
-	@echo "  offline-install-prep                               Install required dependencies for offline install"
 	@echo "  install                                            Install with defaults"
 	@echo "  install-offline                                    Perform an offline installation"
 	@echo "           server_version=<x.x.x>                        @param - required"
@@ -21,10 +19,12 @@ help:
 install-help:
 	./install/quipucords-installer --help
 
+#Internal
 setup:
 	scripts/setup_repos.sh
 
-offline-install-prep: setup
+#Internal
+install-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
 		yum install -y libcgroup; \
@@ -55,13 +55,13 @@ offline-install-prep: setup
 		yum install -y python3-requests; \
 	fi
 
-install: setup
+install: install-prep
 	cd install;./quipucords-installer
 
-install-offline:
+install-offline: install-prep
 	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
-install-version: setup
+install-version: install-prep
 	cd install;./quipucords-installer -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 clean:
