@@ -18,15 +18,6 @@ BuildArch: noarch
 Requires: ansible
 %if "%{stream_name}" == "quipucords"
 BuildRequires: pandoc
-Requires(preun): epel-release
-%if 0%{?el6}
-Requires: python34
-Requires: python34
-%endif
-%if 0%{?el7}
-Requires: python36
-Requires: python36-requests
-%endif
 %endif
 
 # Discovery (Downstream)
