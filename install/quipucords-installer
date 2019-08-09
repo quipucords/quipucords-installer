@@ -1,9 +1,9 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE:  install.sh
+#          FILE:  quipucords-installer
 #
-#         USAGE:  ./install.sh
+#         USAGE:  ./quipucords-installer
 #
 #   DESCRIPTION:  Install Quipucords server and command-line components.
 #
@@ -12,7 +12,7 @@
 #===============================================================================
 
 export PATH=$PATH:$ANSIBLE_HOME/bin
-#Note: The playbook path with be sed replaced in the spec file
+#Note: The playbook path will be sed replaced in the spec file
 # to match the location of where the package is being installed.
 PLAYBOOKFILE="qpc_playbook.yml"
 PLAYBOOKPATH=""
