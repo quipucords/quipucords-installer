@@ -24,7 +24,7 @@ setup:
 	scripts/setup_repos.sh
 
 #Internal
-install-prep: setup
+offline-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
 		yum install -y libcgroup; \
@@ -55,13 +55,34 @@ install-prep: setup
 		yum install -y python3-requests; \
 	fi
 
-install: install-prep
-	cd install;./quipucords-installer
+online-prep: setup
+	@if grep -q -i "release 7" /etc/redhat-release; then \
+		echo "Running 7"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
+	elif grep -q -i "release 6" /etc/redhat-release; then \
+		echo "Running 6"; \
+		yum install -y libcgroup; \
+		yum install -y yum-utils; \
+		yum install -y ansible; \
+	else \
+		echo "Running 8"; \
+		subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true; \
+		subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true; \
+		subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms; \
+		yum install -y ansible; \
+		yum install -y podman; \
+	fi
 
-install-offline: install-prep
+
+install-offline: offline-prep
 	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
-install-version: install-prep
+install: online-prep
+	cd install;./quipucords-installer
+
+install-version: online-prep
 	cd install;./quipucords-installer -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 clean:

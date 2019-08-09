@@ -25,8 +25,6 @@ BuildRequires: pandoc
 # Downstream rpmbuilder bombs when there are no BuildRequires
 BuildRequires: ansible
 Requires: podman
-Requires: python3
-Requires: python3-requests
 %endif
 
 
