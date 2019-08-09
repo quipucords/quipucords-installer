@@ -1,6 +1,6 @@
 def install_tar = "quipucords_install.tar"
 def install_targzfile = "${install_tar}.gz"
-def install_sh_path = "install/install.sh"
+def install_sh_path = "install/quipucords-installer"
 
 node('f28-os') {
     stage('Build Install tar.gz') {
