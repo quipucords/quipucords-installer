@@ -53,7 +53,7 @@ usage() {
          -e server_username=cody
     * Quipucords server password (defaults to qpcpassw0rd):
          -e server_password=c0dy
-    * Quipucords server user_email (defaults to admin@example.com):
+    * Quipucords server user email address (defaults to admin@example.com):
          -e server_user_email=cody@hotmail.com
     * Quipucords server port (defaults to 9443):
          -e server_port=8443
