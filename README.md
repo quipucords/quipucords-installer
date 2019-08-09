@@ -29,7 +29,7 @@ To work with the Quipucords installer, begin by cloning the repository.
 ```
 git clone git@github.com:quipucords/quipucords-installer.git
 cd quipucords-installer/install
-./install.sh
+./quipucords-installer
 ```
 
 # <a name="development"></a> Development
@@ -113,7 +113,7 @@ make test-all
   - Contains the released version of the `quipucords-installer`. Defaults to `latest`. Supply the installer version number you want to use.
 
 ## Configuring Virtual Machines
-The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `install.sh`.
+The above `test-all` command will perform a  `vagrant ssh`.  If you have no configuration help, then you can simply run `quipucords-installer`.
 
 ### Optional Secret Configuration
 Create or obtain a tarball named `installer_config.tar.gz`.  The files in this tarball will automatically be copied inside the VMs mapped volumes.  If you are testing rhel6 or rhel7 and have internal repositories, your `installer_config.tar.gz` should have the following structure:
@@ -138,7 +138,7 @@ make install
 ```
 Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
- - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
+ - You can replace `make install` with other commands or `cd install;./quipucords-installer -e other_flags`
 
 ## Vagrant: Testing Offline Installation
 
@@ -154,7 +154,7 @@ make install-offline server_version=<server_version> cli_version=<cli_version>
 
 Note:
  - Optionally run any secret post install scripts you included in `installer_config.tar.gz`
- - You can replace `make install` with other commands or `cd install;./install.sh -e other_flags`
+ - You can replace `make install` with other commands or `cd install;./quipucords-installer -e other_flags`
 
  ## Creating the man page
  After installing [pandoc](https://pandoc.org/installing.html) locally, run the following command:

@@ -5,7 +5,7 @@ TOPDIR = $(shell pwd)
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
-	@echo "  install-help                                       Runs install.sh help"
+	@echo "  install-help                                       Runs quipucords-installer help"
 	@echo "  setup                                              Configure yum repos as needed"
 	@echo "  offline-install-prep                               Install required dependencies for offline install"
 	@echo "  install                                            Install with defaults"
@@ -19,7 +19,7 @@ help:
 
 
 install-help:
-	./install/install.sh --help
+	./install/quipucords-installer --help
 
 setup:
 	scripts/setup_repos.sh
