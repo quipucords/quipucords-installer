@@ -20,7 +20,7 @@ The ``quipucords-installer`` tool is used to install the quipucords server and q
 Usage
 -----
 
-* To start the quipucords installation:
+To start the quipucords installation:
 
   ``quipucords-installer``
 
@@ -101,6 +101,7 @@ Packages
 
 - Required Name: ``postgres.9.6.10.tar``
 - The postgres image tar can be created with docker:
+
 ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
 *QPC CLI*
