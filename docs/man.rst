@@ -31,11 +31,11 @@ Additionally you can pass a flag to obtain the command usage.
 
 **quipucords-installer (-h | --help)**
 
-Optional flags can be set to control extra-variables passed to the ansible playbook.
+Optional flags can be set to control ``extra-vars`` options passed to the ansible playbook.
 
-**quipucords-installer (-e | --extra-vars) key=** *value*
+**quipucords-installer (-e | --extra-vars) option=** *value*
 
-**Keys**
+**Extra Vars Options**
 
 ``-e install_server=false``
 

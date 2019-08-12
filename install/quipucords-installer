@@ -38,7 +38,7 @@ usage() {
 
     Options:
     -h | --help   Obtain command USAGE
-    -e | --extra-vars  set additional variables as key=value
+    -e | --extra-vars  set additional variables as option=value
 
 
     Extra Variables:
