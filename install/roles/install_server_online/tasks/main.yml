@@ -23,12 +23,9 @@
 - name: Obtain Quipucords server container image from GitHub
   get_url:
     url: "{{ quipucords_server_container_image_url }}"
-    dest: .
+    dest: "{{ pkg_install_dir }}"
+    tmp_dest: "{{ pkg_install_dir }}"
     mode: 0644
     timeout: 300
   when:
     - not quipucords_docker_image_present
-
-- name: Move downloaded server image to user specified folder
-  command: "mv {{ github_server_filename }} {{ pkg_install_dir }}"
-  become: true
