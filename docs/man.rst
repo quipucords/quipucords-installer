@@ -93,15 +93,19 @@ Packages
 ~~~~~~~~
 
 *Quipucords Server*
+
 - Required Name: ``quipucords_server_image.tar.gz``
 - Location: https://github.com/quipucords/quipucords/releases
 
 *Postgres*
+
 - Required Name: ``postgres.9.6.10.tar``
 - The postgres image tar can be created with docker:
+
     ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
 *QPC CLI*
+
 - Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
 - Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
 - Location: https://github.com/quipucords/qpc/releases
