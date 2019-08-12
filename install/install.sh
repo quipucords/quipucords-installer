@@ -49,6 +49,12 @@ usage() {
          -e cli_version=0.0.46
     * Specify if the Quipucords server port should be opened in the host firewall (defaults to true):
          -e open_port=false
+    * Quipucords server username (defaults to admin):
+         -e server_username=cody
+    * Quipucords server password (defaults to qpcpassw0rd):
+         -e server_password=c0dy
+    * Quipucords server user email address (defaults to admin@example.com):
+         -e server_user_email=cody@hotmail.com
     * Quipucords server port (defaults to 9443):
          -e server_port=8443
     * Postgres db user (defaults to 'postgres'):

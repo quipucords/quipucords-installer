@@ -12,6 +12,9 @@
       server_port: '9443'
       server_name: 'quipucords'
       db_name: 'qpc-db'
+      server_username: 'admin'
+      server_password: 'qpcpassw0rd'
+      server_user_email: 'admin@example.com'
       container_command: 'docker'
       server_http_timeout: 120
       dbms_user: 'postgres'
