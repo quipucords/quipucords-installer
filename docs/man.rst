@@ -101,12 +101,7 @@ Packages
 
         Required Name: ``postgres.9.6.10.tar``
         The postgres image tar can be created with docker:
-        ``
-        docker pull postgres:9.6.10
-        ``
-        ``
-        docker save -o postgres.9.6.10.tar postgres:9.6.10
-        ``
+        ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
     *QPC CLI*
 
@@ -119,33 +114,25 @@ Package Location:
 
 A packages directory will need to be created under one of the following paths depending on your system.
 
-  ``
-  mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
-  # {lib} is your library version either lib or lib64
-  # {x.y.z} is the version of your installer
-  ``
+  ``mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages``
+  - # {lib} is your library version either lib or lib64
+  - # {x.y.z} is the version of your installer
 
 The packages above will then need to be moved to this directory so that the installer can find them.
 
-  ``
-  mv path/to/quipucords_server_image.tar.gz /usr/{lib}/quipucords-installer-{x.y.z}/install/packages
-  ``
+  ``mv path/to/quipucords_server_image.tar.gz /usr/{lib}/quipucords-installer-{x.y.z}/install/packages``
 
 Running the Offline Installation:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 As an example the following command with install version 0.9.0 of the Quipucords server and CLI without internet connectivity:
 
-  ``
-  quipucords-installer -e install_offline=true -e server_version=0.9.0  -e cli_vesion=0.9.0
-  ``
+  ``quipucords-installer -e install_offline=true -e server_version=0.9.0  -e cli_vesion=0.9.0``
 
 Installing a Specific Version
 -----------------------------
 The default install will always install the latest release; however, you may choose to install an older version of the quipucords server or the qpc cli.
 
-  ``
-  quipucords-installer -e server_version=0.9.0  -e cli_vesion=0.9.0
-  ``
+  ``quipucords-installer -e server_version=0.9.0  -e cli_vesion=0.9.0``
 
 Installing the CLI & Server Separately
 --------------------------------------
@@ -155,17 +142,13 @@ Installing the Server without the CLI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The following example command will install the Quipucords server but will not install the CLI.
 
-  ``
-  quipucords-installer -e install_cli=false
-  ``
+  ``quipucords-installer -e install_cli=false``
 
 Installing the CLI without the Server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The following example command will install the QPC CLI but will not install the Quipucords Server.
 
-  ``
-  quipucords-installer -e install server=false
-  ``
+  ``quipucords-installer -e install server=false``
 
 Authors
 -------
