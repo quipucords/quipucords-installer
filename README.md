@@ -162,7 +162,7 @@ Note:
 
 ```
  make manpage
- cd install; man ./quipucords-installer
+ cd install; man ./quipucords-installer.1
 ```
 
 # <a name="issues"></a> Issues
