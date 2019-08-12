@@ -14,7 +14,7 @@ Synopsis
 
 Description
 -----------
-The ``quipucords-installer`` tool is used to install the quipucords server and qpc client. The quipucords-installer can be ran by itself to perform a basic install with the preset defaults described in the ``Keys`` section. The most common adaptations of the basic installation are the *Offline Install*, *Specific Version Install*, and *Only CLI/Server install* which are described below.
+The ``quipucords-installer`` tool is used to install the quipucords server and qpc client. The quipucords-installer can be ran by itself to perform a basic install with the preset defaults described in the ``Keys`` section. The most common adaptations of the basic installation are the *Installing Offline*, *Installing a Specific Version*, and *Installing the CLI & Server Separately* which are described below.
 
 
 Usage
