@@ -50,6 +50,7 @@ offline-install-prep: setup
 		yum install -y podman; \
 		yum install -y python36; \
 		yum install -y python3-requests; \
+		yum install -y libselinux-python3; \
 	fi
 
 install: setup

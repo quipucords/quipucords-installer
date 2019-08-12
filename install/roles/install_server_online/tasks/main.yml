@@ -31,7 +31,7 @@
     - not is_rhel8
 
 - name: Obtain Quipucords server container image from GitHub (RHEL 8) # get_url method in above task fails for RHEL 8
-  shell: curl -k -SL "{{ quipucords_server_container_image_url }}" -o "{{ pkg_install_dir }}/{{ github_server_filename }}"
+  shell: curl -k -sSL "{{ quipucords_server_container_image_url }}" -o "{{ pkg_install_dir }}/{{ github_server_filename }}"
   when:
     - not quipucords_docker_image_present
     - is_rhel8|bool
