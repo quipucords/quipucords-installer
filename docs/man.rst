@@ -92,22 +92,19 @@ If you choose the offline option to run the installer, you will need to obtain t
 Packages
 ~~~~~~~~
 
-    *Quipucords Server*
+  *Quipucords Server*
+  Required Name: ``quipucords_server_image.tar.gz``
+  - https://github.com/quipucords/quipucords/releases
 
-        Required Name: ``quipucords_server_image.tar.gz``
-            https://github.com/quipucords/quipucords/releases
+  *Postgres*
+  Required Name: ``postgres.9.6.10.tar``
+  The postgres image tar can be created with docker:
+    ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
-    *Postgres*
-
-        Required Name: ``postgres.9.6.10.tar``
-        The postgres image tar can be created with docker:
-        ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
-
-    *QPC CLI*
-
-        Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
-        Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
-            https://github.com/quipucords/qpc/releases
+  *QPC CLI*
+  Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
+  Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
+  - https://github.com/quipucords/qpc/releases
 
 Package Location:
 ~~~~~~~~~~~~~~~~~
@@ -115,8 +112,8 @@ Package Location:
 A packages directory will need to be created under one of the following paths depending on your system.
 
   ``mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages``
-  - # {lib} is your library version either lib or lib64
-  - # {x.y.z} is the version of your installer
+- # {lib} is your library version either lib or lib64
+- # {x.y.z} is the version of your installer
 
 The packages above will then need to be moved to this directory so that the installer can find them.
 
