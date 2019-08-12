@@ -101,7 +101,7 @@ Packages
 
 - Required Name: ``postgres.9.6.10.tar``
 - The postgres image tar can be created with docker:
-    ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
+``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
 *QPC CLI*
 
@@ -116,8 +116,8 @@ A packages directory will need to be created under one of the following paths de
 
 ``mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages``
 
-- # {lib} is your library version either lib or lib64
-- # {x.y.z} is the version of your installer
+- ``{lib}`` is your library version either lib or lib64
+- ``{x.y.z}`` is the version of your installer
 
 The packages above will then need to be moved to this directory so that the installer can find them.
 
