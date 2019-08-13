@@ -13,7 +13,7 @@ License: GNU
 URL: http://github.com/quipucords/quipucords
 Source0: %{src_name}-%{version}.tar.gz
 %if "%{stream_name}" == "quipucords"
-Source1: https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb
+Source1: https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz
 %endif
 
 BuildArch: noarch
