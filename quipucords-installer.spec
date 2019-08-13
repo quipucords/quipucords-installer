@@ -12,13 +12,13 @@ Group: Applications/Internet
 License: GNU
 URL: http://github.com/quipucords/quipucords
 Source0: %{src_name}-%{version}.tar.gz
+%if "%{stream_name}" == "quipucords"
+Source1: https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb
+%endif
 
 BuildArch: noarch
 #Common Requirements
 Requires: ansible >= 2.4
-%if "%{stream_name}" == "quipucords"
-BuildRequires: pandoc
-%endif
 
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
@@ -33,6 +33,10 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
+%if "%{stream_name}" == "quipucords"
+mkdir %{_builddir}/pandoc
+tar -xvzf %{SOURCE1} --strip-components 1 -C /usr/local
+%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
