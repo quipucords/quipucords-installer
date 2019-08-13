@@ -148,7 +148,7 @@ To test offline installation for RHEL 6/7/8 or Centos 6/7, do the following (wit
 ```
 clear;cd /quipucords_installer;sudo su
 make setup
-make offline-install-prep
+make offline-prep
 # Disconnect from the network
 make install-offline server_version=<server_version> cli_version=<cli_version>
 ```
