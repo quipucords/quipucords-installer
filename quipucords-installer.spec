@@ -12,9 +12,6 @@ Group: Applications/Internet
 License: GNU
 URL: http://github.com/quipucords/quipucords
 Source0: %{src_name}-%{version}.tar.gz
-%if "%{stream_name}" == "quipucords"
-Source1: https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz
-%endif
 
 BuildArch: noarch
 #Common Requirements
@@ -34,8 +31,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %prep
 %setup -q
 %if "%{stream_name}" == "quipucords"
-mkdir %{_builddir}/pandoc
-tar -xvzf %{SOURCE1} --strip-components 1 -C /usr/local
+BuildRequires: pandoc
 %endif
 
 %install
