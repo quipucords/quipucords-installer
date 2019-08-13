@@ -37,6 +37,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
+dnf install pandoc
 
 %install
 mkdir -p %{buildroot}%{_libdir}
