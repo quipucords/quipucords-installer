@@ -19,7 +19,7 @@ Requires: ansible >= 2.4
 
 #Quipucords (Upstream)
 %if "%{stream_name}" == "quipucords"
-%if 1%{?el8}
+%if %{?dist} != el8
 BuildRequires: pandoc
 %endif
 %endif
