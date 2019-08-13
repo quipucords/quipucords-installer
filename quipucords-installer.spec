@@ -25,10 +25,7 @@ Requires: ansible >= 2.4
 
 #Quipucords (Upstream)
 %if "%{stream_name}" == "quipucords"
-%if 0%{?el8}
-BuildRequires: dnf
-dnf install pandoc
-%else
+%if "%{dist}" != ".el8"
 BuildRequires: pandoc
 %endif
 %endif
@@ -55,7 +52,9 @@ sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/instal
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
 %if "%{stream_name}" == "quipucords"
+%if "%{dist}" != ".el8"
 make manpage
+%endif
 %endif
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
