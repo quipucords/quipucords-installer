@@ -17,6 +17,13 @@ BuildArch: noarch
 #Common Requirements
 Requires: ansible >= 2.4
 
+#Quipucords (Upstream)
+%if "%{stream_name}" == "quipucords"
+%if 1%{?el8}
+BuildRequires: pandoc
+%endif
+%endif
+
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
 # Downstream rpmbuilder bombs when there are no BuildRequires
@@ -31,7 +38,9 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %prep
 %setup -q
 %if "%{stream_name}" == "quipucords"
-BuildRequires: pandoc
+%if 0%{el8}
+dnf install pandoc
+%endif
 %endif
 
 %install
