@@ -6,6 +6,7 @@ TOPDIR = $(shell pwd)
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@echo "  setup                                              Sets up yum repos"
+	@echo "  offline-prep                                       Install required dependencies for offline install"
 	@echo "  install-help                                       Runs quipucords-installer help"
 	@echo "  install                                            Install with defaults"
 	@echo "  install-offline                                    Perform an offline installation"
@@ -23,7 +24,6 @@ install-help:
 setup:
 	scripts/setup_repos.sh
 
-#Internal
 offline-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
@@ -53,6 +53,7 @@ offline-prep: setup
 		yum install -y libselinux-python3; \
 	fi
 
+#Internal
 online-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
