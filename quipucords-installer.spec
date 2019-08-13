@@ -1,5 +1,11 @@
+%global intent upstream
+%if "%{intent}" == "upstream"
 %global stream_name quipucords
 %global ver 0.1.2
+%else
+%global stream_name discovery
+%global ver VERSION_PLACE_HOLDER
+%endif
 ####
 %global src_name %{stream_name}-installer
 %global egg_name %{stream_name}_installer
@@ -21,6 +27,7 @@ Requires: ansible >= 2.4
 %if "%{stream_name}" == "quipucords"
 %if 0%{?el8}
 BuildRequires: dnf
+dnf install pandoc
 %else
 BuildRequires: pandoc
 %endif
@@ -39,9 +46,6 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
-%if 0%{?el8}
-sudo dnf install pandoc
-%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
