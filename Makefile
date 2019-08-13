@@ -1,5 +1,6 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
+manpage_path = install/quipucords-installer.1
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
@@ -171,7 +172,7 @@ clean:
 
 manpage:
 	pandoc docs/man.rst \
-	  --standalone -t man -o install/quipucords-installer.1 \
+	  --standalone -t man -o $(manpage_path) \
 	  --variable=section:1 \
 	  --variable=date:'June 6, 2019' \
 	  --variable=footer:'version 0.9.1' \
