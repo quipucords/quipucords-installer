@@ -15,7 +15,7 @@ Source0: %{src_name}-%{version}.tar.gz
 
 BuildArch: noarch
 #Common Requirements
-Requires: ansible
+Requires: ansible >= 2.4
 %if "%{stream_name}" == "quipucords"
 BuildRequires: pandoc
 %endif
