@@ -19,7 +19,10 @@ Requires: ansible >= 2.4
 
 #Quipucords (Upstream)
 %if "%{stream_name}" == "quipucords"
-%if "%{?dist}" != "el8"
+%if 0%{?el7}
+BuildRequires: pandoc
+%endif
+%if 0%{?el6}
 BuildRequires: pandoc
 %endif
 %endif
@@ -37,7 +40,9 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
+%if 0%{?el8}
 dnf install pandoc
+%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
