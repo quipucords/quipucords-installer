@@ -49,11 +49,11 @@ Optional flags can be set to control ``extra-vars`` options passed to the ansibl
 
   Contains a true or false value. Defaults to ``false``. Supply true to start an offline installation.
 
-``-e server_version=0.0.46``
+``-e server_version=0.9.0``
 
   Contains the semantic versioning format (x.y.z) of the quipucords server you want installed. Required if ``install_offline=true`` and ``install_server=true``.
 
-``-e cli_vesion=0.0.46``
+``-e cli_vesion=0.9.0``
 
   Contains the semantic versioning format (x.y.z) of the qpc cli you want installed. Required if ``install_offline=true`` and ``install_cli=true``.
 
@@ -155,7 +155,7 @@ The following example command will install the QPC CLI but will not install the 
 Authors
 -------
 
-The Quipucords Installer was originally written by Chris Hambridge <chambrid@redhat.com>, Kevan Holdaway <kholdawa@redhat.com>, Ashley Aiken <aaiken@redhat.com>, Cody Myers <cmyers@redhat.com>, Cecilia Carter <cecarter@redhat.com>, and Dostonbek Toirov <dtoirov@redhat.com>.
+The Quipucords Installer was originally written by Chris Hambridge <chambrid@redhat.com>, Kevan Holdaway <kholdawa@redhat.com>, Ashley Aiken <aaiken@redhat.com>, Cody Myers <cmyers@redhat.com>, and Dostonbek Toirov <dtoirov@redhat.com>.
 
 Copyright
 ---------

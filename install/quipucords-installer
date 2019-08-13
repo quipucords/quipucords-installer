@@ -49,9 +49,9 @@ usage() {
     * Perform an offline install
          -e install_offline=true
     * Quipucords server version to install (defaults to the latest release):
-         -e server_version=0.0.46
+         -e server_version=0.9.0
     * QPC cli version to install (defaults to the latest release):
-         -e cli_version=0.0.46
+         -e cli_version=0.9.0
     * Specify if the Quipucords server port should be opened in the host firewall (defaults to true):
          -e open_port=false
     * Quipucords server username (defaults to admin):
