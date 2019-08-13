@@ -40,7 +40,7 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %prep
 %setup -q
 %if 0%{?el8}
-dnf install pandoc
+sudo dnf install pandoc
 %endif
 
 %install
