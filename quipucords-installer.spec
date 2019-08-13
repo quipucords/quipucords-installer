@@ -37,11 +37,6 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
-%if "%{stream_name}" == "quipucords"
-%if 0%{el8}
-dnf install pandoc
-%endif
-%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
