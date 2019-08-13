@@ -69,7 +69,7 @@ Optional flags can be set to control ``extra-vars`` options passed to the ansibl
 
   Specifies the database user for postgres. Defaults to ``postgres``.
 
-``-e dbms_password``
+``-e dbms_password=pass123``
 
   Specifies the database password for postgres. Defaults to ``password``.
 
@@ -84,6 +84,38 @@ Optional flags can be set to control ``extra-vars`` options passed to the ansibl
 ``-e server_user_email=cody@hotmail.com``
 
   Quipucords server user email. Defaults to ``admin@example.com``.
+
+``-e use_supervisord=false``
+
+  Contains a true or false value. Defaults to ``true``. Supply false to start server without supervisord.
+
+``-e pkg_install_dir=~/packages``
+
+  Contains the fully qualified path to the downloaded packages for the installer. Defaults to ``<installer>/packages/``.
+
+``-e server_install_dir=~/volumes``
+
+  Contains the fully qualified path to the installation directory for the Quipucords server. Defaults to ``~/quipucords/``.
+
+``-e server_name=quipucords2``
+
+  Contains the name for the Quipucords server. Defaults to ``quipucords``.
+
+``-e QPC_SERVER_TIMEOUT=90``
+
+  Contains the HTTP timeout length for the Quipucords server. Defaults to ``120``.
+
+``-e NETWORK_INSPECT_JOB_TIMEOUT=10700``
+
+  Specifies the network inspect scan timeout in seconds. Defaults to ``10800`` (3 hours).
+
+``-e NETWORK_CONNECT_JOB_TIMEOUT=500``
+
+  Specifies the network connect scan timeout in seconds. Defaults to ``600`` (10 minutes).
+
+``-e ANSIBLE_LOG_LEVEL=10``
+
+  Specifies the level of log output by ansible. Defaults to ``0`` which is no logs.
 
 Installing Offline
 ------------------
