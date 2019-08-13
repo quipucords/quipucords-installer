@@ -18,7 +18,5 @@ then
         sudo cp -rf config/rhel6/*.repo /etc/yum.repos.d/
     else
         sudo cp -rf config/rhel8/*.repo /etc/yum.repos.d/
-        sudo yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/sshpass/1.06/3.el8ae/x86_64/sshpass-1.06-3.el8ae.x86_64.rpm || true
-        sudo yum install -y http://download.eng.bos.redhat.com/brewroot/vol/rhel-8/packages/ansible/2.8.1/1.el8ae/noarch/ansible-2.8.1-1.el8ae.noarch.rpm || true
     fi
 fi

@@ -1,14 +1,16 @@
 ---
 
-- name: Run test 'hello-world' container
-  shell: podman run hello-world
-  register: podman_active
-  become: true
+- name: Test for podman command
+  shell: command -v podman
+  register: have_podman_raw
   ignore_errors: yes
-  when: have_podman|bool
 
-- name: Check the output of test container
+- name: Set have_podman
+  set_fact:
+    have_podman: "{{ have_podman_raw.rc == 0 }}"
+
+- name: Fail if podman command not found
   fail:
-    msg: "Podman not running"
+    msg: "Podman command not found"
   ignore_errors: true
-  when: not podman_active
+  when: not have_podman

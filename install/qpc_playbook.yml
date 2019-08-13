@@ -11,6 +11,7 @@
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
+      db_name: 'qpc-db'
       server_username: 'admin'
       server_password: 'qpcpassw0rd'
       server_user_email: 'admin@example.com'
@@ -41,7 +42,6 @@
     - role: validate_podman_install
       when:
         - install_server|lower == 'true'
-        - install_offline|lower == 'false'
         - container_command|lower == 'podman'
     - role: install_postgres_offline
       when:

@@ -17,6 +17,7 @@
 - name: Set qpc_rpm_local_path
   set_fact:
     qpc_rpm_local_path: "{{ pkg_install_dir }}{{ qpc_package_name }}"
+  when: install_cli|lower == 'true'
 
 - name: Check if local qpc rpm exists
   stat:

@@ -44,19 +44,20 @@
     is_rhel8: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '8') }}"
     is_rhel_centos_8: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '8') }}"
 
-- name: Fail if container_command is 'podman'
+- name: Fail if running on machines other than RHEL 6/7/8 and CentOS 6/7
   fail:
-    msg: "Podman is not supported yet. It is an upcoming update."
-  when: container_command == 'podman'
-
-- fail:
-    msg: "This is not a supported system for installation. Must be RHEL 6/7 or CentOS 6/7."
-  when: not (is_rhel_centos_6 or is_rhel_centos_7)
+    msg: "This is not a supported system for installation. Must be RHEL 6/7/8 or CentOS 6/7."
+  when: not (is_rhel_centos_6 or is_rhel_centos_7 or is_rhel8)
 
 - name: Set container_command to podman if RHEL 8
   set_fact:
     container_command: "podman"
-  when: is_rhel_centos_8|bool
+  when: is_rhel8|bool
+
+- name: Set supervisord to true (RHEL 8)
+  set_fact:
+    use_supervisord: 'true'
+  when: is_rhel8|bool
 
 - name: Get local package directory
   set_fact:
@@ -106,3 +107,8 @@
 - name: Set have_yum
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
+
+- name: Set install_cli to false on RHEL 8 # remove this task once we have cli rpm for RHEL 8
+  set_fact:
+    install_cli: 'false'
+  when: is_rhel8|bool

@@ -24,6 +24,7 @@
   get_url:
     url: "{{ quipucords_server_container_image_url }}"
     dest: "{{ pkg_install_dir }}"
+    tmp_dest: "{{ pkg_install_dir }}"
     mode: 0644
     timeout: 300
   when:
