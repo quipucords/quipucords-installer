@@ -45,16 +45,9 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %setup -q
 %if "%{stream_name}" == "quipucords"
 %if "%{dist}" == ".el8"
-mkdir -p ~/.local/bin
-curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-stack --version
-git clone --depth=50 https://github.com/jgm/pandoc
-cd pandoc
-echo "allow-newer: true" >> stack.yaml
-stack setup
-stack install --ghc-options="-O2" pandoc || true
-ls -lh ~/.local/bin
-pandoc --version || true
+#Working around not having pandoc in RHEL8 yet
+wget -O - https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz >> pandoc.tar.gz
+tar xvzf pandoc.tar.gz --strip-components 1 -C /usr/
 %endif
 %endif
 
