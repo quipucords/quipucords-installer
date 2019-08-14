@@ -1,4 +1,9 @@
 # command to run tests
+addons:
+  apt:
+    packages:
+      - pandoc
+
 script:
   - make test-manpage
 
