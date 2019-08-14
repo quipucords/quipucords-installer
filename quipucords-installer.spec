@@ -1,10 +1,10 @@
-%global intent upstream
-%if "%{intent}" == "upstream"
+%global purpose upstream
+%if "%{purpose}" == "upstream"
 %global stream_name quipucords
 %global ver 0.1.2
 %else
 %global stream_name discovery
-%global ver VERSION_PLACE_HOLDER
+%global ver BUILD_VERSION_PLACEHOLDER
 %endif
 ####
 %global src_name %{stream_name}-installer
@@ -22,13 +22,6 @@ Source0: %{src_name}-%{version}.tar.gz
 BuildArch: noarch
 #Common Requirements
 Requires: ansible >= 2.4
-
-#Quipucords (Upstream)
-%if "%{stream_name}" == "quipucords"
-%if "%{dist}" != ".el8"
-BuildRequires: pandoc
-%endif
-%endif
 
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
@@ -51,16 +44,11 @@ pushd %{_builddir}/%{src_name}-*
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
-%if "%{stream_name}" == "quipucords"
-%if "%{dist}" != ".el8"
-make manpage
-%endif
-%endif
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 chmod 755 %{buildroot}%{_bindir}/%{src_name}
 
-install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/install/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
+install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/docs/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
 
 %files
 %defattr(-,root,root,-)

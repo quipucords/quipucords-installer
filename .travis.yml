@@ -1,6 +1,6 @@
 # command to run tests
 script:
-  - make help
+  - make test-manpage
 
 notifications:
   slack:

@@ -1,6 +1,7 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
 manpage_path = docs/quipucords-installer.1
+manpage_test = docs/test.1
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
@@ -177,3 +178,8 @@ manpage:
 	  --variable=date:'June 6, 2019' \
 	  --variable=footer:'version 0.9.1' \
 	  --variable=header:'quipucords-installer'
+
+test-manpage:
+	make manpage manpage_path=$(manpage_test)
+	diff $(manpage_test) $(manpage_path) || (echo "command failed $?"; exit 1)
+	echo "Successful Test"
