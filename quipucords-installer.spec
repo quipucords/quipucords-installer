@@ -44,9 +44,10 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 %if "%{stream_name}" == "quipucords"
 %if "%{dist}" == ".el8"
 #Working around not having pandoc in RHEL8 yet
-chmod 755 /usr/
+mkdir ~/usr/
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 curl -k -SL https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz -o pandoc.tar.gz
-tar xvzf pandoc.tar.gz --strip-components 1 -C /usr/
+tar xvzf pandoc.tar.gz --strip-components 1 -C ~/usr/
 %endif
 %endif
 
