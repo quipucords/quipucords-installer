@@ -4,7 +4,7 @@
 %global ver 0.1.2
 %else
 %global stream_name discovery
-%global ver BUILD_VERSION_PLACEHOLDER
+%global ver VERSION_PLACE_HOLDER
 %endif
 ####
 %global src_name %{stream_name}-installer
@@ -22,7 +22,12 @@ Source0: %{src_name}-%{version}.tar.gz
 BuildArch: noarch
 #Common Requirements
 Requires: ansible >= 2.4
-
+# Quipucords (Upstream)
+%if "%{stream_name}" == "quipucords"
+%if "%{dist}" != ".el8"
+BuildRequires: pandoc
+%endif
+%endif
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
 # Downstream rpmbuilder bombs when there are no BuildRequires
@@ -36,6 +41,20 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
+%if "%{stream_name}" == "quipucords"
+%if "%{dist}" == ".el8"
+mkdir -p ~/.local/bin
+curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+stack --version
+git clone --depth=50 https://github.com/jgm/pandoc
+cd pandoc
+echo "allow-newer: true" >> stack.yaml
+stack setup
+stack install --ghc-options="-O2" pandoc || true
+ls -lh ~/.local/bin
+pandoc --version || true
+%endif
+%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
@@ -44,10 +63,14 @@ pushd %{_builddir}/%{src_name}-*
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
-install -D -p -m 644 docs/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
+%if "%{stream_name}" == "quipucords"
+make manpage
+%endif
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 chmod 755 %{buildroot}%{_bindir}/%{src_name}
+
+install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/docs/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
 
 %files
 %defattr(-,root,root,-)
