@@ -183,6 +183,7 @@ manpage:
 #diff $(find . -name quipucords-installer.1) quipucords-installer.spec
 test-manpage:
 	make manpage manpage_path=$(manpage_test)
+	tree
 	find . -name quipucords-installer.1
 	diff $(shell find . -name $(manpage_name)) $(manpage_test) || (echo "command failed $?"; exit 1)
 	rm $(manpage_test)

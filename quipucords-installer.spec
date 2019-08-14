@@ -44,11 +44,10 @@ pushd %{_builddir}/%{src_name}-*
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
+install -D -p -m 644 docs/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}
 chmod 755 %{buildroot}%{_bindir}/%{src_name}
-
-install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/docs/%{src_name}.1 %{buildroot}%{_mandir}/man1/%{src_name}.1
 
 %files
 %defattr(-,root,root,-)
