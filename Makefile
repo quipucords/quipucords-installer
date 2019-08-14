@@ -1,6 +1,7 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
-manpage_path = docs/quipucords-installer.1
+manpage_name = quipucords-installer.1
+manpage_path = docs/$(manpage_name)
 manpage_test = docs/test.1
 
 help:
@@ -179,7 +180,10 @@ manpage:
 	  --variable=footer:'version 0.9.1' \
 	  --variable=header:'quipucords-installer'
 
+#diff $(find . -name quipucords-installer.1) quipucords-installer.spec
 test-manpage:
 	make manpage manpage_path=$(manpage_test)
-	diff $(manpage_test) $(manpage_path) || (echo "command failed $?"; exit 1)
+	find . -name quipucords-installer.1
+	diff $(shell find . -name $(manpage_name)) $(manpage_test) || (echo "command failed $?"; exit 1)
+	rm $(manpage_test)
 	echo "Successful Test"
