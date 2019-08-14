@@ -41,20 +41,17 @@ A tool for discovery and inspection of an IT environment. The %{src_name} provid
 
 %prep
 %setup -q
-%if "%{stream_name}" == "quipucords"
-%if "%{dist}" == ".el8"
-#Working around not having pandoc in RHEL8 yet
-mkdir ~/usr/
-export PATH=$HOME/bin:$HOME/.local/bin:$PATH
-curl -k -SL https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz -o pandoc.tar.gz
-tar xvzf pandoc.tar.gz --strip-components 1 -C ~/usr/
-%endif
-%endif
 
 %install
 mkdir -p %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{_bindir}
 pushd %{_builddir}/%{src_name}-*
+%if "%{stream_name}" == "quipucords"
+%if "%{dist}" == ".el8"
+curl -k -SL https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz -o pandoc.tar.gz
+tar xvzf pandoc.tar.gz --strip-components 1 -C /usr/
+%endif
+%endif
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
