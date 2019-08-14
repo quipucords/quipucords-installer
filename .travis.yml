@@ -2,7 +2,7 @@
 addons:
   apt:
     packages:
-      - pandoc
+      - pandoc = 2.7.2
 
 script:
   - make test-manpage
