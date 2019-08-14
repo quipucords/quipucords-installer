@@ -49,14 +49,18 @@ pushd %{_builddir}/%{src_name}-*
 %if "%{stream_name}" == "quipucords"
 %if "%{dist}" == ".el8"
 curl -k -SL https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz -o pandoc.tar.gz
-tar xvzf pandoc.tar.gz --strip-components 1 -C /usr/
+tar xvzf pandoc.tar.gz --strip-components 1 -C ~/
 %endif
 %endif
 sed -i 's?PLAYBOOKPATH=""?PLAYBOOKPATH="%{_libdir}/%{src_name}-%{version}/install/"?g' install/%{src_name}
 sed -i 's/BUILD_VERSION_PLACEHOLDER/%{version}/g' install/%{src_name}
 cp -rf install/%{src_name} %{buildroot}%{_bindir}/%{src_name}
 %if "%{stream_name}" == "quipucords"
+%if 0%{?el8}
+make manpage pandoc=~/bin/pandoc
+%else
 make manpage
+%endif
 %endif
 popd
 cp -rf %{_builddir}/%{src_name}-* %{buildroot}%{_libdir}/%{src_name}-%{version}

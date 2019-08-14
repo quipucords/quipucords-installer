@@ -3,6 +3,7 @@ TOPDIR = $(shell pwd)
 manpage_name = quipucords-installer.1
 manpage_path = docs/$(manpage_name)
 manpage_test = docs/test.1
+pandoc = pandoc
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
@@ -173,7 +174,7 @@ clean:
 	rm -rf test
 
 manpage:
-	pandoc docs/man.rst \
+	$(pandoc) docs/man.rst \
 	  --standalone -t man -o $(manpage_path) \
 	  --variable=section:1 \
 	  --variable=date:'June 6, 2019' \
