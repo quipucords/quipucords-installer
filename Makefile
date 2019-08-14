@@ -1,8 +1,6 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
-manpage_name = quipucords-installer.1
-manpage_path = docs/$(manpage_name)
-manpage_test = docs/test.1
+# Required for a work around in the spec file
 pandoc = pandoc
 
 help:
@@ -175,16 +173,8 @@ clean:
 
 manpage:
 	$(pandoc) docs/man.rst \
-	  --standalone -t man -o $(manpage_path) \
+	  --standalone -t man -o docs/quipucords-installer.1 \
 	  --variable=section:1 \
 	  --variable=date:'June 6, 2019' \
 	  --variable=footer:'version 0.9.1' \
 	  --variable=header:'quipucords-installer'
-
-#diff $(find . -name quipucords-installer.1) quipucords-installer.spec
-test-manpage:
-	make manpage manpage_path=$(manpage_test)
-	find . -name quipucords-installer.1
-	diff $(manpage_name) $(manpage_test) --strip-trailing-cr || (echo "command failed $?"; exit 1)
-	rm $(manpage_test)
-	echo "Successful Test"
