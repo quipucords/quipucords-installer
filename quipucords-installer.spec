@@ -26,6 +26,8 @@ Requires: ansible >= 2.4
 %if "%{stream_name}" == "quipucords"
 %if "%{dist}" != ".el8"
 BuildRequires: pandoc
+%else
+BuildRequires: git
 %endif
 %endif
 # Discovery (Downstream)
