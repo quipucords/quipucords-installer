@@ -14,7 +14,6 @@ before_install:
   - mkdir -p $HOME/.local/bin
 
 script:
-  - docs/pandoc_travis.sh
   - make test-manpage
 
 notifications:
