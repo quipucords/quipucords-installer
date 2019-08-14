@@ -1,9 +1,20 @@
 # command to run tests
+# pandoc 1.16 is the only version of pandoc available.
+# addons:
+#   apt:
+#     packages:
+#       - pandoc
+
+env:
+  global:
+    - PATH=$HOME/bin:$HOME/.local/bin:$PATH
+
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y pandoc=2.7.2
+  - mkdir -p $HOME/bin
+  - mkdir -p $HOME/.local/bin
 
 script:
+  - docs/pandoc_travis.sh
   - make test-manpage
 
 notifications:
