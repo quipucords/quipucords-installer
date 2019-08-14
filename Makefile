@@ -1,6 +1,6 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
-manpage_path = install/quipucords-installer.1
+manpage_path = docs/quipucords-installer.1
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"

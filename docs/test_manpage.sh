@@ -1,13 +1,25 @@
-set -x
-default_location=../install/quipucords-installer.1
-tmpfile=$(mktemp /tmp/test-manpage.1)
+#!/bin/bash
+date=$(date +%s)
+tmpfile=$(mktemp /tmp/test-manpage-$date.1)
+manpage=$PWD/quipucords-installer.1
 cd ../; make manpage manpage_path=$tmpfile
-if [ $tmpfile = $default_location ]
-then
-  echo "File is identical"
-else
-  echo "File is not identical"
-fi
-rm "$tmpfile"
-set +x
 
+DIFF=$(diff $tmpfile $manpage)
+CMP=$(cmp $tmpfile $manpage)
+
+if [ "$DIFF" != "" ]
+then
+  echo "Make manpage was not run."
+  echo "$DIFF"
+  rm $tmpfile
+  exit 1
+fi
+
+if [ "$CMP" != "" ]
+then
+  echo "`make manpage` was not run."
+  echo "$CMP"
+  rm $tmpfile
+  exit 1
+fi
+echo "Successful Test"
