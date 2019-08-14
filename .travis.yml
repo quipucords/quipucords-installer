@@ -3,7 +3,6 @@ addons:
   apt:
     packages:
       - pandoc
-      - tree
 
 script:
   - make test-manpage
