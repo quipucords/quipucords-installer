@@ -1,6 +1,6 @@
 # command to run tests
 script:
-  - make clean
+  - make help
 
 notifications:
   slack:
