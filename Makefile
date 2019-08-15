@@ -1,5 +1,7 @@
 DATE = $(shell date)
 TOPDIR = $(shell pwd)
+# Required for a work around in the spec file
+pandoc = pandoc
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of:"
@@ -170,8 +172,8 @@ clean:
 	rm -rf test
 
 manpage:
-	pandoc docs/man.rst \
-	  --standalone -t man -o install/quipucords-installer.1 \
+	$(pandoc) docs/man.rst \
+	  --standalone -t man -o docs/quipucords-installer.1 \
 	  --variable=section:1 \
 	  --variable=date:'June 6, 2019' \
 	  --variable=footer:'version 0.9.1' \
