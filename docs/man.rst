@@ -101,19 +101,19 @@ Optional flags can be set to control ``extra-vars`` options passed to the ansibl
 
   Contains the name for the Quipucords server. Defaults to ``quipucords``.
 
-``-e QPC_SERVER_TIMEOUT=90``
+``-e server_http_timeout=90``
 
   Contains the HTTP timeout length for the Quipucords server. Defaults to ``120``.
 
-``-e NETWORK_INSPECT_JOB_TIMEOUT=10700``
+``-e inspect_job_timeout=10700``
 
   Specifies the network inspect scan timeout in seconds. Defaults to ``10800`` (3 hours).
 
-``-e NETWORK_CONNECT_JOB_TIMEOUT=500``
+``-e connect_job_timeout=500``
 
   Specifies the network connect scan timeout in seconds. Defaults to ``600`` (10 minutes).
 
-``-e ANSIBLE_LOG_LEVEL=10``
+``-e ansible_log_level=10``
 
   Specifies the level of log output by ansible. Defaults to ``0`` which is no logs.
 
