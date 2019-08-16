@@ -15,6 +15,7 @@
     have_epel: "{{ 'epel-release is already installed' in have_epel_raw['results'][0] }}"
   when:
     - "'results' in have_epel_raw"
+    - have_epel_raw.failed != true
 
 - name: Default have_epel (RHEL/Centos)
   set_fact:

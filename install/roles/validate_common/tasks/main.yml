@@ -13,7 +13,7 @@
   when:
     - not install_cli|lower == 'true'
     - not install_cli|lower == 'false'
-  
+
 - name: Validate install_offline is set to true or false
   fail:
     msg: "{{ install_offline }} is invalid value for install_offline.  Must be equal to true or false"
@@ -92,13 +92,20 @@
   when:
     - qpc_package_name is not defined
     - is_rhel_centos_7|bool
-  
+
+- name: Set qpc version (RHEL8/CentOS 8)
+  set_fact:
+    qpc_package_name: "qpc.el8.noarch.rpm"
+  when:
+    - qpc_package_name is not defined
+    - is_rhel_centos_8|bool
+
 - name: Set install_flag_server_version to server_version
   set_fact:
     install_flag_server_version: "{{ server_version }}"
   when:
     - server_version is defined
-  
+
 - name: Test for yum command
   shell: command -v yum
   register: have_yum_raw
@@ -107,8 +114,3 @@
 - name: Set have_yum
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
-
-- name: Set install_cli to false on RHEL 8 # remove this task once we have cli rpm for RHEL 8
-  set_fact:
-    install_cli: 'false'
-  when: is_rhel8|bool
