@@ -31,6 +31,7 @@ offline-prep: setup
 		yum install -y yum-utils; \
 		yum install -y ansible; \
 		yum install -y docker; \
+		yum install -y podman; \
 		yum install -y epel-release; \
 		yum install -y python36; \
 		yum install -y python36-requests; \
