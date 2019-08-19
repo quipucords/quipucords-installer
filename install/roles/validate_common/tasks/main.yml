@@ -54,7 +54,7 @@
     container_command: "podman"
   when: is_rhel8|bool
 
-- name: Set supervisord to true (RHEL 8)
+- name: Set supervisord to true (Podman - RHEL 7/8)
   set_fact:
     use_supervisord: 'true'
   when: 
@@ -133,5 +133,6 @@
     msg: "Podman command not found"
   ignore_errors: true
   when:
+    - is_rhel8 or is_rhel_centos_7
     - have_podman is defined
     - not have_podman
