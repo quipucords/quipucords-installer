@@ -34,15 +34,6 @@
       when:
         - install_server|lower == 'true'
         - container_command|lower == 'docker'
-    - role: install_podman_online
-      when:
-        - install_server|lower == 'true'
-        - install_offline|lower == 'false'
-        - container_command|lower == 'podman'
-    - role: validate_podman_install
-      when:
-        - install_server|lower == 'true'
-        - container_command|lower == 'podman'
     - role: install_postgres_offline
       when:
         - install_offline|lower == 'true'

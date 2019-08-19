@@ -61,6 +61,7 @@ online-prep: setup
 		yum install -y libcgroup; \
 		yum install -y yum-utils; \
 		yum install -y ansible; \
+		yum install -y podman; \
 	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
 		yum install -y libcgroup; \
@@ -68,9 +69,6 @@ online-prep: setup
 		yum install -y ansible; \
 	else \
 		echo "Running 8"; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true; \
-		subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms; \
 		yum install -y ansible; \
 		yum install -y podman; \
 	fi
