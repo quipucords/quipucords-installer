@@ -54,7 +54,7 @@
     container_command: "podman"
   when: is_rhel8|bool
 
-- name: Set supervisord to true (Podman - RHEL 7/8)
+- name: Set supervisord to true (Podman - RHEL/CentOS 7, RHEL 8)
   set_fact:
     use_supervisord: 'true'
   when: 
