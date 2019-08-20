@@ -67,7 +67,7 @@ copy-install:
 # Internal subcommands that the user should not call
 local-server-image: download-postgres
 	@echo "Building quipucords $(server_version)"
-	cd ../quipucords;make build-ui
+	# cd ../quipucords;make build-ui
 	cd ../quipucords;docker -D build . -t quipucords:$(server_version)
 	cd ../quipucords;docker save -o quipucords_server_image.tar quipucords:$(server_version)
 	cd ../quipucords;gzip -f quipucords_server_image.tar
