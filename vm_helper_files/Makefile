@@ -74,7 +74,7 @@ online-prep: setup
 	fi
 
 
-install-offline: offline-prep
+install-offline:
 	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install: online-prep

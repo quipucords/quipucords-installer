@@ -66,6 +66,10 @@ usage() {
          -e dbms_user=postgres
     * Postgres db password (defaults to 'password')
          -e dbms_password=password
+    * Set the container command ('podman' | 'docker')
+         - defaults to 'podman' for RHEL7/8 & Centos 7
+         - defaults to 'docker' for CentOS/RHEL6
+         -e container_command=
 EOM
     exit 0
 }

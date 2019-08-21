@@ -85,6 +85,10 @@ Optional flags can be set to control ``extra-vars`` options passed to the ansibl
 
   Quipucords server user email. Defaults to ``admin@example.com``.
 
+``-e container_command=docker``
+
+  The container tool default to setup the server. Defaults to ``podman`` for RHEL/Centos7 & RHEL8. Defaults to ``docker`` for RHEL/CentOS 6.
+
 Installing Offline
 ------------------
 If you choose the offline option to run the installer, you will need to obtain the following packages on a machine with internet connectivity.
