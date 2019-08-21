@@ -163,6 +163,6 @@
     msg: "Podman command not found"
   ignore_errors: true
   when:
-    - is_rhel8 or is_rhel_centos_7
+    - container_command == 'podman'
     - have_podman is defined
     - not have_podman
