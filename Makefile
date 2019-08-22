@@ -85,7 +85,7 @@ endif
 
 # Internal subcommands that the user should not call
 download-client:
-	@for os_version in 6 7 ; do \
+	@for os_version in 6 7 8 ; do \
 		set -x; \
 		if [[ "$(cli_version)" = "" || "$(cli_version)" = "latest" ]]; then \
 			curl -k -SL https://github.com/quipucords/qpc/releases/latest/download/qpc.el$$os_version.noarch.rpm -o test/packages/qpc.el$$os_version.noarch.rpm; \
