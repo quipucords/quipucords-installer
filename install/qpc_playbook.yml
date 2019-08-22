@@ -7,7 +7,7 @@
       install_server: 'true'
       install_cli: 'true'
       install_offline: 'false'
-      use_supervisord: 'true'
+      use_supervisord: 'false'
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
