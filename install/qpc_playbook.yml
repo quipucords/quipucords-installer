@@ -49,7 +49,7 @@
         - install_offline|lower == 'true'
         - install_server|lower == 'true'
         - use_docker|lower == 'false'
-    - role: start_postgres_docker
+    - role: start_postgres_common_docker
       when:
         - install_server|lower == 'true'
         - use_docker|lower == 'true'
@@ -69,15 +69,15 @@
       when:
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: start_server_docker
+    - role: start_server_common_docker
       when:
         - install_server|lower == 'true'
         - use_docker|lower == 'true'
-    - role: start_server_podman
+    - role: start_server_common_podman
       when:
         - install_server|lower == 'true'
         - use_docker|lower == 'false'
-    - role: start_postgres_podman
+    - role: start_postgres_common_podman
       when:
         - install_server|lower == 'true'
         - use_docker|lower == 'false'
