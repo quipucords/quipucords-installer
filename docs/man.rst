@@ -59,13 +59,13 @@ The following list contains the available ``--extra-vars`` options.
 
   Enables the installation of a specific Quipucords CLI version. Contains the semantic versioning format (version.release.patch, such as 0.9.0) of the Quipucords CLI that you want to install. Required if ``install_offline=true`` and ``install_cli=true``.
 
-``-e open_port=false``
-
-  Determines whether to open the server port in the firewall during the installation to enable communication between the Quipucords server and remote clients. Contains a true or false value. Defaults to ``true``. Supply ``false`` to install without opening the server port in the firewall. The installation script must run with elevated privileges to open the server port.
-
 ``-e server_port=8443``
 
   Sets the port number for the Quipucords server. Defaults to ``9443``.
+
+``-e open_port=false``
+
+  Determines whether to open the ``server_port`` in the firewall during the installation. This option enables communication between the Quipucords server and any remote clients over the port defined in ``server_port``. Contains a true or false value. Defaults to ``true``. Supply ``false`` to install without opening the server port in the firewall. The installation script must run with elevated privileges to open the server port.
 
 ``-e  dbms_user=postgres``
 
