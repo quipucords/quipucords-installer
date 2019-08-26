@@ -115,3 +115,11 @@
 - name: Set have_yum
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
+
+- name: Set use_docker to true if server_version is less than 0.9.1
+  set_fact:
+    use_docker: 'true'
+  when:
+  - server_version is defined
+  - server_version < '0.9.1'
+  - is_rhel_centos_7|bool
