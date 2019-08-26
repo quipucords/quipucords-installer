@@ -139,19 +139,11 @@ Download the following packages to the machine with internet connectivity. Make 
 
 #. Download the ``quipucords_server_image.tar.gz`` package.
 
-// - Required Name: ``quipucords_server_image.tar.gz``
-// - Location: https://github.com/quipucords/quipucords/releases
-
 *PostgreSQL*
 
 #. Create the PostgreSQL image TAR file with Docker. Use the the following command, where the package name is ``postgres.9.6.10.tar``:
 
    ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
-
-// - Required Name: ``postgres.9.6.10.tar``
-// - The postgres image tar can be created with docker:
-
-// ``docker pull postgres:9.6.10 && docker save -o postgres.9.6.10.tar postgres:9.6.10``
 
 *QPC command line interface*
 
@@ -161,19 +153,12 @@ Download the following packages to the machine with internet connectivity. Make 
    - Red Hat Enterprise Linux 6 and CentOS 6: ``qpc.el6.noarch.rpm``
    - Red Hat Enterprise Linux 7 and CentOS 7: ``qpc.el7.noarch.rpm``
 
-// - Required Name for Centos 6 & RHEL 6: ``qpc.el6.noarch.rpm``
-// - Required Name for Centos 7 & RHEL 7: ``qpc.el7.noarch.rpm``
-// - Location: https://github.com/quipucords/qpc/releases
-
 Setting the package location
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Create a packages directory the following paths. For the variable marked as ``{lib}``, enter the library version, either lib or lib64. For the variable marked as ``{x.y.z}``, enter the version of the Quipucords installer:
 
    ``mkdir -p /usr/{lib}/quipucords-installer-{x.y.z}/install/packages``
-
-// - where ``{lib}`` is your library version, either lib or lib64
-// - where ``{x.y.z}`` is the version of the Quipucords installer
 
 #. Move the packages to the following directory so that the installer can find them:
 
