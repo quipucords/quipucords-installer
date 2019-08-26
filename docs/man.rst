@@ -61,7 +61,7 @@ The following list contains the available ``--extra-vars`` options.
 
 ``-e open_port=false``
 
-  Determines whether to install by opening the server port in the firewall. Contains a true or false value. Defaults to ``true``. Supply ``false`` to install without opening the server port in the firewall. The installation script must run with elevated privileges to open the server port.
+  Determines whether to open the server port in the firewall during the installation to enable communication between the Quipucords server and remote clients. Contains a true or false value. Defaults to ``true``. Supply ``false`` to install without opening the server port in the firewall. The installation script must run with elevated privileges to open the server port.
 
 ``-e server_port=8443``
 
