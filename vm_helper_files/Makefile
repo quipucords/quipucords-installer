@@ -31,6 +31,7 @@ offline-prep: setup
 		yum install -y yum-utils; \
 		yum install -y ansible; \
 		yum install -y docker; \
+		yum install -y podman; \
 		yum install -y epel-release; \
 		yum install -y python36; \
 		yum install -y python36-requests; \
@@ -60,6 +61,7 @@ online-prep: setup
 		yum install -y libcgroup; \
 		yum install -y yum-utils; \
 		yum install -y ansible; \
+		yum install -y podman; \
 	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
 		yum install -y libcgroup; \
@@ -67,15 +69,12 @@ online-prep: setup
 		yum install -y ansible; \
 	else \
 		echo "Running 8"; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-baseos-rpms" || true; \
-		subscription-manager repos --enable="rcm-tools-rhel-8-appstream-rpms" || true; \
-		subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms; \
 		yum install -y ansible; \
 		yum install -y podman; \
 	fi
 
 
-install-offline: offline-prep
+install-offline:
 	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
 
 install: online-prep

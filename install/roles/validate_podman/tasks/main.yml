@@ -8,12 +8,13 @@
 - name: Set have_podman
   set_fact:
     have_podman: "{{ have_podman_raw.rc == 0 }}"
-
-- name: Install the latest version of podman (RHEL/CentOS 8)
-  yum:
-    name: podman
-    state: latest
-  become: true
   when:
-    - is_rhel_centos_8|bool
+    - have_podman_raw is defined
+
+- name: Fail if podman command not found
+  fail:
+    msg: "Podman command not found"
+  ignore_errors: true
+  when:
+    - have_podman is defined
     - not have_podman

@@ -1,0 +1,30 @@
+---
+
+- name: Check if Postgres server docker container already running
+  shell: "docker ps -a -f name='{{ db_name }}' | grep '{{ db_name }}'"
+  become: true
+  register: postgres_ps_raw
+  ignore_errors: yes
+
+- name: Remove running Postgres server docker container
+  shell: "docker rm -f {{ db_name }}"
+  become: true
+  ignore_errors: yes
+  when:
+    - postgres_ps_raw['stdout_lines'] | length > 0
+
+- name: Start Postgres container with docker volume (RHEL 6, Centos 6)
+  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v /var/lib/docker/volumes/db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
+  become: true
+  when:
+    - is_rhel_centos_6|bool
+
+- name: Start Postgres container with docker volume (RHEL 7, Centos 7)
+  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
+  become: true
+  when:
+    - is_rhel_centos_7|bool
+
+- name: Waiting for Postgres to spin up
+  pause:
+    seconds: 30

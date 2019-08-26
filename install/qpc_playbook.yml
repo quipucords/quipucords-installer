@@ -15,52 +15,72 @@
       server_username: 'admin'
       server_password: 'qpcpassw0rd'
       server_user_email: 'admin@example.com'
-      container_command: 'docker'
       server_http_timeout: 120
       dbms_user: 'postgres'
       dbms_password: 'password'
+      use_docker: 'false' # logic elsewhere will change this to docker for RHEL 6
       connect_job_timeout: 600
       inspect_job_timeout: 10800
       ansible_log_level: 0
   roles:
     - validate_common
     - role: validate_offline
-      when: install_offline|lower == 'true'
+      when:
+        - install_offline|lower == 'true'
+    - role: validate_podman
+      when:
+        - install_server | lower == 'true'
+        - use_docker|lower == 'false'
     - role: install_docker_online
       when:
         - install_server|lower == 'true'
-        - container_command|lower == 'docker'
+        - use_docker|lower == 'true'
     - role: start_docker_common
       when:
         - install_server|lower == 'true'
-        - container_command|lower == 'docker'
-    - role: install_podman_online
-      when:
-        - install_server|lower == 'true'
-        - install_offline|lower == 'false'
-        - container_command|lower == 'podman'
-    - role: validate_podman_install
-      when:
-        - install_server|lower == 'true'
-        - container_command|lower == 'podman'
-    - role: install_postgres_offline
+        - use_docker|lower == 'true'
+    - role: install_postgres_offline_docker
       when:
         - install_offline|lower == 'true'
         - install_server|lower == 'true'
-    - role: start_postgres_common
-      when: install_server|lower == 'true'
+        - use_docker|lower == 'true'
+    - role: install_postgres_offline_podman
+      when:
+        - install_offline|lower == 'true'
+        - install_server|lower == 'true'
+        - use_docker|lower == 'false'
+    - role: start_postgres_common_docker
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'true'
     - role: prep_server_online
       when:
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: prep_server_common
-      when: install_server|lower == 'true'
+    - role: prep_server_common_podman
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'false'
+    - role: prep_server_common_docker
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'true'
     - role: install_server_online
       when:
         - install_offline|lower == 'false'
         - install_server|lower == 'true'
-    - role: start_server_common
-      when: install_server|lower == 'true'
+    - role: start_server_common_docker
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'true'
+    - role: start_server_common_podman
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'false'
+    - role: start_postgres_common_podman
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'false'
     - role: install_cli_offline
       when:
         - install_cli|lower == 'true'
@@ -70,8 +90,11 @@
         - install_cli|lower == 'true'
         - install_offline|lower == 'false'
     - role: config_cli_common
-      when: install_cli|lower == 'true'
+      when:
+        - install_cli|lower == 'true'
     - role: validate_cli_install
-      when: install_cli|lower == 'true'
+      when:
+        - install_cli|lower == 'true'
     - role: validate_server_install
-      when: install_server|lower == 'true'
+      when:
+        - install_server|lower == 'true'

@@ -45,7 +45,7 @@
     dir_mount_selinux: ":z"
   when: selinux_on|bool
 
-- name: Set the server {{ container_command }} image tag to user specified version
+- name: Set the server image tag to user specified version
   set_fact:
     server_image_tag: "{{ install_flag_server_version }}"
   when:
@@ -59,35 +59,35 @@
   set_fact:
     release_cache_server_filename: "quipucords.{{ server_image_tag }}.tar.gz"
 
-- name: Set server {{ container_command }} image name
+- name: Set server image name
   set_fact:
-    server_docker_image_name: "quipucords"
+    server_image_name: "quipucords"
 
-- name: Set Quipucords {{ container_command }} image and tag
+- name: Set Quipucords image and tag
   set_fact:
-    server_image_and_tag: "{{server_docker_image_name}}:{{server_image_tag}}"
+    server_image_and_tag: "{{server_image_name}}:{{server_image_tag}}"
   when: server_image_and_tag is not defined
 
-- name: Check for Quipucords server {{ container_command }} image presence
-  shell: "{{ container_command }} images | grep {{ server_docker_image_name }} | grep {{ server_image_tag }}"
+- name: Check for Quipucords server image presence
+  shell: "podman images | grep {{ server_image_name }} | grep {{ server_image_tag }}"
   become: true
-  register: quipucords_docker_image_raw
+  register: quipucords_image_raw
   ignore_errors: yes
 
-- name: Set Quipucords {{ container_command }} image presence to false
+- name: Set Quipucords image presence to false
   set_fact:
-    quipucords_docker_image_present: false
+    quipucords_image_present: false
   when:
-    - quipucords_docker_image_raw.rc != 0
+    - quipucords_image_raw.rc != 0
 
-- name: Set Quipucords {{ container_command }} image presence to true if output is not empty
+- name: Set Quipucords image presence to true if output is not empty
   set_fact:
-    quipucords_docker_image_present: "{{ quipucords_docker_image_raw['stdout_lines']|length > 0 }}"
+    quipucords_image_present: "{{ quipucords_image_raw['stdout_lines']|length > 0 }}"
   when:
-    - quipucords_docker_image_raw.rc == 0
-    - "'stdout_lines' in quipucords_docker_image_raw"
+    - quipucords_image_raw.rc == 0
+    - "'stdout_lines' in quipucords_image_raw"
 
-- name: Set path to local Quipucords {{ container_command }} image tar.gz
+- name: Set path to local Quipucords image tar.gz
   set_fact:
     qpc_server_version_filename: "{{ pkg_install_dir }}{{ release_cache_server_filename }}"
   when: qpc_server_version_filename is not defined
@@ -97,4 +97,4 @@
     path: "{{ pkg_install_dir }}"
     state: directory
   when:
-    - not quipucords_docker_image_present
+    - not quipucords_image_present

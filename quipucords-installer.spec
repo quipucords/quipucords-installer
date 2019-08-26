@@ -27,6 +27,9 @@ Requires: ansible >= 2.4
 %if "%{dist}" != ".el8"
 BuildRequires: pandoc
 %endif
+%if "%{dist}" != ".el6"
+Requires: podman
+%endif
 %endif
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
@@ -73,5 +76,5 @@ install -D -p -m 644 %{buildroot}%{_libdir}/%{src_name}-%{version}/docs/%{src_na
 %{_bindir}/%{src_name}
 
 %changelog
-* Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.9.0
+* Thu Jun 27 2019 Cody Myers <cmyers@redhat.com> 0.1.2
 - Creating the installer as a spec

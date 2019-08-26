@@ -1,0 +1,70 @@
+---
+
+
+- name: Check for Postgres image presence
+  shell: "podman images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  become: true
+  register: postgres_image_raw
+  ignore_errors: yes
+
+- name: Set Postgres image presence to false
+  set_fact:
+    postgres_image_present: false
+  when:
+    - postgres_image_raw.rc != 0
+
+- name: Set Postgres image presence to true if output is not empty
+  set_fact:
+    postgres_image_present: "{{ postgres_image_raw['stdout_lines']|length > 0 }}"
+  when:
+    - postgres_image_raw.rc == 0
+    - "'stdout_lines' in postgres_image_raw"
+
+- name: Default that image load was not attempted for Postgres
+  set_fact:
+    load_postgres_attempted: false
+
+- name: "Image load was attempted for Postgres"
+  set_fact:
+    load_postgres_attempted: true
+  when:
+    - not postgres_image_present
+    - find_postgres_image_local.stat.exists == true
+
+- name: Load Postgres image into local image registry
+  shell: "podman load -i {{postgres_image_local_path}}"
+  become: true
+  when:
+    - not postgres_image_present
+    - find_postgres_image_local.stat.exists == true
+
+- name: Check for Postgres image presence
+  shell: "podman images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  become: true
+  register: postgres_image_raw
+  ignore_errors: yes
+  when:
+    load_postgres_attempted|bool
+
+- name: Set Postgres image presence to false
+  set_fact:
+    postgres_image_present: false
+  when:
+    - load_postgres_attempted|bool
+    - postgres_image_raw.rc != 0
+
+- name: Set Postgres image presence to true if output is not empty
+  set_fact:
+    postgres_image_present: "{{ postgres_image_raw['stdout_lines']|length > 0 }}"
+  when:
+    - load_postgres_attempted|bool
+    - postgres_image_raw.rc == 0
+    - "'stdout_lines' in postgres_image_raw"
+
+- name: Make sure Postgres image loaded (it successfully loaded if skipped)
+  fail:
+    msg: "The Postgres DB's image was not found."
+  when:
+    - load_postgres_attempted|bool
+    - not postgres_image_present
+

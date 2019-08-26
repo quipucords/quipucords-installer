@@ -49,15 +49,16 @@
     msg: "This is not a supported system for installation. Must be RHEL 6/7/8 or CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7 or is_rhel8)
 
-- name: Set container_command to podman if RHEL 8
+- name: Set use_docker to true for RHEL/CentOS 6
   set_fact:
-    container_command: "podman"
-  when: is_rhel8|bool
+    use_docker: 'true'
+  when:
+    - is_rhel_centos_6|bool
 
-- name: Set supervisord to true (RHEL 8)
+- name: Set supervisord to true (RHEL 7/8, CentOS 7)
   set_fact:
     use_supervisord: 'true'
-  when: is_rhel8|bool
+  when: is_rhel8 or is_rhel_centos_7
 
 - name: Get local package directory
   set_fact:
@@ -114,3 +115,11 @@
 - name: Set have_yum
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
+
+- name: Set use_docker to true if server_version is less than 0.9.1
+  set_fact:
+    use_docker: 'true'
+  when:
+  - server_version is defined
+  - server_version < '0.9.1'
+  - is_rhel_centos_7|bool
