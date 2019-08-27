@@ -1,0 +1,60 @@
+---
+
+- name: Install the Quipucords components
+  hosts: localhost
+  vars:
+      install_server: 'true'
+      install_cli: 'true'
+      install_offline: 'false'
+      use_supervisord: 'false'
+      open_port: 'true'
+      server_port: '9443'
+      server_name: 'quipucords'
+      db_name: 'qpc-db'
+      server_username: 'admin'
+      server_password: 'qpcpassw0rd'
+      server_user_email: 'admin@example.com'
+      container_command: 'docker'
+      server_http_timeout: 120
+      dbms_user: 'postgres'
+      dbms_password: 'password'
+      connect_job_timeout: 600
+      inspect_job_timeout: 10800
+      ansible_log_level: 0
+  tasks:
+    - name: Check if ansible is installed with yum (RHEL/Centos)
+      yum:
+        list: ansible
+      register: have_package_raw
+      become: true
+      ignore_errors: yes
+
+    - name: Set have_epel (RHEL/Centos)
+      set_fact:
+        have_ansible: "{{ have_package_raw.results | selectattr('yumstate', 'match', 'installed') | list | length != 0 }}"
+      when:
+        - "'results' in have_package_raw"
+
+    - debug:
+        var: have_ansible
+      when:
+        - have_ansible
+
+    - name: Check if fabtests is installed with yum (RHEL/Centos)
+      yum:
+        list: fabtests
+      register: have_package_raw
+      become: true
+      ignore_errors: yes
+
+    - name: Set have_epel (RHEL/Centos)
+      set_fact:
+        have_fabtests: "{{ have_package_raw.results | selectattr('yumstate', 'match', 'installed') | list | length != 0 }}"
+      when:
+        - "'results' in have_package_raw"
+
+    - debug:
+        var: have_fabtests
+      when:
+        - not have_fabtests
+
