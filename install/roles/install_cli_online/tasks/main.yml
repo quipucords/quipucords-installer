@@ -1,6 +1,6 @@
 ---
 
-- name: Check if EPEL is installed with yum (RHEL/Centos)
+- name: Check if EPEL is installed
   yum:
     name: epel-release
     state: installed
@@ -10,20 +10,20 @@
   when:
     - have_yum|bool
 
-- name: Set have_epel (RHEL/Centos)
+- name: Set fact indicating whether EPEL was found
   set_fact:
     have_epel: "{{ 'epel-release is already installed' in have_epel_raw['results'][0] }}"
   when:
     - "'results' in have_epel_raw"
     - have_epel_raw.failed != true
 
-- name: Default have_epel (RHEL/Centos)
+- name: Default fact indicating whether EPEL was found to false
   set_fact:
     have_epel: false
   when:
     - have_epel is not defined
 
-- name: Install EPEL for RHEL 6 from internet (RHEL/Centos 6)
+- name: Install EPEL for CentOS/RHEL 6 from internet
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
     state: present
@@ -32,7 +32,7 @@
     - is_rhel_centos_6|bool
     - not have_epel
 
-- name: Install EPEL for RHEL 7 from internet (RHEL/Centos 7)
+- name: Install EPEL for CentOS/RHEL 7 from internet
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
@@ -41,25 +41,25 @@
     - is_rhel_centos_7|bool
     - not have_epel
 
-- name: Set install_flag_cli_version to cli_version passed by user
+- name: Assign CLI version passed in by user to cli_version variable
   set_fact:
     install_flag_cli_version: "{{ cli_version }}"
   when:
     - cli_version is defined
 
-- name: Set the default base URL for the qpc cli yum install with cli_version defined by user
+- name: Set the base URL for the QPC CLI yum install (user specified version)
   set_fact:
     cli_github_release_url: "https://github.com/quipucords/qpc/releases/download/{{ install_flag_cli_version }}"
   when:
     - install_flag_cli_version is defined
 
-- name: Set the default base URL for the qpc cli yum install latest if cli_version is not defined
+- name: Set the base URL for the QPC CLI yum install (latest version)
   set_fact:
     cli_github_release_url: "https://github.com/quipucords/qpc/releases/latest/download"
   when:
     - install_flag_cli_version is not defined
 
-- name: Install qpc cli (QPC RHEL/Centos)
+- name: Install QPC CLI
   yum:
     name: '{{ cli_github_release_url }}/{{ qpc_package_name }}'
     state: present

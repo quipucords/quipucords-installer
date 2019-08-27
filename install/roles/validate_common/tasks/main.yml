@@ -35,7 +35,7 @@
     - not open_port|lower == 'true'
     - not open_port|lower == 'false'
 
-- name: Set operating system information
+- name: Gathering operating system information
   set_fact:
     is_rhel_centos_6: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '6') }}"
     is_rhel7: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '7') }}"
@@ -49,13 +49,13 @@
     msg: "This is not a supported system for installation. Must be RHEL 6/7/8 or CentOS 6/7."
   when: not (is_rhel_centos_6 or is_rhel_centos_7 or is_rhel8)
 
-- name: Set use_docker to true for RHEL/CentOS 6
+- name: Set installer to use Docker for RHEL 6 and CentOS 6
   set_fact:
     use_docker: 'true'
   when:
     - is_rhel_centos_6|bool
 
-- name: Set supervisord to true (RHEL 7/8, CentOS 7)
+- name: Set supervisord to true for RHEL 7/8 and CentOS 7
   set_fact:
     use_supervisord: 'true'
   when: is_rhel8 or is_rhel_centos_7
@@ -65,43 +65,43 @@
     pkg_install_dir: "{{ ansible_env['PKG_DIR'] | default(ansible_env['PWD'] + '/packages/') }}"
   when: pkg_install_dir is not defined
 
-- name: Defaulting selinux_on to false
+- name: Defaulting SE Linux Quipucords server installation to false
   set_fact:
     selinux_on: false
 
-- name: Register selinux enabled command
+- name: Determine if SE Linux is enabled
   shell: selinuxenabled
   register: have_selinux_raw
   ignore_errors: yes
 
-- name: Set selinux_on if selinux is enabled
+- name: Set variable to use SE Linux sytax when SE Linux is enabled
   set_fact:
     selinux_on: true
   when:
     - have_selinux_raw.rc == 0
 
-- name: Set qpc version (RHEL/CentOS 6)
+- name: Set QPC RPM package name for RHEL/CentOS 6
   set_fact:
     qpc_package_name: "qpc.el6.noarch.rpm"
   when:
     - qpc_package_name is not defined
     - is_rhel_centos_6|bool
 
-- name: Set qpc version (RHEL/CentOS 7)
+- name: Set QPC RPM package name for RHEL/CentOS 7
   set_fact:
     qpc_package_name: "qpc.el7.noarch.rpm"
   when:
     - qpc_package_name is not defined
     - is_rhel_centos_7|bool
 
-- name: Set qpc version (RHEL8/CentOS 8)
+- name: Set QPC RPM package name for RHEL8/CentOS 8
   set_fact:
     qpc_package_name: "qpc.el8.noarch.rpm"
   when:
     - qpc_package_name is not defined
     - is_rhel_centos_8|bool
 
-- name: Set install_flag_server_version to server_version
+- name: Set version of server to install (if user supplies value)
   set_fact:
     install_flag_server_version: "{{ server_version }}"
   when:
@@ -112,11 +112,11 @@
   register: have_yum_raw
   ignore_errors: yes
 
-- name: Set have_yum
+- name: Set variable to indicate if yum command was found
   set_fact:
     have_yum: "{{ have_yum_raw.rc == 0 }}"
 
-- name: Set use_docker to true if server_version is less than 0.9.1
+- name: Set installation mode to use Docker if Quipucords server version is less than 0.9.1
   set_fact:
     use_docker: 'true'
   when:

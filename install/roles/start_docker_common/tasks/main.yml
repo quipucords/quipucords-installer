@@ -1,11 +1,11 @@
 ---
 
-- name: Test for chkconfig command
+- name: Check for chkconfig command
   shell: command -v chkconfig
   register: have_chkconfig_raw
   ignore_errors: yes
 
-- name: Set have_chkconfig
+- name: Set variable indicating that chkconfig is present
   set_fact:
     have_chkconfig: "{{ have_chkconfig_raw.rc == 0 }}"
 
@@ -14,17 +14,17 @@
   register: have_systemctl_raw
   ignore_errors: yes
 
-- name: Set have_systemctl
+- name: Set variable indicating that systemctl is present
   set_fact:
     have_systemctl: "{{ have_systemctl_raw.rc == 0 }}"
 
-- name: Start Docker
+- name: Start Docker service
   service:
     name: docker
     state: started
   become: true
 
-- name: Setup chkconfig to start docker (RHEL/Centos 6)
+- name: Setup chkconfig to start docker on RHEL/CentOS 6
   shell: chkconfig docker on
   become: true
   ignore_errors: yes
@@ -32,7 +32,7 @@
     - is_rhel_centos_6|bool
     - have_chkconfig
 
-- name: Setup systemctl to start docker (RHEL/Centos 7)
+- name: Setup systemctl to start docker on RHEL/CentOS 7
   shell: systemctl enable docker
   become: true
   ignore_errors: yes

@@ -5,7 +5,7 @@
   register: have_qpc_raw
   ignore_errors: yes
 
-- name: Check have_qpc_raw
+- name: Fail if qpc command was not found
   fail:
     msg: "qpc command not found"
   when:

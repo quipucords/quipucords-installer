@@ -1,6 +1,6 @@
 ---
 
-- name: Ping quipucords server to validate it is up
+- name: Ping quipucords server to validate it is running and functional
   uri:
     url: https://127.0.0.1:{{ server_port}}/api/v1/status
     validate_certs: no
@@ -11,7 +11,7 @@
   until: result.status == 200 or result.status == 401
   changed_when: false
 
-- name: Validate status endpoint responded with valid JSON content
+- name: Validate Quipucords server status endpoint responded with valid JSON content
   fail:
     msg: "The Quipucord server's status endpoint did not respond with valid JSON.  Check installation logs for errors."
   when: "'server_id' not in result.content"
