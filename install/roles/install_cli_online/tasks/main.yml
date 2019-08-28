@@ -1,6 +1,6 @@
 ---
 
-- name: Check if EPEL is installed with yum (RHEL/Centos)
+- name: Check if EPEL is installed with yum
   yum:
     list: epel-release
   register: have_epel_raw
@@ -9,12 +9,12 @@
   when:
     - have_yum|bool
 
-- name: Set have_epel (RHEL/Centos)
+- name: Set have_epel
   set_fact:
-    have_epel: "{{ have_epel_raw.results | selectattr("yumstate", "match", "installed") | list | length != 0 }}"
+    have_epel: "{{ have_epel_raw.results[0].yumstate == 'installed' }}"
   when:
-    - "'results' in have_epel_raw"
-    - have_epel_raw.failed != true
+    - have_epel_raw["results"] is defined
+    - have_epel_raw["results"]|length > 0
 
 - name: Install EPEL for RHEL 6 from internet (RHEL/Centos 6)
   yum:
