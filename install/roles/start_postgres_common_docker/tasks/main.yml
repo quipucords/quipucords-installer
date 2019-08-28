@@ -6,7 +6,7 @@
   register: postgres_ps_raw
   ignore_errors: yes
 
-- name: Remove running PostgreSQL server container
+- name: Remove running PostgreSQL container
   shell: "docker rm -f {{ db_name }}"
   become: true
   ignore_errors: yes

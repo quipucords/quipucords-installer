@@ -63,7 +63,7 @@
 
 - name: Make sure PostgreSQL image loaded (it successfully loaded if skipped)
   fail:
-    msg: "The PostgreSQL DB's image was not found."
+    msg: "The PostgreSQL image was not found."
   when:
     - load_postgres_attempted|bool
     - not postgres_image_present

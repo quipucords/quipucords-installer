@@ -1,6 +1,6 @@
 ---
 
-- name: Rename Quipucords server image file to version specific quipucords file name
+- name: Rename Quipucords server image file to be version specific
   command: cp "{{ pkg_install_dir }}{{ github_server_filename }}" "{{ qpc_server_version_filename }}"
   when:
     - not quipucords_image_present

@@ -51,7 +51,7 @@
     - is_rhel_centos_6|bool
     - not have_docker
 
-- name: Install libselinux-python package
+- name: Install libselinux-python package for CentOS/RHEL 6
   yum:
     name: libselinux-python
     state: present

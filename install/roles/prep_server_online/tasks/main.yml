@@ -29,7 +29,7 @@
     - github_release_info is defined
     - github_release_info.version is defined
 
-- name: Override default Quipucords server container image tag value with release value
+- name: Default the Quipucords server container image tag to the release version when not specified by user
   set_fact:
     server_image_tag: "{{ github_release }}"
   when:

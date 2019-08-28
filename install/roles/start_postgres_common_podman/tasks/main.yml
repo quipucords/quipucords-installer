@@ -6,7 +6,7 @@
   register: postgres_ps_raw
   ignore_errors: yes
 
-- name: Remove running PostgreSQL server container
+- name: Remove running PostgreSQL container
   shell: "podman rm -f {{ db_name }}"
   become: true
   ignore_errors: yes
@@ -21,6 +21,6 @@
   pause:
     seconds: 30
 
-- name: Restart the Quipucords server container on RHEL 8
+- name: Restart the Quipucords server container after starting PostgreSQL
   shell: "podman restart {{ server_name }}"
   become: true
