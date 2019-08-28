@@ -20,7 +20,7 @@
     - postgres_image_raw.rc == 0
     - "'stdout_lines' in postgres_image_raw"
 
-- name: Set variable to indicate that the PostgreSQL Docker image load was not attempted
+- name: Set variable to indicate that the PostgreSQL Docker image load was not attempted (default)
   set_fact:
     load_postgres_attempted: false
 
