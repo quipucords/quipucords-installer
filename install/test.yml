@@ -41,6 +41,7 @@
       debug:
         var: have_fabtests
       when:
+        - have_fabtests is defined
         - not have_fabtests
 
     - name: Prove that our previous method performed an install
