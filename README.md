@@ -21,7 +21,7 @@ Quipucords installer is a bash script that utilizes Ansible to install both the 
 # <a name="requirements"></a> Requirements and Assumptions
 Before installing Quipucords installer on a system, review the following guidelines about installing and running Quipucords and Quipucords installer:
 
- - Quipucords installer is written to run on RHEL or Centos servers.
+ - Quipucords installer is written to run on RHEL or CentOS servers.
 
 # <a name="installation"></a> Installation
 To work with the Quipucords installer, begin by cloning the repository.
@@ -143,7 +143,7 @@ Note:
 
 ## Vagrant: Testing Offline Installation
 
-To test offline installation for RHEL 6/7/8 or Centos 6/7, do the following (with internet connectivity):
+To test offline installation for RHEL 6/7/8 or CentOS 6/7, do the following (with internet connectivity):
 
 ```
 clear;cd /quipucords_installer;sudo su

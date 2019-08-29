@@ -1,6 +1,6 @@
 ---
 
-- name: Query GitHub for the latest release information
+- name: Query GitHub for the latest release of Quipucords server
   uri:
     url: https://github.com/quipucords/quipucords/releases/latest/download/release_info.json
     validate_certs: no
@@ -13,7 +13,7 @@
   when:
     - install_flag_server_version is not defined
 
-- name: Load JSON release info
+- name: Load Quipucords server release JSON
   set_fact:
     github_release_info: "{{ github_release_response.content | from_json }}"
   when:
@@ -21,7 +21,7 @@
     - github_release_response is defined
     - github_release_response.content is defined
 
-- name: Parse release version from github_release_info JSON
+- name: Parse Quipucords server release version from GitHub release JSON
   set_fact:
     github_release: "{{ github_release_info.version }}"
   when:
@@ -29,7 +29,7 @@
     - github_release_info is defined
     - github_release_info.version is defined
 
-- name: Override default server_image_tag value with release value
+- name: Default the Quipucords server container image tag to the release version when not specified by user
   set_fact:
     server_image_tag: "{{ github_release }}"
   when:

@@ -1,26 +1,26 @@
 ---
 
-- name: Set the version specific GitHub base URL for the Quipucords server image tar.gz
+- name: Set the base URL for the Quipucords server container image (user specified version)
   set_fact:
     server_github_release_url: "https://github.com/quipucords/quipucords/releases/download/{{ install_flag_server_version }}"
   when:
     - not quipucords_image_present
     - install_flag_server_version is defined
 
-- name: Set the default GitHub base URL for the Quipucords server image tar.gz
+- name: Set the base URL for the Quipucords server container image (latest version)
   set_fact:
     server_github_release_url: "https://github.com/quipucords/quipucords/releases/latest/download"
   when:
     - not quipucords_image_present
     - install_flag_server_version is not defined
 
-- name: Set server container image tar.gz download URL
+- name: Set Quipucords server container image download URL
   set_fact:
     quipucords_server_container_image_url: "{{ server_github_release_url }}/{{ github_server_filename }}"
   when:
     - not quipucords_image_present
 
-- name: Obtain Quipucords server container image from GitHub
+- name: Download Quipucords server container image from GitHub
   get_url:
     url: "{{ quipucords_server_container_image_url }}"
     dest: "{{ pkg_install_dir }}"

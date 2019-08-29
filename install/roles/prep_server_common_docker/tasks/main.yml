@@ -1,31 +1,31 @@
 ---
 
-- name: Set server directory
+- name: Set Quipucords server working directory
   set_fact:
     server_install_dir: "{{ ansible_env['SERVER_DIR'] | default(ansible_env['HOME'] + '/quipucords') }}"
   when: server_install_dir is not defined
 
-- name: Create server home directory
+- name: Create Quipucords server home directory
   file:
     path: "{{server_install_dir}}"
     state: directory
 
-- name: Create server log directory
+- name: Create Quipucords server directory for logs
   file:
     path: "{{server_install_dir}}/log"
     state: directory
 
-- name: Create server sshkeys directory
+- name: Create Quipucords server directory for ssh keys
   file:
     path: "{{server_install_dir}}/sshkeys"
     state: directory
 
-- name: Create server data directory
+- name: Create Quipucords server directory for data
   file:
     path: "{{server_install_dir}}/data"
     state: directory
 
-- name: Open port in firewall on host machine for Quipucords server
+- name: Open Quipucords server port in firewall on host machine
   iptables:
     chain: INPUT
     destination_port: "{{ server_port }}"
@@ -36,16 +36,16 @@
   when:
     - open_port|bool
 
-- name: Default directory mounting to empty string
+- name: Default SE Linux directory mounting to empty string
   set_fact:
     dir_mount_selinux: ""
 
-- name: Set dir_mount_selinux to add ":z" if selinux_on is true
+- name: Set SE Linux mount directory to ":z" when SE Linux is enabled
   set_fact:
     dir_mount_selinux: ":z"
   when: selinux_on|bool
 
-- name: Set the server image tag to user specified version
+- name: Set the Quipucords server container image tag to user specified version
   set_fact:
     server_image_tag: "{{ install_flag_server_version }}"
   when:
@@ -59,11 +59,11 @@
   set_fact:
     release_cache_server_filename: "quipucords.{{ server_image_tag }}.tar.gz"
 
-- name: Set server image name
+- name: Set Quipucords server container image name
   set_fact:
     server_image_name: "quipucords"
 
-- name: Set Quipucords image and tag
+- name: Set Quipucords container image and tag
   set_fact:
     server_image_and_tag: "{{server_image_name}}:{{server_image_tag}}"
   when: server_image_and_tag is not defined
@@ -74,20 +74,20 @@
   register: quipucords_image_raw
   ignore_errors: yes
 
-- name: Set Quipucords image presence to false
+- name: Set Quipucords container image presence to false (default)
   set_fact:
     quipucords_image_present: false
   when:
     - quipucords_image_raw.rc != 0
 
-- name: Set Quipucords image presence to true if output is not empty
+- name: Set Quipucords container image presence to true if image present
   set_fact:
     quipucords_image_present: "{{ quipucords_image_raw['stdout_lines']|length > 0 }}"
   when:
     - quipucords_image_raw.rc == 0
     - "'stdout_lines' in quipucords_image_raw"
 
-- name: Set path to local Quipucords image tar.gz
+- name: Set path to Quipucords server container image file
   set_fact:
     qpc_server_version_filename: "{{ pkg_install_dir }}{{ release_cache_server_filename }}"
   when: qpc_server_version_filename is not defined

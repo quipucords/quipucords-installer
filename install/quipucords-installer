@@ -62,9 +62,9 @@ usage() {
          -e server_user_email=cody@hotmail.com
     * Quipucords server port (defaults to 9443):
          -e server_port=8443
-    * Postgres db user (defaults to 'postgres'):
+    * PostgreSQL db user (defaults to 'postgres'):
          -e dbms_user=postgres
-    * Postgres db password (defaults to 'password')
+    * PostgreSQL db password (defaults to 'password')
          -e dbms_password=password
 EOM
     exit 0

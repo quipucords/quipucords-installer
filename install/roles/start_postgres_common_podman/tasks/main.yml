@@ -1,26 +1,26 @@
 ---
 
-- name: Check if Postgres server podman container already running
+- name: Check if PostgreSQL server podman container already running
   shell: "podman ps -a -f name='{{ db_name }}' | grep '{{ db_name }}'"
   become: true
   register: postgres_ps_raw
   ignore_errors: yes
 
-- name: Remove running Postgres server podman container
+- name: Remove running PostgreSQL container
   shell: "podman rm -f {{ db_name }}"
   become: true
   ignore_errors: yes
   when:
     - postgres_ps_raw['stdout_lines'] | length > 0
 
-- name: Start Postgres container with Podman
+- name: Start PostgreSQL container with Podman
   shell: "podman run --name {{ db_name }} --network=container:{{ server_name }} -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
   become: true
 
-- name: Waiting for Postgres to spin up
+- name: Waiting for PostgreSQL to spin up
   pause:
     seconds: 30
 
-- name: Restart the Quipucords server container (RHEL 8/Podman)
+- name: Restart the Quipucords server container after starting PostgreSQL
   shell: "podman restart {{ server_name }}"
   become: true

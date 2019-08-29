@@ -1,6 +1,6 @@
 ---
 
-- name: Install QPC from local path
+- name: Install QPC CLI from local RPM
   # Using rpm command throws a warning, suggesting to use 'yum' instead.
   # Read more here: https://stackoverflow.com/questions/48672892/update-yum-package-using-localinstall
   shell: rpm -Uvh --force "{{qpc_rpm_local_path}}"

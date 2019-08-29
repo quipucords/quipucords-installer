@@ -1,15 +1,15 @@
 ---
 
-- name: Test for docker command
+- name: Test for presence of Docker
   shell: command -v docker
   register: have_docker_raw
   ignore_errors: yes
 
-- name: Set have_docker
+- name: Set variable state indicating presence of Docker
   set_fact:
     have_docker: "{{ have_docker_raw.rc == 0 }}"
 
-- name: Install yum-utils (RHEL/Centos)
+- name: Install yum-utils package
   yum:
     name: yum-utils
     state: present
@@ -17,7 +17,7 @@
   when:
     - not have_docker
 
-- name: Install device-mapper-persistent-data (RHEL/Centos)
+- name: Install device-mapper-persistent-data package
   yum:
     name: device-mapper-persistent-data
     state: present
@@ -25,7 +25,7 @@
   when:
     - not have_docker
 
-- name: Install lvm2 (RHEL/Centos)
+- name: Install lvm2 package
   yum:
     name: lvm2
     state: present
@@ -33,7 +33,7 @@
   when:
     - not have_docker
 
-- name: Install libcgroup (RHEL 6)
+- name: Install libcgroup package for CentOS/RHEL 6
   yum:
     name: libcgroup
     state: present
@@ -42,7 +42,7 @@
     - is_rhel_centos_6|bool
     - not have_docker
 
-- name: Install xz (RHEL 6)
+- name: Install xz package for CentOS/RHEL 6
   yum:
     name: xz
     state: present
@@ -51,7 +51,7 @@
     - is_rhel_centos_6|bool
     - not have_docker
 
-- name: Install libselinux-python (RHEL/Centos 6)
+- name: Install libselinux-python package for CentOS/RHEL 6
   yum:
     name: libselinux-python
     state: present
@@ -62,7 +62,7 @@
     - ansible_selinux_python_present is defined and ansible_selinux_python_present == false
     - not have_docker
 
-- name: Add Docker CE repository (Centos 7)
+- name: Add Docker CE repository for CentOS 7
   yum_repository:
     name: docker-ce
     description: Docker CE repo
@@ -74,7 +74,7 @@
     - is_centos_7|bool
     - not have_docker
 
-- name: Install the latest version of docker (RHEL 7)
+- name: Install Docker for RHEL 7
   yum:
     name: docker
     state: latest
@@ -83,7 +83,7 @@
     - is_rhel7|bool
     - not have_docker
 
-- name: Install the latest version of docker-ce (Centos 7)
+- name: Install Docker-CE for CentOS 7
   yum:
     name: docker-ce
     state: latest
@@ -92,7 +92,7 @@
     - is_centos_7|bool
     - not have_docker
 
-- name: Install Docker Engine for (Centos/RHEL 6)
+- name: Install Docker for CentOS/RHEL 6
   yum:
     name: http://yum.dockerproject.org/repo/main/centos/6/Packages/docker-engine-1.7.1-1.el6.x86_64.rpm
     state: present

@@ -1,6 +1,6 @@
 ---
 
-- name: Configure QPC to talk to server
+- name: Configure QPC CLI to talk to local Quipucords server
   shell: qpc server config --host 127.0.0.1 --port "{{ server_port }}"
   when:
     - install_server|lower == 'true'
