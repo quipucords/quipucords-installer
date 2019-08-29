@@ -2,26 +2,19 @@
 
 - name: Check if EPEL is installed
   yum:
-    name: epel-release
-    state: installed
+    list: epel-release
   register: have_epel_raw
   become: true
   ignore_errors: yes
   when:
     - have_yum|bool
 
-- name: Set fact indicating whether EPEL was found
+- name: Set have_epel
   set_fact:
-    have_epel: "{{ 'epel-release is already installed' in have_epel_raw['results'][0] }}"
+    have_epel: "{{ have_epel_raw.results[0].yumstate == 'installed' }}"
   when:
-    - "'results' in have_epel_raw"
-    - have_epel_raw.failed != true
-
-- name: Default fact indicating whether EPEL was found to false
-  set_fact:
-    have_epel: false
-  when:
-    - have_epel is not defined
+    - have_epel_raw["results"] is defined
+    - have_epel_raw["results"]|length > 0
 
 - name: Install EPEL for CentOS/RHEL 6 from internet
   yum:
