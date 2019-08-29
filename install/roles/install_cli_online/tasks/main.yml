@@ -41,23 +41,17 @@
     - is_rhel_centos_7|bool
     - not have_epel
 
-- name: Assign CLI version passed in by user to cli_version variable
-  set_fact:
-    install_flag_cli_version: "{{ cli_version }}"
-  when:
-    - cli_version is defined
-
 - name: Set the base URL for the QPC CLI yum install (user specified version)
   set_fact:
-    cli_github_release_url: "https://github.com/quipucords/qpc/releases/download/{{ install_flag_cli_version }}"
+    cli_github_release_url: "https://github.com/quipucords/qpc/releases/download/{{ cli_version }}"
   when:
-    - install_flag_cli_version is defined
+    - cli_version is defined
 
 - name: Set the base URL for the QPC CLI yum install (latest version)
   set_fact:
     cli_github_release_url: "https://github.com/quipucords/qpc/releases/latest/download"
   when:
-    - install_flag_cli_version is not defined
+    - cli_version is not defined
 
 - name: Install QPC CLI
   yum:

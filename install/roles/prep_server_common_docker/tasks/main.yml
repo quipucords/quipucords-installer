@@ -47,9 +47,9 @@
 
 - name: Set the Quipucords server container image tag to user specified version
   set_fact:
-    server_image_tag: "{{ install_flag_server_version }}"
+    server_image_tag: "{{ server_version }}"
   when:
-    - install_flag_server_version is defined
+    - server_version is defined
 
 - name: Set the Quipucords release server image file name
   set_fact:

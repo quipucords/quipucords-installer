@@ -11,13 +11,13 @@
   until: github_release_response.status == 200 or github_release_response.status == 401
   changed_when: false
   when:
-    - install_flag_server_version is not defined
+    - server_version is not defined
 
 - name: Load Quipucords server release JSON
   set_fact:
     github_release_info: "{{ github_release_response.content | from_json }}"
   when:
-    - install_flag_server_version is not defined
+    - server_version is not defined
     - github_release_response is defined
     - github_release_response.content is defined
 
@@ -25,7 +25,7 @@
   set_fact:
     github_release: "{{ github_release_info.version }}"
   when:
-    - install_flag_server_version is not defined
+    - server_version is not defined
     - github_release_info is defined
     - github_release_info.version is defined
 
@@ -33,5 +33,5 @@
   set_fact:
     server_image_tag: "{{ github_release }}"
   when:
-    - install_flag_server_version is not defined
+    - server_version is not defined
     - github_release is defined
