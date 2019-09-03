@@ -7,6 +7,7 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@echo "  setup                                              Sets up yum repos"
 	@echo "  offline-prep                                       Install required dependencies for offline install"
+	@echo "  online-prep                                        Install required dependencies for online install. Required if not using make commands."
 	@echo "  install-help                                       Runs quipucords-installer help"
 	@echo "  install                                            Install with defaults"
 	@echo "  install-offline                                    Perform an offline installation"
@@ -54,7 +55,6 @@ offline-prep: setup
 		yum install -y libselinux-python3; \
 	fi
 
-#Internal
 online-prep: setup
 	@if grep -q -i "release 7" /etc/redhat-release; then \
 		echo "Running 7"; \
@@ -72,7 +72,6 @@ online-prep: setup
 		yum install -y ansible; \
 		yum install -y podman; \
 	fi
-
 
 install-offline:
 	cd install;./quipucords-installer -e install_offline=true -e server_version=$(server_version) -e cli_version=$(cli_version)
