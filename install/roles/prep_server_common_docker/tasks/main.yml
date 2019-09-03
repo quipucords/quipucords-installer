@@ -1,10 +1,5 @@
 ---
 
-- name: Set Quipucords server working directory
-  set_fact:
-    server_install_dir: "{{ ansible_env['SERVER_DIR'] | default(ansible_env['HOME'] + '/quipucords') }}"
-  when: server_install_dir is not defined
-
 - name: Create Quipucords server home directory
   file:
     path: "{{server_install_dir}}"
