@@ -52,20 +52,37 @@ usage() {
          -e server_version=0.9.0
     * QPC cli version to install (defaults to the latest release):
          -e cli_version=0.9.0
+    * Quipucords server port (defaults to 9443):
+         -e server_port=8443
     * Specify if the Quipucords server port should be opened in the host firewall (defaults to true):
          -e open_port=false
+    * PostgreSQL db user (defaults to 'postgres'):
+         -e dbms_user=postgres
+    * PostgreSQL db password (defaults to 'password')
+         -e dbms_password=password
     * Quipucords server username (defaults to admin):
          -e server_username=cody
     * Quipucords server password (defaults to qpcpassw0rd):
          -e server_password=c0dy
     * Quipucords server user email address (defaults to admin@example.com):
          -e server_user_email=cody@hotmail.com
-    * Quipucords server port (defaults to 9443):
-         -e server_port=8443
-    * PostgreSQL db user (defaults to 'postgres'):
-         -e dbms_user=postgres
-    * PostgreSQL db password (defaults to 'password')
-         -e dbms_password=password
+    * Controls whether to start the Quipucords server with supervisord (defaults to true):
+         -e use_supervisord=false
+    * Sets the path to the downloaded packages for the installer (defaults to <installer>/packages/):
+         -e pkg_install_dir=~/packages
+    * Sets the path to the volumes directory for the Quipucords server (defaults to ~/quipucords):
+         -e server_install_dir=~/volumes
+    * Sets the name of the quipucords server (defaults to quipucords):
+         -e server_name=quipucords2
+    * Sets the HTTP timeout length for the Quipucords server (defaults to 120):
+         -e server_http_timeout=90
+    * Sets the network inspection scan timeout in seconds (defaults to 10800):
+         -e inspect_job_timeout=10700
+    * Sets the network connection scan timeout in seconds (defaults to 600):
+         -e connect_job_timeout=500
+    * Sets the level of log output by Ansible during network scans (defaults to 0):
+         -e ansible_log_level=10
+
 EOM
     exit 0
 }
