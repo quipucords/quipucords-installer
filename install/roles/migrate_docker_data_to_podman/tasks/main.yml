@@ -1,2 +1,69 @@
 ---
 
+- name: Stop PostgreSQL podman container in preparation for migration
+  shell: "podman stop {{ db_name }}"
+  become: true
+  ignore_errors: yes
+
+- name: Query docker volumes to find the location of postgres data
+  shell: "docker volume inspect db-data"
+  become: true
+  register: docker_postgres_volume_json_raw
+  ignore_errors: yes
+
+- name: Convert docker volume information to JSON
+  set_fact:
+    docker_postgres_volume_json: "{{ docker_postgres_volume_json_raw.stdout | from_json }}"
+  when:
+    - docker_postgres_volume_json_raw is defined
+    - docker_postgres_volume_json_raw.stdout is defined
+
+- name: Obtain the qpc docker database mount volume location
+  set_fact:
+    docker_postgres_volume_mount_path: "{{ docker_postgres_volume_json[0].Mountpoint }}"
+  when:
+    - docker_postgres_volume_json is defined
+    - docker_postgres_volume_json[0] is defined
+    - docker_postgres_volume_json[0].Mountpoint is defined
+
+- name: Query podman volumes to find the location of postgres data
+  shell: "podman volume inspect db-data"
+  become: true
+  register: podman_postgres_volume_json_raw
+  ignore_errors: yes
+
+- name: Convert podman volume information to JSON
+  set_fact:
+    podman_postgres_volume_json: "{{ podman_postgres_volume_json_raw.stdout | from_json }}"
+  when:
+    - podman_postgres_volume_json_raw is defined
+    - podman_postgres_volume_json_raw.stdout is defined
+
+- name: Obtain the qpc podman database mount volume location
+  set_fact:
+    podman_postgres_volume_mount_path: "{{ podman_postgres_volume_json[0].mountPoint }}"
+  when:
+    - podman_postgres_volume_json is defined
+    - podman_postgres_volume_json[0] is defined
+    - podman_postgres_volume_json[0].mountPoint is defined
+
+- name: Remove newly created PostgreSQL DB volume's empty data directory
+  file:
+    state: absent
+    path: "{{ podman_postgres_volume_mount_path }}/"
+  when:
+    - podman_postgres_volume_mount_path is defined
+
+- name: Move the docker QPC PostgreSQL DB volume's data to the podman PostgreSQL DB volume
+  command: mv "{{ docker_postgres_volume_mount_path }}" "{{ podman_postgres_volume_mount_path }}"
+  when:
+    - podman_postgres_volume_mount_path is defined
+    - docker_postgres_volume_mount_path is defined
+
+- name: Restart the PostgreSQL DB container after migrating the data
+  shell: "podman restart {{ db_name }}"
+  become: true
+
+- name: Restart the Quipucords server container after restarting PostgreSQL DB container
+  shell: "podman restart {{ server_name }}"
+  become: true

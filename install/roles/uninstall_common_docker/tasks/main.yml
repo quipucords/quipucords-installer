@@ -34,3 +34,8 @@
   when:
     - have_qpc_db_docker_container
 
+- name: Set variable indicating whether any QPC docker containers found
+  set_fact:
+    have_qpc_docker_containers: true
+  when:
+    - have_qpc_server_docker_container or have_qpc_db_docker_container

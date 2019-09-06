@@ -34,3 +34,8 @@
   when:
     - have_qpc_server_podman_container
 
+- name: Set variable indicating whether any QPC podman containers found
+  set_fact:
+    have_qpc_podman_containers: true
+  when:
+    - have_qpc_server_podman_container or have_qpc_db_podman_container
