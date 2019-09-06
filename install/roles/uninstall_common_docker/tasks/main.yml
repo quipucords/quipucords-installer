@@ -1,0 +1,36 @@
+---
+
+- name: Check for Quipucords server container is already running
+  shell: "docker ps -a -f name={{ server_name }} | grep {{server_name}}"
+  become: true
+  register: docker_qpc_ps_raw
+  ignore_errors: yes
+
+- name: Set variable indicating whether QPC server docker container found
+  set_fact:
+    have_qpc_server_docker_container: "{{ docker_qpc_ps_raw['stdout_lines'] | length > 0 }}"
+
+- name: Remove running Quipucords server container
+  shell: "docker rm -f {{server_name}}"
+  become: true
+  ignore_errors: yes
+  when:
+    - have_qpc_server_docker_container
+
+- name: Check if PostgreSQL server docker container already running
+  shell: "docker ps -a -f name='{{ db_name }}' | grep '{{ db_name }}'"
+  become: true
+  register: docker_postgres_ps_raw
+  ignore_errors: yes
+
+- name: Set variable indicating whether QPC PostgreSQL docker container found
+  set_fact:
+    have_qpc_db_docker_container: "{{ docker_postgres_ps_raw['stdout_lines'] | length > 0 }}"
+
+- name: Remove running PostgreSQL container
+  shell: "docker rm -f {{ db_name }}"
+  become: true
+  ignore_errors: yes
+  when:
+    - have_qpc_db_docker_container
+

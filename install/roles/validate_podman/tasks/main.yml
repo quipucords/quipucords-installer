@@ -1,16 +1,5 @@
 ---
 
-- name: Test for podman command
-  shell: command -v podman
-  register: have_podman_raw
-  ignore_errors: yes
-
-- name: Set variable to indicate if Podman command was found
-  set_fact:
-    have_podman: "{{ have_podman_raw.rc == 0 }}"
-  when:
-    - have_podman_raw is defined
-
 - name: Fail if podman command not found
   fail:
     msg: "Podman command not found"

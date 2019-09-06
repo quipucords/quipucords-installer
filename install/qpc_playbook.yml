@@ -28,10 +28,26 @@
     - role: validate_offline
       when:
         - install_offline|lower == 'true'
+    - role: prep_common_docker
+      when:
+        - install_server | lower == 'true'
+    - role: prep_common_podman
+      when:
+        - install_server | lower == 'true'
     - role: validate_podman
       when:
         - install_server | lower == 'true'
         - use_docker|lower == 'false'
+    - role: uninstall_common_docker
+      when:
+        - install_server | lower == 'true'
+        - have_docker is defined
+        - have_docker
+    - role: uninstall_common_podman
+      when:
+        - install_server | lower == 'true'
+        - have_podman is defined
+        - have_podman
     - role: install_docker_online
       when:
         - install_server|lower == 'true'

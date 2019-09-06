@@ -1,0 +1,36 @@
+---
+
+- name: Check if PostgreSQL server podman container already running
+  shell: "podman ps -a -f name='{{ db_name }}' | grep '{{ db_name }}'"
+  become: true
+  register: podman_postgres_ps_raw
+  ignore_errors: yes
+
+- name: Set variable indicating whether QPC server podman container found
+  set_fact:
+    have_qpc_db_podman_container: "{{ podman_postgres_ps_raw['stdout_lines'] | length > 0 }}"
+
+- name: Remove running PostgreSQL container
+  shell: "podman rm -f {{ db_name }}"
+  become: true
+  ignore_errors: yes
+  when:
+    - have_qpc_db_podman_container
+
+- name: Check for Quipucords server container is already running
+  shell: "podman ps -a -f name={{ server_name }} | grep {{server_name}}"
+  become: true
+  register: podman_qpc_ps_raw
+  ignore_errors: yes
+
+- name: Set variable indicating whether QPC server podman container found
+  set_fact:
+    have_qpc_server_podman_container: "{{ podman_qpc_ps_raw['stdout_lines'] | length > 0 }}"
+
+- name: Remove running Quipucords server container
+  shell: "podman rm -f {{server_name}}"
+  become: true
+  ignore_errors: yes
+  when:
+    - have_qpc_server_podman_container
+

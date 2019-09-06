@@ -51,19 +51,6 @@
     - load_quipucords_server_attempted|bool
     - not quipucords_image_present
 
-- name: Check for Quipucords server container is already running
-  shell: "docker ps -a -f name={{ server_name }} | grep {{server_name}}"
-  become: true
-  register: qpc_ps_raw
-  ignore_errors: yes
-
-- name: Remove running Quipucords server container
-  shell: "docker rm -f {{server_name}}"
-  become: true
-  ignore_errors: yes
-  when:
-    - qpc_ps_raw['stdout_lines'] | length > 0
-
 - name: Start Quipucords server Docker container linked to PostgreSQL container
   shell: "docker run --name {{ server_name }} --link {{ db_name }}:qpc-link -d -e USE_SUPERVISORD={{ use_supervisord }} -e QPC_SERVER_TIMEOUT={{ server_http_timeout }} -e QPC_DBMS_USER={{ dbms_user }} -e QPC_DBMS_PASSWORD={{ dbms_password }} -e QPC_DBMS_HOST='qpc-db' -e ANSIBLE_LOG_LEVEL={{ ansible_log_level }} -e NETWORK_CONNECT_JOB_TIMEOUT={{ connect_job_timeout }} -e NETWORK_INSPECT_JOB_TIMEOUT={{ inspect_job_timeout }} -e QPC_SERVER_USERNAME={{ server_username }} -e QPC_SERVER_USER_EMAIL={{ server_user_email }} -e QPC_SERVER_PASSWORD={{ server_password }} -p {{ server_port }}:443 -v {{ server_install_dir }}/sshkeys:/sshkeys{{ dir_mount_selinux }} -v {{ server_install_dir }}/data:/var/data{{ dir_mount_selinux }} -v {{ server_install_dir }}/log:/var/log{{ dir_mount_selinux }} -i {{ server_image_and_tag }}"
   become: true
