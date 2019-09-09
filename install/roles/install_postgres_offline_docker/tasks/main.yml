@@ -2,7 +2,7 @@
 
 
 - name: Check for PostgreSQL Docker image presence
-  shell: "docker images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  shell: "docker images | grep postgres | grep {{ postgres_version }}"
   become: true
   register: postgres_image_raw
   ignore_errors: yes
@@ -39,7 +39,7 @@
     - find_postgres_image_local.stat.exists == true
 
 - name: Read Docker images and grep for PostgreSQL Docker image
-  shell: "docker images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  shell: "docker images | grep postgres | grep {{ postgres_version }}"
   become: true
   register: postgres_image_raw
   ignore_errors: yes

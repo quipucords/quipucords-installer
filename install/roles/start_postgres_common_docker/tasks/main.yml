@@ -1,13 +1,13 @@
 ---
 
 - name: Start PostgreSQL container with docker volume on RHEL 6 or CentOS 6
-  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v /var/lib/docker/volumes/db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
+  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v /var/lib/docker/volumes/db-data:/var/lib/postgresql/data -d postgres:{{postgres_version}}"
   become: true
   when:
     - is_rhel_centos_6|bool
 
 - name: Start PostgreSQL container with docker volume on RHEL 7 or CentOS 7
-  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v db-data:/var/lib/postgresql/data -d postgres:{{POSTGRES_VERSION}}"
+  shell: "docker run --name {{ db_name }}  -e POSTGRES_USER={{dbms_user}} -e POSTGRES_PASSWORD={{dbms_password}} -v db-data:/var/lib/postgresql/data -d postgres:{{postgres_version}}"
   become: true
   when:
     - is_rhel_centos_7|bool

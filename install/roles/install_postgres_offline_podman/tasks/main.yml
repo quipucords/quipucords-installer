@@ -2,7 +2,7 @@
 
 
 - name: Check for PostgreSQL Podman image presence
-  shell: "podman images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  shell: "podman images | grep postgres | grep {{ postgres_version }}"
   become: true
   register: postgres_image_raw
   ignore_errors: yes
@@ -39,7 +39,7 @@
     - find_postgres_image_local.stat.exists == true
 
 - name: Read Podman images and grep for PostgreSQL Podman image
-  shell: "podman images | grep postgres | grep {{ POSTGRES_VERSION }}"
+  shell: "podman images | grep postgres | grep {{ postgres_version }}"
   become: true
   register: postgres_image_raw
   ignore_errors: yes

@@ -61,7 +61,7 @@
 
 - name: Set PostgreSQL container image file name
   set_fact:
-    postgres_image_filename: "postgres.{{ POSTGRES_VERSION }}.tar"
+    postgres_image_filename: "postgres.{{ postgres_version }}.tar"
   when:
     - postgres_image_filename is not defined
 

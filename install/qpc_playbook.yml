@@ -11,6 +11,7 @@
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
+      postgres_version: '9.6.10'
       db_name: 'qpc-db'
       server_username: 'admin'
       server_password: 'qpcpassw0rd'
