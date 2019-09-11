@@ -10,7 +10,7 @@ quipucords-installer - Installs the Quipucords server and command line interface
 Synopsis
 --------
 
-``quipiucords-installer [options]``
+``quipucords-installer [options]``
 
 Description
 -----------
