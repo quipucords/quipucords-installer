@@ -1,0 +1,14 @@
+---
+
+- name: Set QPC CLI RPM file path
+  set_fact:
+    qpc_rpm_local_path: "{{ pkg_install_dir }}{{ qpc_package_name }}"
+  when: install_cli|lower == 'true'
+
+- name: Check if QPC CLI RPM file exists
+  stat:
+    path: "{{ qpc_rpm_local_path }}"
+  register: find_qpc_rpm_local
+  when:
+    - install_cli|lower == 'true'
+

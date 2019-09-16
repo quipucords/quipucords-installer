@@ -1,0 +1,31 @@
+---
+
+- name: Validate use_supervisord is set to true or false
+  fail:
+    msg: "{{ use_supervisord }} is invalid value for use_supervisord.  Must be equal to true or false"
+  when:
+    - not use_supervisord|lower == 'true'
+    - not use_supervisord|lower == 'false'
+
+- name: Validate open_port is set to true or false
+  fail:
+    msg: "{{ open_port }} is invalid value for open_port.  Must be equal to true or false"
+  when:
+    - not open_port|lower == 'true'
+    - not open_port|lower == 'false'
+
+- name: Validate Quipucords server version compatibility with RHEL 8
+  fail:
+    msg: "Quipucords server {{ server_version }} cannot be installed on RHEL 8.  RHEL 8 requires version 0.9.1 or newer."
+  when:
+  - server_version is defined
+  - server_version < '0.9.1'
+  - is_rhel8|bool
+
+- name: Fail if podman command not found when podman is being used instead of docker
+  fail:
+    msg: "Podman command not found and "
+  ignore_errors: true
+  when:
+    - use_docker|lower == 'false'
+    - not have_podman

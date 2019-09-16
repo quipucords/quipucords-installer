@@ -1,9 +1,0 @@
----
-
-- name: Fail if podman command not found
-  fail:
-    msg: "Podman command not found"
-  ignore_errors: true
-  when:
-    - have_podman is defined
-    - not have_podman

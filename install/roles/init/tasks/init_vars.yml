@@ -1,0 +1,38 @@
+---
+
+- name: Gathering operating system information
+  set_fact:
+    is_rhel_centos_6: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '6') }}"
+    is_rhel7: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '7') }}"
+    is_centos_7: "{{ (ansible_distribution == 'CentOS') and (ansible_distribution_major_version == '7') }}"
+    is_rhel_centos_7: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '7') }}"
+    is_rhel8: "{{ (ansible_distribution == 'RedHat') and (ansible_distribution_major_version == '8') }}"
+    is_rhel_centos_8: "{{ ((ansible_distribution == 'RedHat') or (ansible_distribution == 'CentOS')) and (ansible_distribution_major_version == '8') }}"
+
+- name: Test for yum command
+  shell: command -v yum
+  register: have_yum_raw
+  ignore_errors: yes
+
+- name: Set variable to indicate if yum command was found
+  set_fact:
+    have_yum: "{{ have_yum_raw.rc == 0 }}"
+
+- name: Get local package directory
+  set_fact:
+    pkg_install_dir: "{{ ansible_env['PWD'] + '/packages/' }}"
+  when: pkg_install_dir is not defined
+
+- name: Set installer to use Docker for RHEL 6 and CentOS 6
+  set_fact:
+    use_docker: 'true'
+  when:
+    - is_rhel_centos_6|bool
+
+- name: Set installation mode to use Docker if Quipucords server version is less than 0.9.1
+  set_fact:
+    use_docker: 'true'
+  when:
+  - server_version is defined
+  - server_version < '0.9.1'
+  - is_rhel_centos_7|bool

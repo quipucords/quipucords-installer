@@ -1,4 +1,3 @@
-# Install playbook for Quipucords
 ---
 
 - name: Install the Quipucords components
@@ -7,7 +6,7 @@
       install_server: 'true'
       install_cli: 'true'
       install_offline: 'false'
-      use_supervisord: 'false'
+      use_supervisord: 'true'
       open_port: 'true'
       server_port: '9443'
       server_name: 'quipucords'
@@ -26,99 +25,66 @@
       ansible_log_level: 0
       have_qpc_docker_containers: false
       have_qpc_podman_containers: false
-  roles:
-    - validate_common
-    - role: validate_offline
+
+  tasks:
+    - name: Setting default variable values for installation
+      include_role:
+        name: init
+        tasks_from: init_vars
+
+    - name: Validating params for installation
+      include_role:
+        name: init
+        tasks_from: validate_params
+
+    - name: Install the server online using podman
+      include_role:
+        name: server_podman
+        tasks_from: install_online
       when:
-        - install_offline|lower == 'true'
-    - role: prep_common_docker
-      when:
-        - install_server | lower == 'true'
-    - role: prep_common_podman
-      when:
-        - install_server | lower == 'true'
-    - role: validate_podman
-      when:
-        - install_server | lower == 'true'
-        - use_docker|lower == 'false'
-    - role: uninstall_common_docker
-      when:
-        - install_server | lower == 'true'
-        - have_docker
-    - role: uninstall_common_podman
-      when:
-        - install_server | lower == 'true'
-        - have_podman
-    - role: install_docker_online
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: start_docker_common
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: install_postgres_offline_docker
-      when:
-        - install_offline|lower == 'true'
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: install_postgres_offline_podman
-      when:
-        - install_offline|lower == 'true'
         - install_server|lower == 'true'
         - use_docker|lower == 'false'
-    - role: start_postgres_common_docker
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: prep_server_online
-      when:
         - install_offline|lower == 'false'
-        - install_server|lower == 'true'
-    - role: prep_server_common_podman
+
+    - name: Install the server offline using podman
+      include_role:
+        name: server_podman
+        tasks_from: install_offline
       when:
         - install_server|lower == 'true'
         - use_docker|lower == 'false'
-    - role: prep_server_common_docker
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: install_server_online
-      when:
-        - install_offline|lower == 'false'
-        - install_server|lower == 'true'
-    - role: start_server_common_docker
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'true'
-    - role: start_server_common_podman
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'false'
-    - role: start_postgres_common_podman
-      when:
-        - install_server|lower == 'true'
-        - use_docker|lower == 'false'
-    - role: migrate_docker_data_to_podman
-      when:
-        - install_server|lower == 'true'
-        - have_qpc_docker_containers
-        - not have_qpc_podman_containers
-        - use_docker|lower == 'false'
-    - role: install_cli_offline
-      when:
-        - install_cli|lower == 'true'
         - install_offline|lower == 'true'
-    - role: install_cli_online
+
+    - name: Install the server online using docker
+      include_role:
+        name: server_docker
+        tasks_from: install_online
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'true'
+        - install_offline|lower == 'false'
+
+    - name: Install the server offline using docker
+      include_role:
+        name: server_docker
+        tasks_from: install_offline
+      when:
+        - install_server|lower == 'true'
+        - use_docker|lower == 'true'
+        - install_offline|lower == 'true'
+
+    - name: Install the CLI online
+      include_role:
+        name: cli
+        tasks_from: install_online
       when:
         - install_cli|lower == 'true'
         - install_offline|lower == 'false'
-    - role: config_cli_common
+
+    - name: Install the CLI offline
+      include_role:
+        name: cli
+        tasks_from: install_offline
       when:
         - install_cli|lower == 'true'
-    - role: validate_cli_install
-      when:
-        - install_cli|lower == 'true'
-    - role: validate_server_install
-      when:
-        - install_server|lower == 'true'
+        - install_offline|lower == 'true'

@@ -102,10 +102,10 @@ done
 if [[ $EUID -ne 0 ]]
 then
   echo ansible-playbook $PLAYBOOK -v -K $*
-  ansible-playbook $PLAYBOOK -v -K $*
+  ansible-playbook $PLAYBOOK -vv -K $*
 else
   echo ansible-playbook $PLAYBOOK -v $*
-  ansible-playbook $PLAYBOOK -v $*
+  ansible-playbook $PLAYBOOK -vv $*
 fi
 
 if [ $? -eq 0 ]

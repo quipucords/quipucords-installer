@@ -1,0 +1,34 @@
+---
+
+- name: Validate install_server is set to true or false
+  fail:
+    msg: "{{ install_server }} is invalid value for install_server.  Must be equal to true or false"
+  when:
+    - not install_server|lower == 'true'
+    - not install_server|lower == 'false'
+
+- name: Validate install_cli is set to true or false
+  fail:
+    msg: "{{ install_cli }} is invalid value for install_cli.  Must be equal to true or false"
+  when:
+    - not install_cli|lower == 'true'
+    - not install_cli|lower == 'false'
+
+- name: Validate install_offline is set to true or false
+  fail:
+    msg: "{{ install_offline }} is invalid value for install_offline.  Must be equal to true or false"
+  when:
+    - not install_offline|lower == 'true'
+    - not install_offline|lower == 'false'
+
+- name: Fail if running on machines other than RHEL 6/7/8 and CentOS 6/7
+  fail:
+    msg: "This is not a supported system for installation. Must be RHEL 6/7/8 or CentOS 6/7."
+  when: not (is_rhel_centos_6 or is_rhel_centos_7 or is_rhel8)
+
+- name: Fail if yum command is not found
+  fail:
+    msg: "Quipucords installer requires the yum command.  Please install yum and retry."
+  when:
+    - not install_offline|lower == 'false'
+    - not have_yum

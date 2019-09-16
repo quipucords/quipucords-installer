@@ -1,0 +1,39 @@
+---
+
+- name: Set Quipucords server container image file name
+  set_fact:
+    server_image_filename: "quipucords_server_image.tar.gz"
+  when:
+    - server_image_filename is not defined
+
+- name: Set Quipucords server container image file path
+  set_fact:
+    server_image_local_path: "{{ pkg_install_dir }}{{ server_image_filename }}"
+  when:
+    - server_image_local_path is not defined
+
+- name: Check if Quipucords server container image file exists
+  stat:
+    path: "{{ server_image_local_path }}"
+  register: find_server_image_local
+  when:
+    - install_server|lower == 'true'
+
+- name: Set PostgreSQL container image file name
+  set_fact:
+    postgres_image_filename: "postgres.{{ postgres_version }}.tar"
+  when:
+    - postgres_image_filename is not defined
+
+- name: Set PostgreSQL container image file path
+  set_fact:
+    postgres_image_local_path: "{{ pkg_install_dir }}{{ postgres_image_filename }}"
+  when:
+    - postgres_image_local_path is not defined
+
+- name: Check if local PostgreSQL container image exists
+  stat:
+    path: "{{ postgres_image_local_path }}"
+  register: find_postgres_image_local
+  when:
+    - install_server|lower == 'true'

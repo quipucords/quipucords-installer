@@ -1,0 +1,29 @@
+---
+
+- name: Check if user supplied server version when offline installation requested
+  fail:
+    msg: "server_version must be set when install_offline=true"
+  when:
+    - install_server|lower == 'true'
+    - server_version is not defined
+
+- name: Check if server version was set to empty string when offline installation requested
+  fail:
+    msg: "server_version is defined but is an empty string"
+  when:
+    - install_server|lower == 'true'
+    - server_version is defined and server_version|length == 0
+
+- name: Fail if Quipucords server image file does not exist for offline installation
+  fail:
+    msg: "{{ server_image_local_path }} file not found and required for an offline installation"
+  when:
+    - install_server|lower == 'true'
+    - not find_server_image_local.stat.exists
+
+- name: Fail if PostgreSQL container image file does not exist for offline installation
+  fail:
+    msg: "{{ postgres_image_local_path }} file not found and required for an offline installation"
+  when:
+    - install_server|lower == 'true'
+    - not find_postgres_image_local.stat.exists

@@ -1,0 +1,36 @@
+---
+
+- name: Test for presence of Docker
+  shell: command -v docker
+  register: have_docker_raw
+  ignore_errors: yes
+
+- name: Set variable state indicating presence of Docker
+  set_fact:
+    have_docker: "{{ have_docker_raw.rc == 0 }}"
+
+- name: Test for podman command
+  shell: command -v podman
+  register: have_podman_raw
+  ignore_errors: yes
+
+- name: Set variable to indicate if Podman command was found
+  set_fact:
+    have_podman: "{{ have_podman_raw.rc == 0 }}"
+  when:
+    - have_podman_raw is defined
+
+- name: Defaulting SE Linux Quipucords server installation to false
+  set_fact:
+    selinux_on: false
+
+- name: Determine if SE Linux is enabled
+  shell: selinuxenabled
+  register: have_selinux_raw
+  ignore_errors: yes
+
+- name: Set variable to use SE Linux sytax when SE Linux is enabled
+  set_fact:
+    selinux_on: true
+  when:
+    - have_selinux_raw.rc == 0

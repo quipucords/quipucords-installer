@@ -1,0 +1,21 @@
+---
+
+- name: Setting common default variable values for CLI installation (online)
+  include_role:
+    name: cli
+    tasks_from: init_vars
+
+- name: Installing the CLI (online)
+  include_role:
+    name: cli
+    tasks_from: load_rpm_online
+
+- name: Configuring the CLI (online)
+  include_role:
+    name: cli
+    tasks_from: configure
+
+- name: Validating the CLI (online)
+  include_role:
+    name: cli
+    tasks_from: validate_install

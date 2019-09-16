@@ -1,0 +1,68 @@
+---
+
+- name: Setting common default variable values for server installation
+  include_role:
+    name: server
+    tasks_from: init_vars
+
+- name: Validate variable values for server installation
+  include_role:
+    name: server
+    tasks_from: validate_params
+
+- name: Setting common default offline variable values for server installation
+  include_role:
+    name: server
+    tasks_from: init_vars_offline
+
+- name: Validate offline variable values for server installation
+  include_role:
+    name: server
+    tasks_from: validate_params_offline
+
+- name: Set default values for variables  installation for podman
+  include_role:
+    name: server_podman
+    tasks_from: init_vars
+
+- name: Remove existing docker containers when they are present
+  include_role:
+    name: server
+    tasks_from: uninstall_docker_containers
+  when:
+    - have_docker
+
+- name: Remove existing podman containers when they are present
+  include_role:
+    name: server
+    tasks_from: uninstall_podman_containers
+  when:
+    - have_podman
+
+- name: Load the PostgreSQL image for offline installation
+  include_role:
+    name: server_podman
+    tasks_from: load_postgres_image_offline
+
+- name: Start the QPC server
+  include_role:
+    name: server_podman
+    tasks_from: start_quipucords_container
+
+- name: Start the PostgreSQL container
+  include_role:
+    name: server_podman
+    tasks_from: start_postgres_container
+
+- name: Migrate existing PostgreSQL data from the docker volume to podman
+  include_role:
+    name: server_podman
+    tasks_from: migrate_docker_data_to_podman
+  when:
+    - have_qpc_docker_containers
+    - not have_qpc_podman_containers
+
+- name: Validate that the Quipucords server is up and running
+  include_role:
+    name: server
+    tasks_from: validate_server_install

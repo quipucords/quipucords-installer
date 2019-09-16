@@ -1,0 +1,31 @@
+---
+
+- name: Setting common default variable values for CLI installation (offline)
+  include_role:
+    name: cli
+    tasks_from: init_vars
+
+- name: Setting offline default variable values for CLI installation (offline)
+  include_role:
+    name: cli
+    tasks_from: init_vars_offline
+
+- name: Validating offline CLI installation (offline)
+  include_role:
+    name: cli
+    tasks_from: validate_params_offline
+
+- name: Installing the CLI (offline)
+  include_role:
+    name: cli
+    tasks_from: load_rpm_offline
+
+- name: Configuring the CLI (offline)
+  include_role:
+    name: cli
+    tasks_from: configure
+
+- name: Validating the CLI (offline)
+  include_role:
+    name: cli
+    tasks_from: validate_install

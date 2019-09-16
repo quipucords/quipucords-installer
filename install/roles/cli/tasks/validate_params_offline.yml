@@ -1,0 +1,8 @@
+---
+
+- name: Fail if QPC CLI RPM is not present for offline installation
+  fail:
+    msg: "{{ qpc_rpm_local_path }} file not found and required for an offline installation"
+  when:
+    - install_cli|lower == 'true'
+    - not find_qpc_rpm_local.stat.exists
