@@ -34,6 +34,11 @@
   when:
     - have_podman
 
+- name: Install Podman
+  include_role:
+    name: server_podman
+    tasks_from: load_podman_rpm_online
+
 - name: Download server image from GitHub
   include_role:
     name: server

@@ -61,7 +61,6 @@ online-prep: setup
 		yum install -y libcgroup; \
 		yum install -y yum-utils; \
 		yum install -y ansible; \
-		yum install -y podman; \
 	elif grep -q -i "release 6" /etc/redhat-release; then \
 		echo "Running 6"; \
 		yum install -y libcgroup; \
@@ -70,7 +69,6 @@ online-prep: setup
 	else \
 		echo "Running 8"; \
 		yum install -y ansible; \
-		yum install -y podman; \
 	fi
 
 install-offline:

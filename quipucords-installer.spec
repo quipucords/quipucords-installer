@@ -27,15 +27,11 @@ Requires: ansible >= 2.4
 %if "%{dist}" != ".el8"
 BuildRequires: pandoc
 %endif
-%if "%{dist}" != ".el6"
-Requires: podman
-%endif
 %endif
 # Discovery (Downstream)
 %if "%{stream_name}" == "discovery"
 # Downstream rpmbuilder bombs when there are no BuildRequires
 BuildRequires: ansible
-Requires: podman
 %endif
 
 
