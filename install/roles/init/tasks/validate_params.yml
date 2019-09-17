@@ -32,3 +32,17 @@
   when:
     - not install_offline|lower == 'false'
     - not have_yum
+
+- name: Fail if request to use Docker on RHEL 8
+  fail:
+    msg: "Quipucords installer cannot install with Docker on RHEL 8."
+  when:
+    - is_rhel_centos_8|bool
+    - use_docker|bool
+
+- name: Fail if request to use Podman on RHEL 6 or CentOS 6
+  fail:
+    msg: "Quipucords installer cannot install with Podman on RHEL 6 or CentOS 6."
+  when:
+    - is_rhel_centos_6|bool
+    - not use_docker|bool
