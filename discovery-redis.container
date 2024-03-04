@@ -1,0 +1,19 @@
+[Unit]
+Description=Redis container for Discovery
+Requires=podman.socket
+
+[Container]
+ContainerName=discovery-redis
+Image=registry.redhat.io/rhel9/redis-6:latest
+PublishPort=6379:6379
+ExposeHostPort=5432
+User=1001
+Group=1001
+Environment=REDIS_PASSWORD=qpc
+Network=discovery.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=local.target
