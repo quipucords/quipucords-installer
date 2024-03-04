@@ -3,7 +3,7 @@ if [ -z "${SVC}" ]; then
   echo "Must specify which service to restart."
   exit 1
 fi
-if [ ! -f "discovery-${SVC}.container" ]; then
+if [ ! -f "config/discovery-${SVC}.container" ]; then
   echo "Invalid Discovery service ${SVC} specified."
   exit 1
 fi

@@ -60,7 +60,7 @@ if [ $(id -u) -eq - ]; then
 fi
 echo "Copying Discovery container files to the user systemd configuration ..."
 mkdir -p $HOME/.config/containers/systemd/
-cp *.network *.container $HOME/.config/containers/systemd/
+cp config/*.network config/*.container $HOME/.config/containers/systemd/
 echo "Generate the systemd Discovery services ..."
 systemctl --user daemon-reload
 echo "Generated Services:"
