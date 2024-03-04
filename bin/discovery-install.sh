@@ -69,9 +69,9 @@ echo "Starting the Discovery services ..."
 systemctl --user start discovery-db
 systemctl --user start discovery-redis
 systemctl --user start discovery-server
-systemctl --user start "discovery-celery-worker@1"
-systemctl --user start "discovery-celery-worker@2"
-systemctl --user start "discovery-celery-worker@3"
+systemctl --user start "discovery-celery-worker-@1"
+systemctl --user start "discovery-celery-worker-@2"
+systemctl --user start "discovery-celery-worker-@3"
 echo "Discovery Services:"
 systemctl --user list-units 'discovery-*'
 
