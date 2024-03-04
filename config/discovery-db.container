@@ -1,5 +1,5 @@
 [Unit]
-Description=PostgreSQL Database container for Discovery
+Description=PostgreSQL Database for Discovery
 Requires=podman.socket
 
 [Container]

@@ -1,5 +1,5 @@
 [Unit]
-Description=Redis container for Discovery
+Description=Redis for Discovery
 Requires=podman.socket
 
 [Container]
