@@ -1,5 +1,5 @@
 [Unit]
-Description=Discovery Celery Worker %i
+Description=Discovery Celery Worker #%i
 Requires=podman.socket
 
 [Container]
