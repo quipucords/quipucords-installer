@@ -38,4 +38,4 @@ Network=discovery.network
 Restart=always
 
 [Install]
-After=discovery-db.service
+WantedBy=discovery-redis.service
