@@ -35,5 +35,5 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=discovery-redis.service
+WantedBy=default.target
 

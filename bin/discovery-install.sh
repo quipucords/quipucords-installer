@@ -80,7 +80,7 @@ systemctl --user reset-failed
 systemctl --user start discovery-db
 systemctl --user start discovery-redis
 systemctl --user start discovery-server
-systemctl --user start "discovery-celery-worker-@1"
+systemctl --user start "discovery-celery-worker-@default"
 systemctl --user start "discovery-celery-worker-@2"
 systemctl --user start "discovery-celery-worker-@3"
 echo "Discovery Services:"

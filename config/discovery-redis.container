@@ -16,5 +16,5 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=local.target
+WantedBy=default.target
 
