@@ -68,6 +68,7 @@ if [ $? -ne 0 ]; then
   echo "Must create the discovery-django-secret-key secret."
   exit 1
 fi
+systemctl --user reset-failed
 echo "Copying Discovery container and network files to the user systemd configuration ..."
 mkdir -p $HOME/.config/containers/systemd/
 cp config/*.network config/*.container $HOME/.config/containers/systemd/
@@ -80,9 +81,6 @@ systemctl --user reset-failed
 systemctl --user start discovery-db
 systemctl --user start discovery-redis
 systemctl --user start discovery-server
-systemctl --user start "discovery-celery-worker-@default"
-systemctl --user start "discovery-celery-worker-@2"
-systemctl --user start "discovery-celery-worker-@3"
 echo "Discovery Services:"
 systemctl --user list-units 'discovery-*'
 

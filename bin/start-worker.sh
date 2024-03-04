@@ -8,3 +8,4 @@ do
   echo "Starting celery worker discovery-celery-worker-@${WORKER}.service ..."
   systemctl --user start "discovery-celery-worker-@${WORKER}.service"
 done
+exit 0

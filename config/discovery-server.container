@@ -9,21 +9,7 @@ PublishPort=8443:8443
 ExposeHostPort=8443
 EnvironmentFile=/home/abellotti/discovery/config/env-redis.env
 EnvironmentFile=/home/abellotti/discovery/config/env-ansible.env
-Environment=DJANGO_SECRET_PATH=/var/data/secret.txt
-Environment=QPC_DBMS=postgres
-Environment=QPC_DBMS_HOST=discovery-db
-Environment=QPC_DBMS_PORT=5432
-Environment=QPC_DBMS_DATABASE=qpc
-Environment=QPC_DBMS_USER=qpc
-Environment=QPC_DBMS_PASSWORD=qpc
-Environment=QPC_SERVER_PORT=8443
-Environment=QPC_SERVER_TIMEOUT=5
-Environment=QPC_SERVER_USERNAME=admin
-Environment=NETWORK_CONNECT_JOB_TIMEOUT=6
-Environment=NETWORK_INSPECT_JOB_TIMEOUT=600
-Environment=QPC_DEBUGPY=0
-Environment=QPC_LOG_ALL_ENV_VARS_AT_STARTUP=False
-Environment=QPC_ENABLE_CELERY_SCAN_MANAGER=0
+EnvironmentFile=/home/abellotti/discovery/config/env-server.env
 Secret=discovery-server-password,type=env,target=QPC_SERVER_PASSWORD
 Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
 Volume=/home/abellotti/.local/share/discovery/data:/var/data:z
@@ -33,6 +19,7 @@ Network=discovery.network
 
 [Service]
 Restart=always
+ExecStartPost=/bin/bash -c "/home/abellotti/discovery/bin/scale-workers.sh"
 
 [Install]
 WantedBy=default.target
