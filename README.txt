@@ -1,7 +1,13 @@
 
-Add bin/ directory to the PATH:
+Copy the project to $HOME/discovery/
 
-  export PATH=":`pwd`/bin:${PATH}"
+From your .bash_profile add the following:
+
+  source $HOME/discovery/bin/setup.env
+
+Install discovery:
+
+  $ discovery-install.sh
 
 
 To Investigate:
