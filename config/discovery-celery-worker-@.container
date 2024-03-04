@@ -16,6 +16,7 @@ Volume=%h/.local/share/discovery/log:/var/log:z
 Network=discovery.network
 
 [Service]
+TimeoutStartSec=300
 Restart=always
 
 [Install]

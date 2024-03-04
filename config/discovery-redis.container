@@ -13,6 +13,7 @@ EnvironmentFile=%h/discovery/config/env-redis.env
 Network=discovery.network
 
 [Service]
+TimeoutStartSec=300
 Restart=always
 
 [Install]
