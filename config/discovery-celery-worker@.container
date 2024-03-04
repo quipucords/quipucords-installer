@@ -3,7 +3,7 @@ Description=Discovery Celery Worker
 Requires=podman.socket
 
 [Container]
-ContainerName=discovery-celery-worker
+ContainerName=discovery-celery-worker-%i
 Image=quay.io/abellott/quipucords:latest
 Exec=/bin/sh -c /deploy/entrypoint_celery_worker.sh
 Environment=ANSIBLE_REMOTE_TMP=/var/data/tmp/ansible/remote
