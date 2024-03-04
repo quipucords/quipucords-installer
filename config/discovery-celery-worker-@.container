@@ -1,5 +1,5 @@
 [Unit]
-Description=Discovery Celery Worker
+Description=Discovery Celery Worker %i
 Requires=podman.socket
 
 [Container]
@@ -21,4 +21,3 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=discovery-server.service

@@ -18,8 +18,8 @@
 # We get systemd services:
 #   discovery-db
 #   discovery-redis
-#   discovery-celery-worker
 #   discovery-server
+#   discovery-celery-worker
 #
 # Which can be managed via systemctl
 #
@@ -66,6 +66,7 @@ systemctl --user daemon-reload
 echo "Generated Services:"
 ls -l /run/user/1001/systemd/generator/discovery-*.service
 echo "Starting the Discovery services ..."
+systemctl --user reset-failed
 systemctl --user start discovery-db
 systemctl --user start discovery-redis
 systemctl --user start discovery-server
