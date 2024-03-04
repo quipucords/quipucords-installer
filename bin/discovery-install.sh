@@ -68,7 +68,7 @@ if [ $? -ne 0 ]; then
   echo "Must create the discovery-django-secret-key secret."
   exit 1
 fi
-echo "Copying Discovery container files to the user systemd configuration ..."
+echo "Copying Discovery container and network files to the user systemd configuration ..."
 mkdir -p $HOME/.config/containers/systemd/
 cp config/*.network config/*.container $HOME/.config/containers/systemd/
 echo "Generate the systemd Discovery services ..."

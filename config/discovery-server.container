@@ -7,9 +7,8 @@ ContainerName=discovery-server
 Image=quay.io/abellott/quipucords:latest
 PublishPort=8443:8443
 ExposeHostPort=8443
-Environment=ANSIBLE_REMOTE_TMP=/var/data/tmp/ansible/remote
-Environment=ANSIBLE_LOCAL_TEMP=/var/data/tmp/ansible/local
-Environment=ANSIBLE_LOG_LEVEL=3
+EnvironmentFile=/home/abellotti/discovery/config/env-redis.env
+EnvironmentFile=/home/abellotti/discovery/config/env-ansible.env
 Environment=DJANGO_SECRET_PATH=/var/data/secret.txt
 Environment=QPC_DBMS=postgres
 Environment=QPC_DBMS_HOST=discovery-db
@@ -24,8 +23,6 @@ Environment=NETWORK_CONNECT_JOB_TIMEOUT=6
 Environment=NETWORK_INSPECT_JOB_TIMEOUT=600
 Environment=QPC_DEBUGPY=0
 Environment=QPC_LOG_ALL_ENV_VARS_AT_STARTUP=False
-Environment=REDIS_HOST=discovery-redis
-Environment=REDIS_PASSWORD=qpc
 Environment=QPC_ENABLE_CELERY_SCAN_MANAGER=0
 Secret=discovery-server-password,type=env,target=QPC_SERVER_PASSWORD
 Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
