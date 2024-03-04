@@ -6,6 +6,5 @@ Add bin/ directory to the PATH:
 
 To Investigate:
 - Running discovery-db as User, files are somehow created as 100025 and not 1001.
-- Fetching env passwords from secrets
 - Using multiple/shared Environment files
 
