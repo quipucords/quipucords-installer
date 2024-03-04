@@ -75,7 +75,7 @@ cp config/*.network config/*.container $HOME/.config/containers/systemd/
 echo "Generate the systemd Discovery services ..."
 systemctl --user daemon-reload
 echo "Generated Services:"
-ls -l /run/user/1001/systemd/generator/discovery-*.service
+ls -l ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service
 echo "Starting the Discovery services ..."
 systemctl --user reset-failed
 systemctl --user start discovery-db

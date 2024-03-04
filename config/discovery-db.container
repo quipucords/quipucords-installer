@@ -10,7 +10,7 @@ ExposeHostPort=5432
 Environment=POSTGRESQL_USER=qpc
 Environment=POSTGRESQL_PASSWORD=qpc
 Environment=POSTGRESQL_DATABASE=qpc
-Volume=/home/abellotti/.local/share/discovery/data:/var/lib/pgsql/data
+Volume=%h/.local/share/discovery/data:/var/lib/pgsql/data
 Network=discovery.network
 
 [Service]

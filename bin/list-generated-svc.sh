@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "Generated Services:"
-ls -l /run/user/1001/systemd/generator/discovery-*.service
+ls -l ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service

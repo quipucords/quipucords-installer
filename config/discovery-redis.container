@@ -7,9 +7,9 @@ ContainerName=discovery-redis
 Image=registry.redhat.io/rhel9/redis-6:latest
 PublishPort=6379:6379
 ExposeHostPort=5432
-User=1001
-Group=1001
-EnvironmentFile=/home/abellotti/discovery/config/env-redis.env
+User=%U
+Group=%G
+EnvironmentFile=%h/discovery/config/env-redis.env
 Network=discovery.network
 
 [Service]

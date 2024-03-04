@@ -7,19 +7,19 @@ ContainerName=discovery-server
 Image=quay.io/abellott/quipucords:latest
 PublishPort=8443:8443
 ExposeHostPort=8443
-EnvironmentFile=/home/abellotti/discovery/config/env-redis.env
-EnvironmentFile=/home/abellotti/discovery/config/env-ansible.env
-EnvironmentFile=/home/abellotti/discovery/config/env-server.env
+EnvironmentFile=%h/discovery/config/env-redis.env
+EnvironmentFile=%h/discovery/config/env-ansible.env
+EnvironmentFile=%h/discovery/config/env-server.env
 Secret=discovery-server-password,type=env,target=QPC_SERVER_PASSWORD
 Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
-Volume=/home/abellotti/.local/share/discovery/data:/var/data:z
-Volume=/home/abellotti/.local/share/discovery/log:/var/log:z
-Volume=/home/abellotti/.local/share/discovery/sshkeys:/sshkeys:z
+Volume=%h/.local/share/discovery/data:/var/data:z
+Volume=%h/.local/share/discovery/log:/var/log:z
+Volume=%h/.local/share/discovery/sshkeys:/sshkeys:z
 Network=discovery.network
 
 [Service]
 Restart=always
-ExecStartPost=/bin/bash -c "/home/abellotti/discovery/scripts/scale-workers.sh"
+ExecStartPost=/bin/bash -c "%h/discovery/scripts/scale-workers.sh"
 
 [Install]
 WantedBy=default.target
