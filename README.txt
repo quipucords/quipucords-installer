@@ -7,7 +7,17 @@ From your .bash_profile add the following:
 
 Install discovery:
 
+  First login to the registries used so that podman can pull the images.
+
+  $ podman login registry.redhat.io
+  $ podman login quay.io
+
+  Create the secrets needed by the Discovery server
+
   $ create-secrets.sh
+
+  Install the Discovery server
+
   $ discovery-install.sh
 
 Helper shell functions:
