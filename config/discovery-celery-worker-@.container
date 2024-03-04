@@ -19,6 +19,5 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=default.target
 DefaultInstance=1
 
