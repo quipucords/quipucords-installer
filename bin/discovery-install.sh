@@ -54,8 +54,18 @@
 #
 # https://github.com/containers/aardvark-dns/issues/389
 #
-if [ $(id -u) -eq - ]; then
+if [ $(id -u) -eq 0 ]; then
   echo "Do not run $0 as root."
+  exit 1
+fi
+podman secret exists discovery-server-password
+if [ $? -ne 0 ]; then
+  echo "Must create the discovery-server-password secret."
+  exit 1
+fi
+podman secret exists discovery-django-secret-key
+if [ $? -ne 0 ]; then
+  echo "Must create the discovery-django-secret-key secret."
   exit 1
 fi
 echo "Copying Discovery container files to the user systemd configuration ..."
