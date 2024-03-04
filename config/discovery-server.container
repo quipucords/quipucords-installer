@@ -19,7 +19,7 @@ Network=discovery.network
 
 [Service]
 Restart=always
-ExecStartPost=/bin/bash -c "/home/abellotti/discovery/bin/scale-workers.sh"
+ExecStartPost=/bin/bash -c "/home/abellotti/discovery/scripts/scale-workers.sh"
 
 [Install]
 WantedBy=default.target
