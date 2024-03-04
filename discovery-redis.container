@@ -16,4 +16,4 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=local.target
+After=discovery-server.service

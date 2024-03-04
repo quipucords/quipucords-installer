@@ -38,4 +38,4 @@ Network=discovery.network
 Restart=always
 
 [Install]
-WantedBy=local.target
+After=discovery-db.service
