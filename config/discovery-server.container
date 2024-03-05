@@ -20,7 +20,7 @@ Network=discovery.network
 [Service]
 Restart=always
 TimeoutStartSec=600
-ExecStartPost=/bin/bash -c %h/discovery/scripts/scale-workers.sh
+ExecStartPost=/bin/bash -c "%h/discovery/bin/scale-workers.sh"
 
 [Install]
 WantedBy=default.target
