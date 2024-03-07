@@ -8,8 +8,9 @@
 # For rootless, steps include:
 #   - Install the container files as $HOME/.config/containers/systemd/
 #   - Reboot system or run "systemctl --user daemon-reload"
-#   - This generates system service files
-#      i.e. /run/systemd/generator/<svc>.service
+#   - This generates system service files in:
+#         ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service
+#      i.e. /run/user/<user_id>/systemd/generator/discovery-*.service
 #   - Services run under a user id specified.
 #
 #
