@@ -4,7 +4,7 @@ Requires=podman.socket
 
 [Container]
 ContainerName=discovery-server
-Image=quay.io/abellott/quipucords:latest
+Image=quay.io/quipucords/quipucords:latest
 PublishPort=8443:8443
 ExposeHostPort=8443
 EnvironmentFile=%h/discovery/config/env-redis.env
