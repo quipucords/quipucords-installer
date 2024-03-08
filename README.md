@@ -1,5 +1,5 @@
 
-# Discovery Containers (via. quadlets)
+# Discovery Containers (via quadlets)
 
 Login as the user that will be running discovery.
 
@@ -63,3 +63,4 @@ $ restart-dsc         - Stops then re-Starts a Discovery service
 - https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
 - https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html
 - https://github.com/containers/quadlet/tree/main/docs
+
