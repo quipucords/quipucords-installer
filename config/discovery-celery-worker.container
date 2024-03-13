@@ -1,16 +1,15 @@
 [Unit]
-Description=Discovery Celery Worker #%i
+Description=Discovery Celery Worker
 Requires=podman.socket
 
 [Container]
-ContainerName=discovery-celery-worker-%i
+ContainerName=discovery-celery-worker
 Image=quay.io/quipucords/quipucords:latest
-Exec=/bin/sh -c /deploy/entrypoint_celery_worker.sh
 EnvironmentFile=%h/discovery/config/env-redis.env
 EnvironmentFile=%h/discovery/config/env-ansible.env
-Environment=DJANGO_SECRET_PATH=/var/data/secret.txt
-Environment=QPC_ENABLE_CELERY_SCAN_MANAGER=0
+EnvironmentFile=%h/discovery/config/env-celery-worker.env
 Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
+Exec=/bin/sh -c /deploy/entrypoint_celery_worker.sh
 Volume=%h/.local/share/discovery/data:/var/data:z
 Volume=%h/.local/share/discovery/log:/var/log:z
 Network=discovery.network
@@ -20,5 +19,5 @@ TimeoutStartSec=300
 Restart=always
 
 [Install]
-DefaultInstance=1
+WantedBy=default.target
 
