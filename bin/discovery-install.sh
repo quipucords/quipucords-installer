@@ -46,6 +46,8 @@ echo "  discovery-server ..."
 systemctl --user restart discovery-server
 echo "  discovery-celery-worker ..."
 systemctl --user restart discovery-celery-worker
+echo "  discovery-ui ..."
+systemctl --user restart discovery-ui
 echo "Discovery Services:"
 systemctl --user list-units 'discovery-*'
 
