@@ -16,6 +16,12 @@ if [ $? -ne 0 ]; then
   echo "Must create the discovery-django-secret-key secret."
   exit 1
 fi
+
+DISCOVERY_LOCAL_FILES="${HOME}/.local/share/discovery"
+mkdir -p "${DISCOVERY_LOCAL_FILES}/data"
+mkdir -p "${DISCOVERY_LOCAL_FILES}/log"
+mkdir -p "${DISCOVERY_LOCAL_FILES}/sshkeys"
+
 SCRIPT_PATH=`realpath ${BASH_SOURCE[0]}`
 DISCOVERY_QUADLETS_ROOT=`dirname $(dirname ${SCRIPT_PATH})`
 CONFIG_PATH="${DISCOVERY_QUADLETS_ROOT}/config"
