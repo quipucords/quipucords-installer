@@ -5,7 +5,6 @@ Requires=podman.socket
 [Container]
 ContainerName=discovery-redis
 Image=registry.redhat.io/rhel9/redis-6:latest
-PublishPort=6379:6379
 ExposeHostPort=6379
 EnvironmentFile=%h/.config/discovery/env/env-redis.env
 Network=discovery.network

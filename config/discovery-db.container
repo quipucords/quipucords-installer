@@ -5,7 +5,6 @@ Requires=podman.socket
 [Container]
 ContainerName=discovery-db
 Image=registry.redhat.io/rhel8/postgresql-12:latest
-PublishPort=5432:5432
 ExposeHostPort=5432
 Environment=POSTGRESQL_USER=qpc
 Environment=POSTGRESQL_PASSWORD=qpc
