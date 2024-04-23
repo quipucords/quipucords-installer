@@ -21,6 +21,7 @@ DISCOVERY_LOCAL_FILES="${HOME}/.local/share/discovery"
 mkdir -p "${DISCOVERY_LOCAL_FILES}/data"
 mkdir -p "${DISCOVERY_LOCAL_FILES}/log"
 mkdir -p "${DISCOVERY_LOCAL_FILES}/sshkeys"
+mkdir -p "${DISCOVERY_LOCAL_FILES}/certs"
 
 SCRIPT_PATH=`realpath ${BASH_SOURCE[0]}`
 DISCOVERY_QUADLETS_ROOT=`dirname $(dirname ${SCRIPT_PATH})`
@@ -46,8 +47,8 @@ echo "  discovery-server ..."
 systemctl --user restart discovery-server
 echo "  discovery-celery-worker ..."
 systemctl --user restart discovery-celery-worker
-echo "  discovery-ui ..."
-systemctl --user restart discovery-ui
+echo "  discovery-app ..."
+systemctl --user restart discovery-app
 echo "Discovery Services:"
 systemctl --user list-units 'discovery-*'
 
