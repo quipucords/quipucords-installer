@@ -37,17 +37,8 @@ echo "Generate the systemd Discovery services ..."
 systemctl --user daemon-reload
 echo "Generated Services:"
 ls -l ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service
-echo "Re-starting the Discovery services ..."
+echo "Re-starting the Discovery application ..."
 systemctl --user reset-failed
-echo "  discovery-db ..."
-systemctl --user restart discovery-db
-echo "  discovery-redis ..."
-systemctl --user restart discovery-redis
-echo "  discovery-server ..."
-systemctl --user restart discovery-server
-echo "  discovery-celery-worker ..."
-systemctl --user restart discovery-celery-worker
-echo "  discovery-app ..."
 systemctl --user restart discovery-app
 echo "Discovery Services:"
 systemctl --user list-units 'discovery-*'

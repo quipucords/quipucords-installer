@@ -1,6 +1,11 @@
 [Unit]
 Description=Discovery App
 Requires=podman.socket
+Wants=discovery-db.service
+Wants=discovery-redis.service
+Wants=discovery-celery-worker.service
+Wants=discovery-server.service
+After=discovery-server.service
 
 [Container]
 ContainerName=discovery-app
@@ -13,7 +18,7 @@ Volume=%h/.local/share/discovery/certs:/opt/app-root/certs:z
 Network=discovery.network
 # Since we could write self-generated keys to the shared certs
 # volume and write nginx logs to the common log volume,
-# let's make sure we map the nginx user to the hosts's user.
+# let's make sure we map the nginx user to the host's user.
 UserNS=keep-id:uid=1001,gid=101
 
 [Service]

@@ -46,8 +46,6 @@ $ restart-dsc         - Stops then re-Starts a Discovery service
 
 ## Additional research:
 
-- [ ] Running discovery-db as User, files are somehow created as 100025 and not the user's id.
-
 - [ ] Control service cpu/mem/net limits via cgroups (Control Groups)
 
 - [ ] How customers can specify alternate image repositories

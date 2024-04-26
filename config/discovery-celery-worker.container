@@ -1,6 +1,8 @@
 [Unit]
 Description=Discovery Celery Worker
 Requires=podman.socket
+PartOf=discovery-app.service
+After=discovery-server.service
 
 [Container]
 ContainerName=discovery-celery-worker

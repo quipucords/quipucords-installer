@@ -1,6 +1,9 @@
 [Unit]
 Description=Discovery Server
 Requires=podman.socket
+PartOf=discovery-app.service
+After=discovery-db.service
+After=discovery-redis.service
 
 [Container]
 ContainerName=discovery-server
