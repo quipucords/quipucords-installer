@@ -5,7 +5,7 @@ PartOf=discovery-app.service
 
 [Container]
 ContainerName=discovery-db
-Image=registry.redhat.io/rhel8/postgresql-12:latest
+Image=registry.redhat.io/rhel8/postgresql-15:latest
 ExposeHostPort=5432
 Environment=POSTGRESQL_USER=qpc
 Environment=POSTGRESQL_PASSWORD=qpc
