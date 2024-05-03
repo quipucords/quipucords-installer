@@ -1,6 +1,7 @@
 [Unit]
 Description=Redis for Discovery
 Requires=podman.socket
+PartOf=discovery-app.service
 
 [Container]
 ContainerName=discovery-redis
