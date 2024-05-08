@@ -1,8 +1,8 @@
 
-Quadlet is a systemd generator that creates systemd services
-from container description files.
-Generated Services are then managed by systemctl.
+## Discovery Podman Quadlets Background
 
+Quadlet is a systemd generator that creates systemd services from container description files.
+Generated Services are then managed by systemctl.
 
 
 For rootless, steps include:
@@ -16,15 +16,15 @@ For rootless, steps include:
 
   - Services run under the current user id.
 
-
-Install the Discovery containers as Systemd services
+We install the Discovery containers as Systemd services
 
 We get systemd services:
 
-  - discovery-db
-  - discovery-redis
+  - discovery-app
   - discovery-server
   - discovery-celery-worker
+  - discovery-db
+  - discovery-redis
 
 Which can be managed via systemctl
 
@@ -98,8 +98,4 @@ $ rm -f $HOME/.config/containers/systemd/*
 $ systemctl --user reset-failed
 $ systemctl --user daemon-reload
 ```
-
-_NOTE_: rootless could have unreliable networking issues:
-
-     See: https://github.com/containers/aardvark-dns/issues/389
 

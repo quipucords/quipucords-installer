@@ -1,0 +1,118 @@
+#!/usr/bin/bash
+#
+# Discovery Installer 
+#
+INSTALLER_COMMAND="discovery-installer"
+DISCOVERY_ETC_ROOT=/etc/${INSTALLER_COMMAND}
+DISCOVERY_BIN_DIR=${DISCOVERY_ETC_ROOT}/bin
+
+CONFIG_PATH="${DISCOVERY_ETC_ROOT}/config"
+ENV_PATH="${DISCOVERY_ETC_ROOT}/env"
+
+DISCOVERY_USER_PATH="${HOME}/.local/share/discovery"
+ENV_USER_PATH="${HOME}/.config/discovery/env/"
+SYSTEMD_USER_PATH="${HOME}/.config/containers/systemd/"
+
+COMMAND="${1}"
+shift
+
+if [ "${COMMAND}" == "open-firewall-port" ]; then
+  if [ $(id -u) -ne 0 ]; then
+    echo "${INSTALLER_COMMAND} open-firewall-port must run as root."
+    exit 1
+  fi
+  ${DISCOVERY_BIN_DIR}/open-firewall-port -p 9443
+  exit $?
+fi
+
+if [ $(id -u) -eq 0 ]; then
+  echo "${INSTALLER_COMMAND} must not run as root."
+  exit 1
+fi
+
+if [ -z "${XDG_RUNTIME_DIR}" ]; then
+  export XDG_RUNTIME_DIR=/run/user/$UID
+fi
+
+if [ "${COMMAND}" == "create-server-password" ]; then
+  ${DISCOVERY_BIN_DIR}/create-server-password
+  exit $?
+fi
+
+if [ "${COMMAND}" == "create-app-secret" ]; then
+  ${DISCOVERY_BIN_DIR}/create-app-secret
+  exit $?
+fi
+
+podman secret exists discovery-server-password
+if [ $? -ne 0 ]; then
+  echo "Must create the discovery-server-password secret."
+  echo "Run ${INSTALLER_COMMAND} create-server-password"
+  exit 1
+fi
+
+podman secret exists discovery-django-secret-key
+if [ $? -ne 0 ]; then
+  echo "Must create the discovery-django-secret-key secret."
+  echo "Run ${INSTALLER_COMMAND} create-app-secret"
+  exit 1
+fi
+
+if [ "${COMMAND}" == "install" ]; then
+  mkdir -p "${DISCOVERY_USER_PATH}/data"
+  mkdir -p "${DISCOVERY_USER_PATH}/log"
+  mkdir -p "${DISCOVERY_USER_PATH}/sshkeys"
+  mkdir -p "${DISCOVERY_USER_PATH}/certs"
+
+  systemctl --user reset-failed
+
+  echo "Installing Discovery configuration files ..."
+  mkdir -p ${ENV_USER_PATH}
+  mkdir -p ${SYSTEMD_USER_PATH}
+  cp $CONFIG_PATH/*.network $CONFIG_PATH/*.container ${SYSTEMD_USER_PATH}
+  cp $ENV_PATH/*.env ${ENV_USER_PATH}
+
+  echo "Generate the Discovery services ..."
+  systemctl --user daemon-reload
+
+  echo "Discovery Installed."
+  exit 0
+fi
+
+
+if [ "${COMMAND}" == "uninstall" ]; then
+
+  echo "Stopping Discovery ..."
+  systemctl --user stop discovery-app
+  systemctl --user stop discovery-network
+
+  echo "Removing Discovery Services ..."
+  rm -f ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service
+  rm -f ${SYSTEMD_USER_PATH}/discovery*.network
+  rm -f ${SYSTEMD_USER_PATH}/discovery*.container
+  rm -f ${ENV_USER_PATH}/*.env
+
+  systemctl --user daemon-reload
+  systemctl --user reset-failed
+
+  echo "Removing Discovery Data ..."
+  rm -rf "${DISCOVERY_USER_PATH}/data"
+  rm -rf "${DISCOVERY_USER_PATH}/log"
+  rm -rf "${DISCOVERY_USER_PATH}/sshkeys"
+  rm -rf "${DISCOVERY_USER_PATH}/certs"
+
+  echo "Discovery Uninstalled."
+  exit 0
+fi
+
+
+echo "Usage: ${INSTALLER_COMMAND} <command>"
+echo ""
+echo "Where <command> is one of:"
+echo "  install                  - Install Discovery"
+echo "  uninstall                - Uninstall Discovery"
+echo "  create-server-password   - Create a Discovery server password"
+echo "  create-app-secret        - Create a Discovery application secret"
+echo "  open-firewall-port       - Open the Discovery port in the firewall"
+
+exit 1
