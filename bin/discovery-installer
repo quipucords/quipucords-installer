@@ -1,13 +1,13 @@
 #!/usr/bin/bash
 #
-# Discovery Installer 
+# Discovery Installer
 #
 INSTALLER_COMMAND="discovery-installer"
-DISCOVERY_ETC_ROOT=/etc/${INSTALLER_COMMAND}
-DISCOVERY_BIN_DIR=${DISCOVERY_ETC_ROOT}/bin
+DISCOVERY_PKG_ROOT=/usr/share/${INSTALLER_COMMAND}
+DISCOVERY_BIN_DIR=${DISCOVERY_PKG_ROOT}/bin
 
-CONFIG_PATH="${DISCOVERY_ETC_ROOT}/config"
-ENV_PATH="${DISCOVERY_ETC_ROOT}/env"
+CONFIG_PATH="${DISCOVERY_PKG_ROOT}/config"
+ENV_PATH="${DISCOVERY_PKG_ROOT}/env"
 
 DISCOVERY_USER_PATH="${HOME}/.local/share/discovery"
 ENV_USER_PATH="${HOME}/.config/discovery/env/"
