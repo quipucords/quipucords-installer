@@ -9,7 +9,7 @@ After=discovery-server.service
 
 [Container]
 ContainerName=discovery-app
-Image=quay.io/quipucords/quipucords-ui:latest
+Image=quay.io/quipucords/quipucords-ui:v2-alpha
 PublishPort=9443:9443
 ExposeHostPort=9443
 EnvironmentFile=%h/.config/discovery/env/env-app.env
