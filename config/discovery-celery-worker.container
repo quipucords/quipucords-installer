@@ -15,6 +15,7 @@ Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
 Exec=/bin/sh -c /deploy/entrypoint_celery_worker.sh
 Volume=%h/.local/share/discovery/data:/var/data:z
 Volume=%h/.local/share/discovery/log:/var/log:z
+Volume=%h/.local/share/discovery/sshkeys:/sshkeys:z
 Network=discovery.network
 
 [Service]
