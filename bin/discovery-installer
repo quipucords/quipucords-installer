@@ -44,21 +44,21 @@ if [ "${COMMAND}" == "create-app-secret" ]; then
   exit $?
 fi
 
-podman secret exists discovery-server-password
-if [ $? -ne 0 ]; then
-  echo "Must create the discovery-server-password secret."
-  echo "Run ${INSTALLER_COMMAND} create-server-password"
-  exit 1
-fi
-
-podman secret exists discovery-django-secret-key
-if [ $? -ne 0 ]; then
-  echo "Must create the discovery-django-secret-key secret."
-  echo "Run ${INSTALLER_COMMAND} create-app-secret"
-  exit 1
-fi
-
 if [ "${COMMAND}" == "install" ]; then
+  podman secret exists discovery-server-password
+  if [ $? -ne 0 ]; then
+    echo "Must create the discovery-server-password secret before installing Discovery."
+    echo "Run ${INSTALLER_COMMAND} create-server-password"
+    exit 1
+  fi
+
+  podman secret exists discovery-django-secret-key
+  if [ $? -ne 0 ]; then
+    echo "Must create the discovery-django-secret-key secret before installing Discovery."
+    echo "Run ${INSTALLER_COMMAND} create-app-secret"
+    exit 1
+  fi
+
   mkdir -p "${DISCOVERY_USER_PATH}/data"
   mkdir -p "${DISCOVERY_USER_PATH}/log"
   mkdir -p "${DISCOVERY_USER_PATH}/sshkeys"
