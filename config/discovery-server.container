@@ -26,4 +26,3 @@ TimeoutStartSec=600
 
 [Install]
 WantedBy=default.target
-
