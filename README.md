@@ -27,7 +27,7 @@ discovery $ pwd
 discovery $ type discovery-installer
 discovery-installer is /usr/bin/discovery-installer
 discovery $ discovery-installer
-Usage: discovery-installer <command>
+Usage: discovery-installer [-v | --verbose] <command>
 
 Where <command> is one of:
   install                  - Install Discovery
