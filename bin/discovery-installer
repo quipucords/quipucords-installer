@@ -77,7 +77,8 @@ function override_unit_section {
       while read var_name
       do
         NL=$'\n'
-        ccnt=$(echo "${updated_config}" | grep -c "^${var_name}=" >/dev/null)
+        # number of var_name entries in the config section we want to update
+        num_var_names=$(echo "${updated_config}" | grep -c "^${var_name}=" >/dev/null)
         var_lines=$(echo "${override_section}" | grep "^${var_name}=.*" |
             (
               var_lines=""
@@ -92,21 +93,23 @@ function override_unit_section {
               echo "${var_lines}"
             )
         )
-        if [ "${ccnt}" == "0" ]; then     # just append
+        if [ "${num_var_names}" == "0" ]; then    # just append the overrides at the end
           for line in ${var_lines}
           do
             updated_config="${updated_config}${NL}${line}"
           done
-        else                              # replace block
-          pref=$(echo "${updated_config}" | sed "/^${var_name}=.*/,$ d")
-          suf=$(echo "${updated_config}" | sed "1,/^${var_name}=.*/d")
-          suf=$(echo "${suf}" | sed "/^${var_name}=.*/d")
-          updated_config="${pref}"
+        else                                      # replace block
+          # prefix is the config section that precedes the var_name entries
+          prefix=$(echo "${updated_config}" | sed "/^${var_name}=.*/,$ d")
+          # suffix is the config section that succeeds the var_name entries
+          suffix=$(echo "${updated_config}" | sed "1,/^${var_name}=.*/d")
+          suffix=$(echo "${suffix}" | sed "/^${var_name}=.*/d")
+          updated_config="${prefix}"
           for line in ${var_lines}
           do
             updated_config="${updated_config}${NL}${line}"
           done
-          updated_config="${updated_config}${NL}${suf}"
+          updated_config="${updated_config}${NL}${suffix}"
         fi
       done
       echo "${updated_config}"
@@ -152,7 +155,7 @@ function copy_container {
       echo
     fi
   else
-    echo "${container_unit}" > ${target_dir}/${container_file}
+    cp "${container_config}" "${target_dir}/${container_file}"
   fi
 }
 
