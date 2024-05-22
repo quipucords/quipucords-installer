@@ -34,7 +34,6 @@ Where <command> is one of:
   uninstall                - Uninstall Discovery
   create-server-password   - Create a Discovery server password
   create-app-secret        - Create a Discovery application secret
-  open-firewall-port       - Open the Discovery port in the firewall
 ```
 
 ## Discovery Pre-requisites
@@ -101,20 +100,14 @@ discovery $
 For accessing the Discovery Console, make sure the 9443 port that is exposed and published by the discovery-app quadlet is accessible:
 
 
-```
-discovery $ sudo discovery-installer open-firewall-port
-Exposing the Discovery port 9443 in the firewall ...
-success
-success
-```
-
-This is equivalent to running the following commands as root:
+This can be done by running the following commands as root:
 
 ```
 # firewall-cmd --permanent --add-port=9443/tcp
 # firewall-cmd --reload
 ```
 
+*Note*: the firewall-cmd command is provided by the _firewalld_ RPM package.
 
 
 ## Installing Discovery

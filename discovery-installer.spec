@@ -25,7 +25,6 @@ mkdir -p %{buildroot}/%{_datadir}/%{name}/bin
 cp bin/%{name} %{buildroot}/%{_bindir}/%{name}
 cp bin/create-server-password %{buildroot}/%{_datadir}/%{name}/bin/
 cp bin/create-app-secret %{buildroot}/%{_datadir}/%{name}/bin/
-cp bin/open-firewall-port %{buildroot}/%{_datadir}/%{name}/bin/
 mkdir -p %{buildroot}/%{_datadir}/%{name}/config
 cp config/*.container config/*.network %{buildroot}/%{_datadir}/%{name}/config/
 mkdir -p %{buildroot}/%{_datadir}/%{name}/env
@@ -37,7 +36,6 @@ cp config/*.env %{buildroot}/%{_datadir}/%{name}/env/
 %{_bindir}/%{name}
 %{_datadir}/%{name}/bin/create-server-password
 %{_datadir}/%{name}/bin/create-app-secret
-%{_datadir}/%{name}/bin/open-firewall-port
 %{_datadir}/%{name}/config/discovery.network
 %{_datadir}/%{name}/config/discovery-app.container
 %{_datadir}/%{name}/config/discovery-celery-worker.container

@@ -30,15 +30,6 @@ function debug_msg {
 
 export OVERRIDE_CONF_DIR=""   # Optional --override-conf-dir configuration directory
 
-if [ "${COMMAND}" == "open-firewall-port" ]; then
-  if [ $(id -u) -ne 0 ]; then
-    echo "${INSTALLER_COMMAND} open-firewall-port must run as root."
-    exit 1
-  fi
-  ${DISCOVERY_BIN_DIR}/open-firewall-port -p 9443
-  exit $?
-fi
-
 if [ $(id -u) -eq 0 ]; then
   echo "${INSTALLER_COMMAND} must not run as root."
   exit 1
@@ -272,6 +263,5 @@ echo "  install                  - Install Discovery"
 echo "  uninstall                - Uninstall Discovery"
 echo "  create-server-password   - Create a Discovery server password"
 echo "  create-app-secret        - Create a Discovery application secret"
-echo "  open-firewall-port       - Open the Discovery port in the firewall"
 
 exit 1
