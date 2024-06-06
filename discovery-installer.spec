@@ -1,7 +1,7 @@
 Name:           discovery-installer
-Version:        1.7
+Version:        1.8
 Release:        1%{?dist}
-Summary:        Discovery Application v1.7 Installer
+Summary:        Discovery Application v1.8 Installer
 
 License:        GPLv3
 URL:            https://gihub.com/quipucords/discovery-quadlets
@@ -12,8 +12,8 @@ BuildArch:      noarch
 Requires:       bash
 
 %description
-This RPM installs the Discovery Application v1.7 Installer on the System.
-The Installer installs and configures Discovery v1.7 to be managed
+This RPM installs the Discovery Application v1.8 Installer on the System.
+The Installer installs and configures Discovery v1.8 to be managed
 and run via systemd quadlet services.
 
 %prep
@@ -50,5 +50,5 @@ cp config/*.env %{buildroot}/%{_datadir}/%{name}/env/
 %{_datadir}/%{name}/env/env-server.env
 
 %changelog
-* Sat May 04 2024 Alberto Bellotti <abellott@redhat.com>
-1.7
+* Thu Jun 04 2024 Alberto Bellotti <abellott@redhat.com>
+1.8

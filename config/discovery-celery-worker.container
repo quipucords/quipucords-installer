@@ -6,7 +6,7 @@ After=discovery-server.service
 
 [Container]
 ContainerName=discovery-celery-worker
-Image=quay.io/quipucords/quipucords:1.7
+Image=quay.io/quipucords/quipucords:1.8
 EnvironmentFile=%h/.config/discovery/env/env-db.env
 EnvironmentFile=%h/.config/discovery/env/env-redis.env
 EnvironmentFile=%h/.config/discovery/env/env-ansible.env
