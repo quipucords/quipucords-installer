@@ -147,5 +147,12 @@ In another window, start Discovery:
 
 $ systemctl --user start discovery-app
 
+## References:
 
+- https://www.redhat.com/sysadmin/multi-container-application-podman-quadlet
+- https://www.redhat.com/sysadmin/quadlet-podman
+- https://github.com/containers/podman/blob/main/docs/source/markdown/podman-systemd.unit.5.md
+- https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+- https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html
+- https://github.com/containers/quadlet/tree/main/docs
 

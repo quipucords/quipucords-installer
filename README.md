@@ -72,7 +72,8 @@ Run discovery-installer create-app-secret
 
 ```
 abellotti $ discovery-installer create-app-secret
-Enter the Discovery Django secret key (development): 
+Enter the Discovery Django secret key:
+Re-enter the secret key:
 7add5731b86406497f046ade9
 ID                         NAME                         DRIVER      CREATED                 UPDATED
 7add5731b86406497f046ade9  discovery-django-secret-key  file        Less than a second ago  Less than a second ago
