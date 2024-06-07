@@ -7,7 +7,7 @@ After=discovery-redis.service
 
 [Container]
 ContainerName=discovery-server
-Image=quay.io/quipucords/quipucords:latest
+Image=quay.io/quipucords/quipucords:1.8
 ExposeHostPort=8443
 EnvironmentFile=%h/.config/discovery/env/env-db.env
 EnvironmentFile=%h/.config/discovery/env/env-redis.env
@@ -26,4 +26,3 @@ TimeoutStartSec=600
 
 [Install]
 WantedBy=default.target
-

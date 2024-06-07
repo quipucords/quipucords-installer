@@ -1,0 +1,39 @@
+# See the documentation for more information:
+# https://packit.dev/docs/configuration/
+
+specfile_path: discovery-installer.spec
+
+upstream_project_url: https://github.com/quipucords/discovery-quadlets
+
+jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets: &targets_list
+      # we officially support rhel-8 and rhel-9 downstream.
+      - rhel-8-x86_64
+      - rhel-8-aarch64
+      - rhel-9-x86_64
+      - rhel-9-aarch64
+      # centos-stream is like a preview of upcoming rhel.
+      - centos-stream-9-x86_64
+      - centos-stream-9-aarch64
+      # fedora is like an even farther future preview.
+      - fedora-39-x86_64
+      - fedora-39-aarch64
+      - fedora-40-x86_64
+      - fedora-40-aarch64
+
+  - job: copr_build
+    trigger: commit
+    branch: "^main$"
+    owner: "@quipucords"
+    project: "discovery-installer-latest"
+    preserve_project: True
+    targets: *targets_list
+
+  - job: copr_build
+    trigger: release
+    owner: "@quipucords"
+    project: "discovery-installer"
+    preserve_project: True
+    targets: *targets_list
