@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 #
 # Discovery Installer
 #
@@ -14,7 +14,7 @@ DISCOVERY_USER_PATH="${HOME}/.local/share/discovery"
 ENV_USER_PATH="${HOME}/.config/discovery/env/"
 SYSTEMD_USER_PATH="${HOME}/.config/containers/systemd/"
 
-if [ "${1}" == "-v" -o "${1}" == "--verbose" ]; then
+if [ "${1}" == "-v" ] || [ "${1}" == "--verbose" ]; then
   VERBOSE="y"
   shift
 fi
@@ -30,7 +30,7 @@ function debug_msg {
 
 export OVERRIDE_CONF_DIR=""   # Optional --override-conf-dir configuration directory
 
-if [ $(id -u) -eq 0 ]; then
+if [ "$(id -u)" -eq 0 ]; then
   echo "${INSTALLER_COMMAND} must not run as root."
   exit 1
 fi
@@ -40,19 +40,19 @@ if [ -z "${XDG_RUNTIME_DIR}" ]; then
 fi
 
 if [ "${COMMAND}" == "create-server-password" ]; then
-  ${DISCOVERY_BIN_DIR}/create-server-password
+  "${DISCOVERY_BIN_DIR}"/create-server-password
   exit $?
 fi
 
 if [ "${COMMAND}" == "create-app-secret" ]; then
-  ${DISCOVERY_BIN_DIR}/create-app-secret
+  "${DISCOVERY_BIN_DIR}"/create-app-secret
   exit $?
 fi
 
 function get_section {
   config_file="${1}"
   section_name="${2}"
-  cat ${config_file} | sed "0,/^\[${section_name}\]/d" | sed '/^[\b]*$/,$d'
+  < "${config_file}" sed "0,/^\[${section_name}\]/d" | sed '/^[\b]*$/,$d'
 }
 
 function override_unit_section {
@@ -65,7 +65,7 @@ function override_unit_section {
   updated_config="${config_section}"
   updated_config=$(echo "${override_section}" | cut -f1 -d= | sort -u |
     (
-      while read var_name
+      while read -r var_name
       do
         NL=$'\n'
         # number of var_name entries in the config section we want to update
@@ -73,7 +73,7 @@ function override_unit_section {
         var_lines=$(echo "${override_section}" | grep "^${var_name}=.*" |
             (
               var_lines=""
-              while read line
+              while read -r line
               do
                 if [ -z "${var_lines}" ]; then
                   var_lines="${line}"
@@ -112,35 +112,34 @@ function override_unit_section {
 function copy_container {
   container_config="${1}"
   target_dir="${2}"
-  container_file=$(basename ${container_config})
+  container_file=$(basename "${container_config}")
   debug_msg "Copying ${container_config} ${target_dir} ..."
-  if [ -n "${OVERRIDE_CONF_DIR}" -a -s "${OVERRIDE_CONF_DIR}/${container_file}" ]; then
+  if [ -n "${OVERRIDE_CONF_DIR}" ] && [ -s "${OVERRIDE_CONF_DIR}/${container_file}" ]; then
     debug_msg "Overriding ${container_file}:"
     container_override="${OVERRIDE_CONF_DIR}/${container_file}"
-    override_config=`cat ${container_override}`
 
-    config_unit=`get_section ${container_config} "Unit"`
-    override_unit=`get_section ${container_override} "Unit"`
-    updated_unit=`override_unit_section "${config_unit}" "${override_unit}"`
+    config_unit=$(get_section "${container_config}" "Unit")
+    override_unit=$(get_section "${container_override}" "Unit")
+    updated_unit=$(override_unit_section "${config_unit}" "${override_unit}")
 
-    config_container=`get_section ${container_config} "Container"`
-    override_container=`get_section ${container_override} "Container"`
-    updated_container=`override_unit_section "${config_container}" "${override_container}"`
+    config_container=$(get_section "${container_config}" "Container")
+    override_container=$(get_section "${container_override}" "Container")
+    updated_container=$(override_unit_section "${config_container}" "${override_container}")
 
-    config_service=`get_section ${container_config} "Service"`
-    override_service=`get_section ${container_override} "Service"`
-    updated_service=`override_unit_section "${config_service}" "${override_service}"`
+    config_service=$(get_section "${container_config}" "Service")
+    override_service=$(get_section "${container_override}" "Service")
+    updated_service=$(override_unit_section "${config_service}" "${override_service}")
 
-    config_install=`get_section ${container_config} "Install"`
-    override_install=`get_section ${container_override} "Install"`
-    updated_install=`override_unit_section "${config_install}" "${override_install}"`
+    config_install=$(get_section "${container_config}" "Install")
+    override_install=$(get_section "${container_override}" "Install")
+    updated_install=$(override_unit_section "${config_install}" "${override_install}")
 
     NL=$'\n'
     updated_config="[Unit]${NL}${updated_unit}${NL}"
     updated_config="${updated_config}${NL}[Container]${NL}${updated_container}${NL}"
     updated_config="${updated_config}${NL}[Service]${NL}${updated_service}${NL}"
     updated_config="${updated_config}${NL}[Install]${NL}${updated_install}"
-    echo "${updated_config}" > ${target_dir}/${container_file}
+    echo "${updated_config}" >"${target_dir}/${container_file}"
     if [ "${VERBOSE}" = "y" ]; then
       diff --suppress-common-line -y "${container_config}" "${target_dir}/${container_file}"
       echo
@@ -153,45 +152,41 @@ function copy_container {
 function copy_env {
   env_config="${1}"
   target_dir="${2}"
-  env_file=$(basename ${env_config})
-  env_unit="$(cat ${env_config})"
+  env_file=$(basename "${env_config}")
+  env_unit="$(cat "${env_config}")"
   debug_msg "Copying ${env_config} ${target_dir} ..."
-  if [ -n "${OVERRIDE_CONF_DIR}" -a -s "${OVERRIDE_CONF_DIR}/${env_file}" ]; then
+  if [ -n "${OVERRIDE_CONF_DIR}" ] && [ -s "${OVERRIDE_CONF_DIR}/${env_file}" ]; then
     debug_msg "Overriding ${env_file}:"
-    IFS="\n" cat "${OVERRIDE_CONF_DIR}/${env_file}" | (
-      while read line
-      do
-        env_var=${line%=*}
-        env_val=${line#*=}
-        echo "${env_unit}" | grep "^${env_var}=" >/dev/null
-        if [ $? -eq 0 ]; then
-          env_unit=$(echo "${env_unit}" | sed "s|${env_var}=.*|${env_var}=${env_val}|")
-        else
-          NL=$'\n'
-          env_unit="${env_unit}${NL}${env_var}=${env_val}"
-        fi
-      done
-      echo "${env_unit}" > ${target_dir}/${env_file}
-    )
+    while IFS=$'\n' read -r line
+    do
+      env_var=${line%=*}
+      env_val=${line#*=}
+      if ! echo "${env_unit}" | grep "^${env_var}=" >/dev/null; then
+        env_unit="${env_unit//${env_var}=.*/${env_var}=${env_val}/}"
+      else
+        NL=$'\n'
+        env_unit="${env_unit}${NL}${env_var}=${env_val}"
+      fi
+    done < "${OVERRIDE_CONF_DIR}/${env_file}"
+    echo "${env_unit}" >"${target_dir}/${env_file}"
+
     if [ "${VERBOSE}" = "y" ]; then
       diff --suppress-common-line -y "${env_config}" "${target_dir}/${env_file}"
       echo
     fi
   else
-    echo "${env_unit}" > ${target_dir}/${env_file}
+    echo "${env_unit}" >"${target_dir}/${env_file}"
   fi
 }
 
 if [ "${COMMAND}" == "install" ]; then
-  podman secret exists discovery-server-password
-  if [ $? -ne 0 ]; then
+  if ! podman secret exists discovery-server-password; then
     echo "Must create the discovery-server-password secret before installing Discovery."
     echo "Run ${INSTALLER_COMMAND} create-server-password"
     exit 1
   fi
 
-  podman secret exists discovery-django-secret-key
-  if [ $? -ne 0 ]; then
+  if ! podman secret exists discovery-django-secret-key; then
     echo "Must create the discovery-django-secret-key secret before installing Discovery."
     echo "Run ${INSTALLER_COMMAND} create-app-secret"
     exit 1
@@ -212,15 +207,15 @@ if [ "${COMMAND}" == "install" ]; then
   systemctl --user reset-failed
 
   echo "Installing Discovery configuration files ..."
-  mkdir -p ${ENV_USER_PATH}
-  mkdir -p ${SYSTEMD_USER_PATH}
+  mkdir -p "${ENV_USER_PATH}"
+  mkdir -p "${SYSTEMD_USER_PATH}"
 
-  cp ${CONFIG_PATH}/*.network ${SYSTEMD_USER_PATH}
-  for container_file in ${CONFIG_PATH}/*.container; do
-    copy_container ${container_file} ${SYSTEMD_USER_PATH}
+  cp "${CONFIG_PATH}"/*.network "${SYSTEMD_USER_PATH}"
+  for container_file in "${CONFIG_PATH}"/*.container; do
+    copy_container "${container_file}" "${SYSTEMD_USER_PATH}"
   done
-  for env_file in ${ENV_PATH}/*.env; do
-    copy_env ${env_file} ${ENV_USER_PATH}
+  for env_file in "${ENV_PATH}"/*.env; do
+    copy_env "${env_file}" "${ENV_USER_PATH}"
   done
 
   echo "Generate the Discovery services ..."
@@ -238,10 +233,10 @@ if [ "${COMMAND}" == "uninstall" ]; then
   systemctl --user stop discovery-network
 
   echo "Removing Discovery Services ..."
-  rm -f ${XDG_RUNTIME_DIR}/systemd/generator/discovery-*.service
-  rm -f ${SYSTEMD_USER_PATH}/discovery*.network
-  rm -f ${SYSTEMD_USER_PATH}/discovery*.container
-  rm -f ${ENV_USER_PATH}/*.env
+  rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/discovery-*.service
+  rm -f "${SYSTEMD_USER_PATH}"/discovery*.network
+  rm -f "${SYSTEMD_USER_PATH}"/discovery*.container
+  rm -f "${ENV_USER_PATH}"/*.env
 
   systemctl --user daemon-reload
   systemctl --user reset-failed
