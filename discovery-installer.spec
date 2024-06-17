@@ -28,7 +28,7 @@ cp bin/create-app-secret %{buildroot}/%{_datadir}/%{name}/bin/
 mkdir -p %{buildroot}/%{_datadir}/%{name}/config
 cp config/*.container config/*.network %{buildroot}/%{_datadir}/%{name}/config/
 mkdir -p %{buildroot}/%{_datadir}/%{name}/env
-cp config/*.env %{buildroot}/%{_datadir}/%{name}/env/
+cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
 
 %files
 %license LICENSE
