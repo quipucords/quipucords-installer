@@ -178,15 +178,11 @@ function copy_env {
 
 if [ "${COMMAND}" == "install" ]; then
   if ! podman secret exists discovery-server-password; then
-    echo "Must create the discovery-server-password secret before installing Discovery."
-    echo "Run ${INSTALLER_COMMAND} create-server-password"
-    exit 1
+    "${DISCOVERY_BIN_DIR}"/create-server-password || exit 1
   fi
 
   if ! podman secret exists discovery-django-secret-key; then
-    echo "Must create the discovery-django-secret-key secret before installing Discovery."
-    echo "Run ${INSTALLER_COMMAND} create-app-secret"
-    exit 1
+    "${DISCOVERY_BIN_DIR}"/create-app-secret -y || exit 1
   fi
 
   if [ "${1}" == "--override-conf-dir" ]; then
