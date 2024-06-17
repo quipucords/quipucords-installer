@@ -28,7 +28,7 @@ function debug_msg {
   fi
 }
 
-export OVERRIDE_CONF_DIR=""   # Optional --override-conf-dir configuration directory
+export OVERRIDE_CONF_DIR="" # Optional --override-conf-dir configuration directory
 
 if [ "$(id -u)" -eq 0 ]; then
   echo "${INSTALLER_COMMAND} must not run as root."
@@ -52,7 +52,7 @@ fi
 function get_section {
   config_file="${1}"
   section_name="${2}"
-  < "${config_file}" sed "0,/^\[${section_name}\]/d" | sed '/^[\b]*$/,$d'
+  <"${config_file}" sed "0,/^\[${section_name}\]/d" | sed '/^[\b]*$/,$d'
 }
 
 function override_unit_section {
@@ -63,48 +63,46 @@ function override_unit_section {
     return
   fi
   updated_config="${config_section}"
-  updated_config=$(echo "${override_section}" | cut -f1 -d= | sort -u |
-    (
-      while read -r var_name
-      do
-        NL=$'\n'
-        # number of var_name entries in the config section we want to update
-        num_var_names=$(echo "${updated_config}" | grep -c "^${var_name}=" >/dev/null)
-        var_lines=$(echo "${override_section}" | grep "^${var_name}=.*" |
-            (
-              var_lines=""
-              while read -r line
-              do
-                if [ -z "${var_lines}" ]; then
-                  var_lines="${line}"
-                else
-                  var_lines="${var_lines}${NL}${line}"
-                fi
-              done
-              echo "${var_lines}"
-            )
-        )
-        if [ "${num_var_names}" == "0" ]; then    # just append the overrides at the end
-          for line in ${var_lines}
-          do
-            updated_config="${updated_config}${NL}${line}"
-          done
-        else                                      # replace block
-          # prefix is the config section that precedes the var_name entries
-          prefix=$(echo "${updated_config}" | sed "/^${var_name}=.*/,$ d")
-          # suffix is the config section that succeeds the var_name entries
-          suffix=$(echo "${updated_config}" | sed "1,/^${var_name}=.*/d")
-          suffix=$(echo "${suffix}" | sed "/^${var_name}=.*/d")
-          updated_config="${prefix}"
-          for line in ${var_lines}
-          do
-            updated_config="${updated_config}${NL}${line}"
-          done
-          updated_config="${updated_config}${NL}${suffix}"
-        fi
-      done
-      echo "${updated_config}"
-    )
+  updated_config=$(
+    echo "${override_section}" | cut -f1 -d= | sort -u |
+      (
+        while read -r var_name; do
+          NL=$'\n'
+          # number of var_name entries in the config section we want to update
+          num_var_names=$(echo "${updated_config}" | grep -c "^${var_name}=" >/dev/null)
+          var_lines=$(
+            echo "${override_section}" | grep "^${var_name}=.*" |
+              (
+                var_lines=""
+                while read -r line; do
+                  if [ -z "${var_lines}" ]; then
+                    var_lines="${line}"
+                  else
+                    var_lines="${var_lines}${NL}${line}"
+                  fi
+                done
+                echo "${var_lines}"
+              )
+          )
+          if [ "${num_var_names}" == "0" ]; then # just append the overrides at the end
+            for line in ${var_lines}; do
+              updated_config="${updated_config}${NL}${line}"
+            done
+          else # replace block
+            # prefix is the config section that precedes the var_name entries
+            prefix=$(echo "${updated_config}" | sed "/^${var_name}=.*/,$ d")
+            # suffix is the config section that succeeds the var_name entries
+            suffix=$(echo "${updated_config}" | sed "1,/^${var_name}=.*/d")
+            suffix=$(echo "${suffix}" | sed "/^${var_name}=.*/d")
+            updated_config="${prefix}"
+            for line in ${var_lines}; do
+              updated_config="${updated_config}${NL}${line}"
+            done
+            updated_config="${updated_config}${NL}${suffix}"
+          fi
+        done
+        echo "${updated_config}"
+      )
   )
   echo "${updated_config}"
 }
@@ -157,8 +155,7 @@ function copy_env {
   debug_msg "Copying ${env_config} ${target_dir} ..."
   if [ -n "${OVERRIDE_CONF_DIR}" ] && [ -s "${OVERRIDE_CONF_DIR}/${env_file}" ]; then
     debug_msg "Overriding ${env_file}:"
-    while IFS=$'\n' read -r line
-    do
+    while IFS=$'\n' read -r line; do
       env_var=${line%=*}
       env_val=${line#*=}
       if ! echo "${env_unit}" | grep "^${env_var}=" >/dev/null; then
@@ -167,7 +164,7 @@ function copy_env {
         NL=$'\n'
         env_unit="${env_unit}${NL}${env_var}=${env_val}"
       fi
-    done < "${OVERRIDE_CONF_DIR}/${env_file}"
+    done <"${OVERRIDE_CONF_DIR}/${env_file}"
     echo "${env_unit}" >"${target_dir}/${env_file}"
 
     if [ "${VERBOSE}" = "y" ]; then
@@ -224,7 +221,6 @@ if [ "${COMMAND}" == "install" ]; then
   echo "Discovery Installed."
   exit 0
 fi
-
 
 if [ "${COMMAND}" == "uninstall" ]; then
 
