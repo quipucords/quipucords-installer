@@ -251,6 +251,8 @@ if [ "${COMMAND}" == "uninstall" ]; then
   rm -rf "${DISCOVERY_USER_PATH}/log"
   rm -rf "${DISCOVERY_USER_PATH}/sshkeys"
   rm -rf "${DISCOVERY_USER_PATH}/certs"
+  podman secret rm discovery-server-password &>/dev/null
+  podman secret rm discovery-django-secret-key &>/dev/null
 
   echo "Discovery Uninstalled."
   exit 0
