@@ -1,147 +1,95 @@
+# Installing Discovery using `discovery-installer`
 
-## Installing Discovery using the RPM Installer
+## Using the official RPM
 
-## Deploying Discovery
+Unless specifically noted with `sudo`, ***all commands*** for installing and interacting with Discovery through this installer should be executed as a *regular non-root* user. If you install and run Discovery as `root`, expect no support from the maintainers.
 
-Deploying Discovery via Quadlet is performed via an RPM based installer. The following is an example of how to install discovery:
+To use the the official installer to install, configure, and run Discovery:
 
-You must be running the following commands as root to install the discovery installer via the RPM:
-
-```
-# subscription-manager repos --enable discovery-1-for-rhel-9-x86_64-rpms
-# dnf install -y discovery-installer
-```
-
-```
-# type discovery-installer
-discovery-installer is /usr/bin/discovery-installer
+```sh
+sudo subscription-manager repos --enable discovery-1-for-rhel-9-x86_64-rpms
+sudo dnf install -y discovery-installer
+discovery-installer install
+podman login registry.redhat.io  # REQUIRED before starting discovery-app
+systemctl --user start discovery-app
 ```
 
-Discovery must then be installed as a regular (non-root) user in the system. For the following examples we will use the username **discovery**
+A few seconds later, you may access Discovery on https://localhost:9443
 
-Log in to the _discovery_ user account then install Discovery:
+If you want to access Discovery from systems outside of localhost, you may need to add a rule to allow access through the firewall:
 
-```
-discovery $ pwd
-/home/discovery
-discovery $ type discovery-installer
-discovery-installer is /usr/bin/discovery-installer
-discovery $ discovery-installer
-Usage: discovery-installer [-v | --verbose] <command>
-
-Where <command> is one of:
-  install                  - Install Discovery
-  uninstall                - Uninstall Discovery
-  create-server-password   - Create a Discovery server password
-  create-app-secret        - Create a Discovery application secret
+```sh
+sudo firewall-cmd --permanent --add-port=9443/tcp  # optional if you want external access
+sudo firewall-cmd --reload  # optional if you want external access
 ```
 
-## Discovery Pre-requisites
+## Running from source (developers only)
 
-### Podman Secrets
+Alternatively, if you are a Discovery developer and need to run this repo from source:
 
-Before starting Discovery you need to create the following _podman_ secrets:
-
-- discovery-server-password
-  - The Discovery Console admin password
-- discovery-django-secret-key
-  - The Discovery application secret key for this deployment
-
-Running *discovery-installer* install first requires the server password and application secrets to be created. if not detected, the installer will require those to be done first.
-
-```
-abellotti $ discovery-installer install
-Must create the discovery-server-password secret before installing Discovery.
-Run discovery-installer create-server-password
+```sh
+git clone https://github.com/quipucords/discovery-quadlets.git discovery-quadlets
+cd discovery-quadlets
+DISCOVERY_PKG_ROOT=$(pwd) ./bin/discovery-installer install
+podman login registry.redhat.io  # REQUIRED before starting discovery-app
+systemctl --user start discovery-app
 ```
 
-```
-abellotti $ discovery-installer create-server-password
-Enter the Discovery server password: 
-Re-enter the password: 
-1894eb784d888afbabdc6eaa4
-ID                         NAME                       DRIVER      CREATED                 UPDATED
-1894eb784d888afbabdc6eaa4  discovery-server-password  file        Less than a second ago  Less than a second ago
-```
+A few seconds (or minutes depending on your hardware) later, you may access Discovery on https://localhost:9443
 
-```
-abellotti $ discovery-installer install
-Must create the discovery-django-secret-key secret before installing Discovery.
-Run discovery-installer create-app-secret
-```
+## Accessing Discovery
 
-```
-abellotti $ discovery-installer create-app-secret
-Enter the Discovery Django secret key:
-Re-enter the secret key:
-7add5731b86406497f046ade9
-ID                         NAME                         DRIVER      CREATED                 UPDATED
-7add5731b86406497f046ade9  discovery-django-secret-key  file        Less than a second ago  Less than a second ago
+You can access Discovery on the host where it was installed at https://localhost:9443.
+
+If that host has a custom hostname, such as `my-discovery-server`, and you have added appropriate firewall rules, you may be able to access Discovery from other systems on your network at https://my-discovery-server:9443 or https://my-discovery-server.local:9443. Further hostname, DNS, firewall, and network configuration instructions are outside the scope of this document and not officially supported.
+
+
+## Stopping Discovery
+
+Discovery is managed via the **discovery-app.service** systemd unit. Related service units declare dependencies such that this one service is responsible for all Discovery service orchestration.
+
+To stop Discovery and all its supporting services:
+
+```sh
+systemctl --user stop discovery-app
 ```
 
-### Registry Access
+## Restarting Discovery
 
+To restart all Discovery services:
 
-For starting Discovery, the quadlets will be downloading the necessary images from **registry.redhat.io**, you need to login to that registry first:
-
-```
-discovery $ podman login registry.redhat.io
-Username: {your_registry_redhat_io_username}
-Password:
-Login Succeeded!
-discovery $
+```sh
+systemctl --user restart discovery-app
 ```
 
-*Note*: If you are installing an upstream release of Discovery you also need to _podman login_ to **quay.io**
+## Uninstall and cleanup
 
+To stop Discovery, uninstall it, and remove related files, simply run:
 
-
-### Firewall
-
-For accessing the Discovery Console, make sure the 9443 port that is exposed and published by the discovery-app quadlet is accessible:
-
-
-This can be done by running the following commands as root:
-
+```sh
+discovery-installer uninstall
 ```
-# firewall-cmd --permanent --add-port=9443/tcp
-# firewall-cmd --reload
+```
+Stopping Discovery ...
+Removing Discovery Services ...
+Removing Discovery Data ...
+Discovery Uninstalled.
 ```
 
-*Note*: the firewall-cmd command is provided by the _firewalld_ RPM package.
+That command should stop any running containers belonging to Discovery, remove saved podman secrets, remove systemd unit files, and remove Discovery's logs and data.
+
+## Troubleshooting
+
+What if you cannot access the web UI or API on https://localhost:9443?
 
 
-## Installing Discovery
+After installing and starting Discovery, check that the following services are defined:
 
-
+```sh
+systemctl --user list-units 'discovery-*'
 ```
-discovery $ discovery-installer install
-Installing Discovery configuration files ...
-Generate the Discovery services ...
-Discovery Installed.
-discovery $
 ```
-
-The necessary volume mount directories for Discovery would be created during the install:
-
-```
-discovery $ ls -FC ~/.local/share/discovery
-certs/ data/ log/ sshkeys/
-discovery $
-```
-
-When running Discovery, a self-signed certificate is created for accessing the Console and API and stored in the ~/.local/share/discovery/certs/ directory. A customer provided/signed certificate can also be placed there before starting Discovery
-
-- server.crt
-- server.key
-
-### Quadlet Services
-
-After installing Discovery, the following Quadlet services and shared network are defined:
-
-```
-discovery $ systemctl --user list-units 'discovery-*'
-  UNIT                            LOAD   ACTIVE SUB     DESCRIPTION                      
+  UNIT                            LOAD   ACTIVE SUB     DESCRIPTION
   discovery-app.service           loaded active running Discovery App
   discovery-celery-worker.service loaded active running Discovery Celery Worker
   discovery-db.service            loaded active running PostgreSQL Database for Discovery
@@ -149,16 +97,92 @@ discovery $ systemctl --user list-units 'discovery-*'
   discovery-redis.service         loaded active running Redis for Discovery
   discovery-server.service        loaded active running Discovery Server
 
-LOAD   = Reflects whether the unit definition was properly loaded.
-ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
-SUB    = The low-level unit activation state, values depend on unit type.
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
 6 loaded units listed. Pass --all to see loaded but inactive units, too.
 To show all installed unit files use 'systemctl list-unit-files'.
 ```
 
-Starting and stopping Discovery is managed via the **discovery-app.service** service. It declares its dependencies to the other quadlets and is responsible for the Discovery quadlet orchestration.
+`discovery-network` should report `loaded active exited` and all other units should report `loaded active running`.
 
-### Discovery Quadlet Orchestration
+Check that systemd reports that each component service is `active (running)`:
+
+```sh
+systemctl --user status discovery-app
+systemctl --user status discovery-db
+systemctl --user status discovery-redis
+systemctl --user status discovery-server
+systemctl --user status discovery-celery-worker
+```
+
+Check that podman reports each container is running without error:
+
+```sh
+podman ps -a
+podman inspect discovery-app | jq '.[].State | {Status, Running, Error, ExitCode}'
+podman inspect discovery-db | jq '.[].State | {Status, Running, Error, ExitCode}'
+podman inspect discovery-redis | jq '.[].State | {Status, Running, Error, ExitCode}'
+podman inspect discovery-server | jq '.[].State | {Status, Running, Error, ExitCode}'
+podman inspect discovery-celery-worker | jq '.[].State | {Status, Running, Error, ExitCode}'
+```
+
+Check the systemd journal for any errors or interesting log messages:
+
+```sh
+journalctl --user -u podman
+journalctl --user -u discovery-server
+journalctl --user -u discovery-db
+journalctl --user -u discovery-redis
+journalctl --user -u discovery-server
+journalctl --user -u discovery-celery-worker
+```
+
+Did some containers start but not all? Are the `discovery-db` and `discovery-redis` containers missing? You may have forgotten to `podman login` or your auth token has expired. Log in again, and restart the app:
+
+```sh
+podman login registry.redhat.io  # REQUIRED before starting discovery-app
+systemctl --user restart discovery-app
+```
+
+Are you trying to access Discovery from outside localhost? Check that the correct port/protocol is open, and add rules if necessary:
+
+```sh
+sudo firewall-cmd --list-ports
+```
+
+Can you access Discovery via the web UI or CLI, but you cannot log in? You may have forgotten your password, or the password you set during the `install` command was too weak. Reset your password, and restart the app:
+
+```sh
+discovery-installer create-server-password
+systemctl --user restart discovery-app
+```
+
+Still can't login? If the password you set it too weak, Discovery will reset it to a new strong random password upon startup. Check for recent messages like this in the server logs:
+
+```sh
+journalctl --user -u discovery-server | grep password
+```
+```
+QPC_SERVER_PASSWORD value failed password requirements. Using a randomly generated password instead.
+Updated user 'admin' with random password: jbzRwrvjnw
+```
+
+You may use the logged randomly-generated password *temporarily*, but beware that if you do not set a properly strong password directly, the random password will regenerate itself the next time Discovery restarts.
+
+Did you run `discovery-installer install` as a regular user or as root? You should always run the installer and podman commands as a regular user, *NEVER as the root user*. Run the uninstall command, and start over as a non-root user.
+
+## Securing Discovery HTTPS
+
+When running Discovery, a self-signed certificate is created for accessing the web UI and API and is stored in the running host's `~/.local/share/discovery/certs/` directory. You may provide your own HTTPS certificate and key in this location before starting Discovery:
+
+- `~/.local/share/discovery/certs/server.crt`
+- `~/.local/share/discovery/certs/server.key`
+
+## Discovery Service Orchestration
+
+Discovery's services are managed by systemd with the following relationships:
 
 - **discovery-app.service**
   - Depends on and automatically starts and stops:
@@ -177,53 +201,7 @@ Starting and stopping Discovery is managed via the **discovery-app.service** ser
   - Starts After:
       - discovery-db
       - discovery-redis
- 
+
 - **discovery-redis.service**
 
 - **discovery-db.service**
-
-
-
-## Starting Discovery
-
-Starting Discovery and all related quadlets is done via the _discovery-app_ quadlet as follows:
-
-```
-discovery $ systemctl --user start discovery-app
-discovery $
-```
-
-
-## Accessing Discovery
-
-You can access the Discovery console on the Machine hosting the Discovery Quadlet Services by opening up a browser and accessing port 9443.
-
-In this example, the host name is aab-dsc, so simply access the following URL:
-
-```
-https://aab-dsc:9443
-```
-
-
-## Stopping Discovery
-
-Stopping Discovery and all related quadlets is done as follows:
-
-```
-discovery $ systemctl --user stop discovery-app
-discovery $
-```
-
-## Uninstalling Discovery
-
-For uninstalling Discovery and all related files and services, run the following command:
-
-```
-discovery $ discovery-installer uninstall
-Stopping Discovery ...
-Removing Discovery Services ...
-Removing Discovery Data ...
-Discovery Uninstalled.
-discovery $
-```
-
