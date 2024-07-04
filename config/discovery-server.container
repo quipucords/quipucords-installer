@@ -18,7 +18,6 @@ Secret=discovery-django-secret-key,type=env,target=DJANGO_SECRET_KEY
 Volume=%h/.local/share/discovery/data:/var/data:z
 Volume=%h/.local/share/discovery/log:/var/log:z
 Volume=%h/.local/share/discovery/sshkeys:/sshkeys:z
-Volume=discovery-cached-reports:/app/var/cached_reports:z
 Network=discovery.network
 
 [Service]
