@@ -193,6 +193,7 @@ if [ "${COMMAND}" == "install" ]; then
   fi
 
   mkdir -p "${DISCOVERY_USER_PATH}/data"
+  mkdir -p "${DISCOVERY_USER_PATH}/db"
   mkdir -p "${DISCOVERY_USER_PATH}/log"
   mkdir -p "${DISCOVERY_USER_PATH}/sshkeys"
   mkdir -p "${DISCOVERY_USER_PATH}/certs"

@@ -10,7 +10,7 @@ ExposeHostPort=5432
 Environment=POSTGRESQL_USER=qpc
 Environment=POSTGRESQL_PASSWORD=qpc
 Environment=POSTGRESQL_DATABASE=qpc
-Volume=%h/.local/share/discovery/data:/var/lib/pgsql/data:z
+Volume=%h/.local/share/discovery/db:/var/lib/pgsql/data:z
 Network=discovery.network
 # for some reason podman default user mapping won't map host user to postgres container uid (26)[1]
 # (maybe due to fix-permission script it executes later on [2]), so we fix that setting this up with
