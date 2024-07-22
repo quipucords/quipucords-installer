@@ -9,7 +9,7 @@ After=quipucords-server.service
 
 [Container]
 ContainerName=quipucords-app
-Image=quay.io/quipucords/quipucords-ui:v2-alpha
+Image=quay.io/quipucords/quipucords-ui:latest
 PublishPort=9443:9443
 ExposeHostPort=9443
 EnvironmentFile=%h/.config/quipucords/env/env-app.env

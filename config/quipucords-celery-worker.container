@@ -6,7 +6,7 @@ After=quipucords-server.service
 
 [Container]
 ContainerName=quipucords-celery-worker
-Image=quay.io/quipucords/quipucords:1.8
+Image=quay.io/quipucords/quipucords:latest
 EnvironmentFile=%h/.config/quipucords/env/env-db.env
 EnvironmentFile=%h/.config/quipucords/env/env-redis.env
 EnvironmentFile=%h/.config/quipucords/env/env-ansible.env
