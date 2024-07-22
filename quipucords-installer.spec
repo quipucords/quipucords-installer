@@ -1,5 +1,8 @@
-Name:           quipucords-installer
-Summary:        installer for quipucords server
+%global product_name_lower quipucords
+%global product_name_title Quipucords
+
+Name:           %{product_name_lower}-installer
+Summary:        installer for %{product_name_lower} server
 
 Version:        1.8.1
 Release:        1%{?dist}
@@ -14,22 +17,37 @@ BuildArch:      noarch
 Requires:       bash
 
 %description
-quipucords-installer configures and installs the quipucords server to be
+%{name} configures and installs the %{product_name_title} server to be
 managed and run via systemd using Podman Quadlet services.
 
 %prep
+# Note: this must match the GitHub repo name. Do not substitute variables.
 %autosetup -n quipucords-installer-%{version}
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
 mkdir -p %{buildroot}/%{_datadir}/%{name}/bin
-cp bin/%{name} %{buildroot}/%{_bindir}/%{name}
+cp bin/quipucords-installer %{buildroot}/%{_bindir}/%{name}
 cp bin/create-server-password %{buildroot}/%{_datadir}/%{name}/bin/
 cp bin/create-app-secret %{buildroot}/%{_datadir}/%{name}/bin/
-mkdir -p %{buildroot}/%{_datadir}/%{name}/config
-cp config/*.container config/*.network %{buildroot}/%{_datadir}/%{name}/config/
+
 mkdir -p %{buildroot}/%{_datadir}/%{name}/env
 cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
+
+# Copy and rename original source files with appropriate branding.
+mkdir -p %{buildroot}/%{_datadir}/%{name}/config
+cp config/quipucords-app.container %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-app.container
+cp config/quipucords-celery-worker.container %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-celery-worker.container
+cp config/quipucords-db.container %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-db.container
+cp config/quipucords-redis.container %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-redis.container
+cp config/quipucords-server.container %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-server.container
+cp config/quipucords.network %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}.network
+
+# Update source files contents with appropriate branding.
+sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_bindir}/%{name}
+sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_datadir}/%{name}/bin/*
+sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}*
+sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_datadir}/%{name}/env/*
 
 %files
 %license LICENSE
@@ -37,12 +55,12 @@ cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
 %{_bindir}/%{name}
 %{_datadir}/%{name}/bin/create-server-password
 %{_datadir}/%{name}/bin/create-app-secret
-%{_datadir}/%{name}/config/quipucords.network
-%{_datadir}/%{name}/config/quipucords-app.container
-%{_datadir}/%{name}/config/quipucords-celery-worker.container
-%{_datadir}/%{name}/config/quipucords-db.container
-%{_datadir}/%{name}/config/quipucords-redis.container
-%{_datadir}/%{name}/config/quipucords-server.container
+%{_datadir}/%{name}/config/%{product_name_lower}.network
+%{_datadir}/%{name}/config/%{product_name_lower}-app.container
+%{_datadir}/%{name}/config/%{product_name_lower}-celery-worker.container
+%{_datadir}/%{name}/config/%{product_name_lower}-db.container
+%{_datadir}/%{name}/config/%{product_name_lower}-redis.container
+%{_datadir}/%{name}/config/%{product_name_lower}-server.container
 %{_datadir}/%{name}/env/env-ansible.env
 %{_datadir}/%{name}/env/env-app.env
 %{_datadir}/%{name}/env/env-celery-worker.env
