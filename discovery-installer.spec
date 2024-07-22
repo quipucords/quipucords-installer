@@ -1,23 +1,24 @@
 Name:           discovery-installer
-Version:        1.8
+Summary:        installer for quipucords server
+
+Version:        1.8.1
 Release:        1%{?dist}
-Summary:        Discovery Application v1.8 Installer
+Epoch:          0
 
 License:        GPLv3
-URL:            https://gihub.com/quipucords/discovery-quadlets
-Source0:        %{name}-%{version}.tar.gz
+URL:            https://github.com/quipucords/discovery-quadlets
+Source0:        %{url}/archive/%{version}.tar.gz
 
 BuildArch:      noarch
 
 Requires:       bash
 
 %description
-This RPM installs the Discovery Application v1.8 Installer on the System.
-The Installer installs and configures Discovery v1.8 to be managed
-and run via systemd quadlet services.
+discovery-installer configures and installs the quipucords server to be
+managed and run via systemd using Podman Quadlet services.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n discovery-quadlets-%{version}
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
@@ -50,5 +51,8 @@ cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
 %{_datadir}/%{name}/env/env-server.env
 
 %changelog
-* Thu Jun 04 2024 Alberto Bellotti <abellott@redhat.com>
-1.8
+* Mon Jul 22 2024 Brad Smith <brasmith@redhat.com> - 0:1.8.1-1
+- Clean up typos in spec file.
+
+* Thu Jun 6 2024 Alberto Bellotti <abellott@redhat.com> - 0:1.8.0-1
+- Initial version
