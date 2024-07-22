@@ -49,6 +49,11 @@ sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/
 sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}*
 sed -i 's/Quipucords/%{product_name_title}/g;s/quipucords/%{product_name_lower}/g' %{buildroot}/%{_datadir}/%{name}/env/*
 
+# Inject specific image versions into the container files.
+sed -i 's/^Image=.*/Image=quay.io\/quipucords\/quipucords:1.8/g' %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-server.container
+sed -i 's/^Image=.*/Image=quay.io\/quipucords\/quipucords:1.8/g' %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-celery-worker.container
+sed -i 's/^Image=.*/Image=quay.io\/quipucords\/quipucords-ui:v2-alpha/g' %{buildroot}/%{_datadir}/%{name}/config/%{product_name_lower}-app.container
+
 %files
 %license LICENSE
 %doc README.md
