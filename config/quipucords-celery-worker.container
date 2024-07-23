@@ -1,0 +1,26 @@
+[Unit]
+Description=Quipucords Celery Worker
+Requires=podman.socket
+PartOf=quipucords-app.service
+After=quipucords-server.service
+
+[Container]
+ContainerName=quipucords-celery-worker
+Image=quay.io/quipucords/quipucords:1.8
+EnvironmentFile=%h/.config/quipucords/env/env-db.env
+EnvironmentFile=%h/.config/quipucords/env/env-redis.env
+EnvironmentFile=%h/.config/quipucords/env/env-ansible.env
+EnvironmentFile=%h/.config/quipucords/env/env-celery-worker.env
+Secret=quipucords-django-secret-key,type=env,target=DJANGO_SECRET_KEY
+Exec=/bin/sh -c /deploy/entrypoint_celery_worker.sh
+Volume=%h/.local/share/quipucords/data:/var/data:z
+Volume=%h/.local/share/quipucords/log:/var/log:z
+Volume=%h/.local/share/quipucords/sshkeys:/sshkeys:z
+Network=quipucords.network
+
+[Service]
+TimeoutStartSec=300
+Restart=always
+
+[Install]
+WantedBy=default.target
