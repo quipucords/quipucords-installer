@@ -1,4 +1,4 @@
-Name:           discovery-installer
+Name:           quipucords-installer
 Summary:        installer for quipucords server
 
 Version:        1.8.1
@@ -6,7 +6,7 @@ Release:        1%{?dist}
 Epoch:          0
 
 License:        GPLv3
-URL:            https://github.com/quipucords/discovery-quadlets
+URL:            https://github.com/quipucords/quipucords-installer
 Source0:        %{url}/archive/%{version}.tar.gz
 
 BuildArch:      noarch
@@ -14,11 +14,11 @@ BuildArch:      noarch
 Requires:       bash
 
 %description
-discovery-installer configures and installs the quipucords server to be
+quipucords-installer configures and installs the quipucords server to be
 managed and run via systemd using Podman Quadlet services.
 
 %prep
-%autosetup -n discovery-quadlets-%{version}
+%autosetup -n quipucords-installer-%{version}
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
@@ -37,12 +37,12 @@ cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
 %{_bindir}/%{name}
 %{_datadir}/%{name}/bin/create-server-password
 %{_datadir}/%{name}/bin/create-app-secret
-%{_datadir}/%{name}/config/discovery.network
-%{_datadir}/%{name}/config/discovery-app.container
-%{_datadir}/%{name}/config/discovery-celery-worker.container
-%{_datadir}/%{name}/config/discovery-db.container
-%{_datadir}/%{name}/config/discovery-redis.container
-%{_datadir}/%{name}/config/discovery-server.container
+%{_datadir}/%{name}/config/quipucords.network
+%{_datadir}/%{name}/config/quipucords-app.container
+%{_datadir}/%{name}/config/quipucords-celery-worker.container
+%{_datadir}/%{name}/config/quipucords-db.container
+%{_datadir}/%{name}/config/quipucords-redis.container
+%{_datadir}/%{name}/config/quipucords-server.container
 %{_datadir}/%{name}/env/env-ansible.env
 %{_datadir}/%{name}/env/env-app.env
 %{_datadir}/%{name}/env/env-celery-worker.env
@@ -52,7 +52,7 @@ cp env/*.env %{buildroot}/%{_datadir}/%{name}/env/
 
 %changelog
 * Mon Jul 22 2024 Brad Smith <brasmith@redhat.com> - 0:1.8.1-1
-- Clean up typos in spec file.
+- Update names and fix typos in spec file.
 
 * Thu Jun 6 2024 Alberto Bellotti <abellott@redhat.com> - 0:1.8.0-1
 - Initial version

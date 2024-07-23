@@ -1,9 +1,9 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
 
-specfile_path: discovery-installer.spec
+specfile_path: quipucords-installer.spec
 
-upstream_project_url: https://github.com/quipucords/discovery-quadlets
+upstream_project_url: https://github.com/quipucords/quipucords-installer
 
 jobs:
   - job: copr_build
@@ -27,13 +27,13 @@ jobs:
     trigger: commit
     branch: "^main$"
     owner: "@quipucords"
-    project: "discovery-installer-latest"
+    project: "quipucords-installer-latest"
     preserve_project: True
     targets: *targets_list
 
   - job: copr_build
     trigger: release
     owner: "@quipucords"
-    project: "discovery-installer"
+    project: "quipucords-installer"
     preserve_project: True
     targets: *targets_list

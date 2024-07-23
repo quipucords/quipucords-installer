@@ -1,14 +1,14 @@
 [Unit]
-Description=Redis for Discovery
+Description=Redis for Quipucords
 Requires=podman.socket
-PartOf=discovery-app.service
+PartOf=quipucords-app.service
 
 [Container]
-ContainerName=discovery-redis
+ContainerName=quipucords-redis
 Image=registry.redhat.io/rhel9/redis-6:latest
 ExposeHostPort=6379
-EnvironmentFile=%h/.config/discovery/env/env-redis.env
-Network=discovery.network
+EnvironmentFile=%h/.config/quipucords/env/env-redis.env
+Network=quipucords.network
 
 [Service]
 TimeoutStartSec=300

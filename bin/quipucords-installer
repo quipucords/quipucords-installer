@@ -1,17 +1,17 @@
 #!/bin/bash
 #
-# Discovery Installer
+# Quipucords Installer
 #
 export VERBOSE="n"
-INSTALLER_COMMAND="discovery-installer"
-DISCOVERY_PKG_ROOT="${DISCOVERY_PKG_ROOT:-/usr/share/${INSTALLER_COMMAND}}"
-DISCOVERY_BIN_DIR=${DISCOVERY_PKG_ROOT}/bin
+INSTALLER_COMMAND="quipucords-installer"
+QUIPUCORDS_PKG_ROOT="${QUIPUCORDS_PKG_ROOT:-/usr/share/${INSTALLER_COMMAND}}"
+QUIPUCORDS_BIN_DIR=${QUIPUCORDS_PKG_ROOT}/bin
 
-CONFIG_PATH="${DISCOVERY_PKG_ROOT}/config"
-ENV_PATH="${DISCOVERY_PKG_ROOT}/env"
+CONFIG_PATH="${QUIPUCORDS_PKG_ROOT}/config"
+ENV_PATH="${QUIPUCORDS_PKG_ROOT}/env"
 
-DISCOVERY_USER_PATH="${HOME}/.local/share/discovery"
-ENV_USER_PATH="${HOME}/.config/discovery/env/"
+QUIPUCORDS_USER_PATH="${HOME}/.local/share/quipucords"
+ENV_USER_PATH="${HOME}/.config/quipucords/env/"
 SYSTEMD_USER_PATH="${HOME}/.config/containers/systemd/"
 
 if [ "${1}" == "-v" ] || [ "${1}" == "--verbose" ]; then
@@ -40,12 +40,12 @@ if [ -z "${XDG_RUNTIME_DIR}" ]; then
 fi
 
 if [ "${COMMAND}" == "create-server-password" ]; then
-  "${DISCOVERY_BIN_DIR}"/create-server-password
+  "${QUIPUCORDS_BIN_DIR}"/create-server-password
   exit $?
 fi
 
 if [ "${COMMAND}" == "create-app-secret" ]; then
-  "${DISCOVERY_BIN_DIR}"/create-app-secret
+  "${QUIPUCORDS_BIN_DIR}"/create-app-secret
   exit $?
 fi
 
@@ -177,12 +177,12 @@ function copy_env {
 }
 
 if [ "${COMMAND}" == "install" ]; then
-  if ! podman secret exists discovery-server-password; then
-    "${DISCOVERY_BIN_DIR}"/create-server-password || exit 1
+  if ! podman secret exists quipucords-server-password; then
+    "${QUIPUCORDS_BIN_DIR}"/create-server-password || exit 1
   fi
 
-  if ! podman secret exists discovery-django-secret-key; then
-    "${DISCOVERY_BIN_DIR}"/create-app-secret -y || exit 1
+  if ! podman secret exists quipucords-django-secret-key; then
+    "${QUIPUCORDS_BIN_DIR}"/create-app-secret -y || exit 1
   fi
 
   if [ "${1}" == "--override-conf-dir" ]; then
@@ -192,15 +192,15 @@ if [ "${COMMAND}" == "install" ]; then
     [[ ! -d "${OVERRIDE_CONF_DIR}" ]] && echo "Override configuration directory ${OVERRIDE_CONF_DIR} does not exist." && exit 1
   fi
 
-  mkdir -p "${DISCOVERY_USER_PATH}/data"
-  mkdir -p "${DISCOVERY_USER_PATH}/db"
-  mkdir -p "${DISCOVERY_USER_PATH}/log"
-  mkdir -p "${DISCOVERY_USER_PATH}/sshkeys"
-  mkdir -p "${DISCOVERY_USER_PATH}/certs"
+  mkdir -p "${QUIPUCORDS_USER_PATH}/data"
+  mkdir -p "${QUIPUCORDS_USER_PATH}/db"
+  mkdir -p "${QUIPUCORDS_USER_PATH}/log"
+  mkdir -p "${QUIPUCORDS_USER_PATH}/sshkeys"
+  mkdir -p "${QUIPUCORDS_USER_PATH}/certs"
 
   systemctl --user reset-failed
 
-  echo "Installing Discovery configuration files ..."
+  echo "Installing Quipucords configuration files ..."
   mkdir -p "${ENV_USER_PATH}"
   mkdir -p "${SYSTEMD_USER_PATH}"
 
@@ -212,46 +212,46 @@ if [ "${COMMAND}" == "install" ]; then
     copy_env "${env_file}" "${ENV_USER_PATH}"
   done
 
-  echo "Generate the Discovery services ..."
+  echo "Generate the Quipucords services ..."
   systemctl --user daemon-reload
 
-  echo "Discovery Installed."
+  echo "Quipucords Installed."
   exit 0
 fi
 
 if [ "${COMMAND}" == "uninstall" ]; then
 
-  echo "Stopping Discovery ..."
-  systemctl --user stop discovery-app
-  systemctl --user stop discovery-network
+  echo "Stopping Quipucords ..."
+  systemctl --user stop quipucords-app
+  systemctl --user stop quipucords-network
 
-  echo "Removing Discovery Services ..."
-  rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/discovery-*.service
-  rm -f "${SYSTEMD_USER_PATH}"/discovery*.network
-  rm -f "${SYSTEMD_USER_PATH}"/discovery*.container
+  echo "Removing Quipucords Services ..."
+  rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/quipucords-*.service
+  rm -f "${SYSTEMD_USER_PATH}"/quipucords*.network
+  rm -f "${SYSTEMD_USER_PATH}"/quipucords*.container
   rm -f "${ENV_USER_PATH}"/*.env
 
   systemctl --user daemon-reload
   systemctl --user reset-failed
 
-  echo "Removing Discovery Data ..."
-  rm -rf "${DISCOVERY_USER_PATH}/data"
-  rm -rf "${DISCOVERY_USER_PATH}/log"
-  rm -rf "${DISCOVERY_USER_PATH}/sshkeys"
-  rm -rf "${DISCOVERY_USER_PATH}/certs"
-  podman secret rm discovery-server-password &>/dev/null
-  podman secret rm discovery-django-secret-key &>/dev/null
+  echo "Removing Quipucords Data ..."
+  rm -rf "${QUIPUCORDS_USER_PATH}/data"
+  rm -rf "${QUIPUCORDS_USER_PATH}/log"
+  rm -rf "${QUIPUCORDS_USER_PATH}/sshkeys"
+  rm -rf "${QUIPUCORDS_USER_PATH}/certs"
+  podman secret rm quipucords-server-password &>/dev/null
+  podman secret rm quipucords-django-secret-key &>/dev/null
 
-  echo "Discovery Uninstalled."
+  echo "Quipucords Uninstalled."
   exit 0
 fi
 
 echo "Usage: ${INSTALLER_COMMAND} [-v | --verbose] <command>"
 echo ""
 echo "Where <command> is one of:"
-echo "  install                  - Install Discovery"
-echo "  uninstall                - Uninstall Discovery"
-echo "  create-server-password   - Create a Discovery server password"
-echo "  create-app-secret        - Create a Discovery application secret"
+echo "  install                  - Install Quipucords"
+echo "  uninstall                - Uninstall Quipucords"
+echo "  create-server-password   - Create a Quipucords server password"
+echo "  create-app-secret        - Create a Quipucords application secret"
 
 exit 1
