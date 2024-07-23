@@ -1,12 +1,15 @@
 # Installing Quipucords using `quipucords-installer`
 
+## What is this?
+
+`quipucords-installer` is a small bundle of commands and templates that you can use to install and configure Quipucords and all its required components to run in Podman containers on your local system.
+
 ## Using the RPM
 
 > [!IMPORTANT]
 > Installing the `quipucords-installer` RPM itself requires `sudo` or elevated `root` privileges, but ***all other commands*** for installing and interacting with Quipucords through the `quipucords-installer` program should be executed as a *regular non-root* user. If you install and run Quipucords as `root`, expect no support from the maintainers.
 
 To prepare `quipucords-installer`:
-
 ```sh
 sudo dnf copr enable -y @quipucords/quipucords-installer
 sudo dnf install -y quipucords-installer
