@@ -8,7 +8,7 @@ After=quipucords-redis.service
 [Container]
 ContainerName=quipucords-server
 Image=quay.io/quipucords/quipucords:latest
-ExposeHostPort=8443
+ExposeHostPort=8000
 EnvironmentFile=%h/.config/quipucords/env/env-db.env
 EnvironmentFile=%h/.config/quipucords/env/env-redis.env
 EnvironmentFile=%h/.config/quipucords/env/env-ansible.env
