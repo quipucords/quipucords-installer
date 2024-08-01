@@ -17,6 +17,9 @@ Source0:        %{url}/archive/%{version}.tar.gz
 
 BuildArch:      noarch
 
+BuildRequires:  coreutils
+BuildRequires:  sed
+
 Requires:       bash
 Requires:       coreutils
 Requires:       diffutils
