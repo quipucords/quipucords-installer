@@ -1,6 +1,6 @@
 %global product_name_lower quipucords
 %global product_name_title Quipucords
-%global version_installer 1.9.1
+%global version_installer 1.9.2
 %global server_image quay.io/quipucords/quipucords:1.9
 %global ui_image quay.io/quipucords/quipucords-ui:latest
 
@@ -86,6 +86,9 @@ sed -i 's#^Image=.*#Image=%{ui_image}#g' %{buildroot}/%{_datadir}/%{name}/config
 %{_datadir}/%{name}/env/env-server.env
 
 %changelog
+* Thu Aug 1 2024 Brad Smith <brasmith@redhat.com> - 0:1.9.2-1
+- Add missing BuildRequires and Requires.
+
 * Mon Jul 22 2024 Brad Smith <brasmith@redhat.com> - 0:1.8.1-1
 - Update names and fix typos in spec file.
 
