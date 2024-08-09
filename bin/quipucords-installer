@@ -2,60 +2,134 @@
 #
 # Quipucords Installer
 #
-export VERBOSE="n"
-INSTALLER_COMMAND="quipucords-installer"
-QUIPUCORDS_PKG_ROOT="${QUIPUCORDS_PKG_ROOT:-/usr/share/${INSTALLER_COMMAND}}"
-QUIPUCORDS_BIN_DIR=${QUIPUCORDS_PKG_ROOT}/bin
+set -e
 
-CONFIG_PATH="${QUIPUCORDS_PKG_ROOT}/config"
-ENV_PATH="${QUIPUCORDS_PKG_ROOT}/env"
-
-QUIPUCORDS_USER_PATH="${HOME}/.local/share/quipucords"
-ENV_USER_PATH="${HOME}/.config/quipucords/env/"
-SYSTEMD_USER_PATH="${HOME}/.config/containers/systemd/"
-
-if [ "${1}" == "-v" ] || [ "${1}" == "--verbose" ]; then
-  VERBOSE="y"
-  shift
+if [ "$(id -u)" -eq 0 ]; then
+  echo "$0 must not run as root." 1>&2
+  exit 1
 fi
 
-COMMAND="${1}"
-shift
+usage() {
+  echo "Usage: $0 [-v|--verbose] [--override-conf-dir value] <command>"
+  echo "Options:"
+  echo "  -v, --verbose                 Enable verbose output mode"
+  echo "  --override-conf-dir value     Path of a directory containing config overrides"
+  echo "Commands:"
+  echo "  install                       Install Quipucords"
+  echo "  uninstall                     Uninstall Quipucords"
+  echo "  create-server-password        Create a Quipucords server password"
+  echo "  create-app-secret             Create a Quipucords application secret"
+  exit 1
+}
 
-function debug_msg {
+set_default_vars() {
+  VERBOSE="n"
+  OVERRIDE_CONF_DIR="" # Optional
+
+  # All external programs quipucords-installer needs are in /usr/bin.
+  # Do not allow a user's custom PATH environment to interfere.
+  export PATH=/usr/bin
+
+  INSTALLER_BIN_DIR=$(dirname "$(realpath "$0")")
+  INSTALLER_BASE_DIR=$(dirname "$INSTALLER_BIN_DIR")
+  INSTALLER_CONFIG_DIR="${INSTALLER_BASE_DIR}/config"
+  INSTALLER_ENV_DIR="${INSTALLER_BASE_DIR}/env"
+
+  QUIPUCORDS_ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords/env"
+  QUIPUCORDS_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/quipucords"
+  SYSTEMD_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd"
+
+  if [ -z "${XDG_RUNTIME_DIR}" ]; then
+    export XDG_RUNTIME_DIR=/run/user/$UID
+  fi
+}
+
+main() {
+  set_default_vars
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -v | --verbose)
+      VERBOSE="y"
+      shift
+      ;;
+    --override-conf-dir)
+      if [[ -n $2 && $2 != -* ]]; then
+        OVERRIDE_CONF_DIR=$2
+        shift 2
+      else
+        echo "Error: --override-conf-dir requires a value." 1>&2
+        usage
+      fi
+      if [ ! -d "${OVERRIDE_CONF_DIR}" ]; then
+        echo "Override configuration directory '${OVERRIDE_CONF_DIR}' does not exist." 1>&2
+        usage
+      fi
+      ;;
+    -h | --help)
+      usage
+      ;;
+    -*)
+      echo "Error: Invalid option '$1'" 1>&2
+      usage
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  if [[ $# -ne 1 ]]; then
+    echo "Error: Exactly one command is required." 1>&2
+    usage
+  fi
+
+  COMMAND="$1"
+  shift
+
+  case "$COMMAND" in
+  install)
+    install
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  create-server-password)
+    "${INSTALLER_BIN_DIR}"/create-server-password
+    exit $?
+    ;;
+  create-app-secret)
+    "${INSTALLER_BIN_DIR}"/create-app-secret
+    exit $?
+    ;;
+  *)
+    echo "Error: Invalid command '$COMMAND'" 1>&2
+    usage
+    ;;
+  esac
+}
+
+debug_msg() {
   if [ "${VERBOSE}" == "y" ]; then
     echo "$@"
   fi
 }
 
-export OVERRIDE_CONF_DIR="" # Optional --override-conf-dir configuration directory
+get_section() {
+  # get_section expects two arguments:
+  # 1) file path
+  # 2) config section name
 
-if [ "$(id -u)" -eq 0 ]; then
-  echo "${INSTALLER_COMMAND} must not run as root."
-  exit 1
-fi
-
-if [ -z "${XDG_RUNTIME_DIR}" ]; then
-  export XDG_RUNTIME_DIR=/run/user/$UID
-fi
-
-if [ "${COMMAND}" == "create-server-password" ]; then
-  "${QUIPUCORDS_BIN_DIR}"/create-server-password
-  exit $?
-fi
-
-if [ "${COMMAND}" == "create-app-secret" ]; then
-  "${QUIPUCORDS_BIN_DIR}"/create-app-secret
-  exit $?
-fi
-
-function get_section {
   config_file="${1}"
   section_name="${2}"
   <"${config_file}" sed "0,/^\[${section_name}\]/d" | sed '/^[\b]*$/,$d'
 }
 
-function override_unit_section {
+override_unit_section() {
+  # override_unit_section expects two arguments:
+  # 1) string containing config lines
+  # 2) string containing lines to override
+
   export config_section="${1}"
   export override_section="${2}"
   if [ -z "${override_section}" ]; then
@@ -107,7 +181,11 @@ function override_unit_section {
   echo "${updated_config}"
 }
 
-function copy_container {
+copy_container() {
+  # copy_container expects two arguments:
+  # 1) file path
+  # 2) target directory path
+
   container_config="${1}"
   target_dir="${2}"
   container_file=$(basename "${container_config}")
@@ -139,7 +217,7 @@ function copy_container {
     updated_config="${updated_config}${NL}[Install]${NL}${updated_install}"
     echo "${updated_config}" >"${target_dir}/${container_file}"
     if [ "${VERBOSE}" = "y" ]; then
-      diff --suppress-common-line -y "${container_config}" "${target_dir}/${container_file}"
+      diff --suppress-common-line -y "${container_config}" "${target_dir}/${container_file}" || true
       echo
     fi
   else
@@ -147,7 +225,11 @@ function copy_container {
   fi
 }
 
-function copy_env {
+copy_env() {
+  # copy_env expects two arguments:
+  # 1) file path
+  # 2) target directory path
+
   env_config="${1}"
   target_dir="${2}"
   env_file=$(basename "${env_config}")
@@ -168,7 +250,7 @@ function copy_env {
     echo "${env_unit}" >"${target_dir}/${env_file}"
 
     if [ "${VERBOSE}" = "y" ]; then
-      diff --suppress-common-line -y "${env_config}" "${target_dir}/${env_file}"
+      diff --suppress-common-line -y "${env_config}" "${target_dir}/${env_file}" || true
       echo
     fi
   else
@@ -176,40 +258,33 @@ function copy_env {
   fi
 }
 
-if [ "${COMMAND}" == "install" ]; then
+install() {
   if ! podman secret exists quipucords-server-password; then
-    "${QUIPUCORDS_BIN_DIR}"/create-server-password || exit 1
+    "${INSTALLER_BIN_DIR}"/create-server-password || exit 1
   fi
 
   if ! podman secret exists quipucords-django-secret-key; then
-    "${QUIPUCORDS_BIN_DIR}"/create-app-secret -y || exit 1
+    "${INSTALLER_BIN_DIR}"/create-app-secret -y || exit 1
   fi
 
-  if [ "${1}" == "--override-conf-dir" ]; then
-    OVERRIDE_CONF_DIR="${2}"
-    shift 2
-    [[ -z "${OVERRIDE_CONF_DIR}" ]] && echo "Missing override configuration directory." && exit 1
-    [[ ! -d "${OVERRIDE_CONF_DIR}" ]] && echo "Override configuration directory ${OVERRIDE_CONF_DIR} does not exist." && exit 1
-  fi
-
-  mkdir -p "${QUIPUCORDS_USER_PATH}/data"
-  mkdir -p "${QUIPUCORDS_USER_PATH}/db"
-  mkdir -p "${QUIPUCORDS_USER_PATH}/log"
-  mkdir -p "${QUIPUCORDS_USER_PATH}/sshkeys"
-  mkdir -p "${QUIPUCORDS_USER_PATH}/certs"
+  mkdir -p "${QUIPUCORDS_DATA_DIR}/data"
+  mkdir -p "${QUIPUCORDS_DATA_DIR}/db"
+  mkdir -p "${QUIPUCORDS_DATA_DIR}/log"
+  mkdir -p "${QUIPUCORDS_DATA_DIR}/sshkeys"
+  mkdir -p "${QUIPUCORDS_DATA_DIR}/certs"
 
   systemctl --user reset-failed
 
   echo "Installing Quipucords configuration files ..."
-  mkdir -p "${ENV_USER_PATH}"
-  mkdir -p "${SYSTEMD_USER_PATH}"
+  mkdir -p "${QUIPUCORDS_ENV_DIR}"
+  mkdir -p "${SYSTEMD_CONFIG_DIR}"
 
-  cp "${CONFIG_PATH}"/*.network "${SYSTEMD_USER_PATH}"
-  for container_file in "${CONFIG_PATH}"/*.container; do
-    copy_container "${container_file}" "${SYSTEMD_USER_PATH}"
+  cp "${INSTALLER_CONFIG_DIR}"/*.network "${SYSTEMD_CONFIG_DIR}"
+  for container_file in "${INSTALLER_CONFIG_DIR}"/*.container; do
+    copy_container "${container_file}" "${SYSTEMD_CONFIG_DIR}"
   done
-  for env_file in "${ENV_PATH}"/*.env; do
-    copy_env "${env_file}" "${ENV_USER_PATH}"
+  for env_file in "${INSTALLER_ENV_DIR}"/*.env; do
+    copy_env "${env_file}" "${QUIPUCORDS_ENV_DIR}"
   done
 
   echo "Generate the Quipucords services ..."
@@ -217,41 +292,33 @@ if [ "${COMMAND}" == "install" ]; then
 
   echo "Quipucords Installed."
   exit 0
-fi
+}
 
-if [ "${COMMAND}" == "uninstall" ]; then
-
+uninstall() {
   echo "Stopping Quipucords ..."
-  systemctl --user stop quipucords-app
-  systemctl --user stop quipucords-network
+  systemctl --user stop quipucords-app || true
+  systemctl --user stop quipucords-network || true
 
   echo "Removing Quipucords Services ..."
   rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/quipucords-*.service
-  rm -f "${SYSTEMD_USER_PATH}"/quipucords*.network
-  rm -f "${SYSTEMD_USER_PATH}"/quipucords*.container
-  rm -f "${ENV_USER_PATH}"/*.env
+  rm -f "${SYSTEMD_CONFIG_DIR}"/quipucords*.network
+  rm -f "${SYSTEMD_CONFIG_DIR}"/quipucords*.container
+  rm -f "${QUIPUCORDS_ENV_DIR}"/*.env
 
   systemctl --user daemon-reload
   systemctl --user reset-failed
 
   echo "Removing Quipucords Data ..."
-  rm -rf "${QUIPUCORDS_USER_PATH}/data"
-  rm -rf "${QUIPUCORDS_USER_PATH}/log"
-  rm -rf "${QUIPUCORDS_USER_PATH}/sshkeys"
-  rm -rf "${QUIPUCORDS_USER_PATH}/certs"
+  rm -rf "${QUIPUCORDS_DATA_DIR}/data"
+  rm -rf "${QUIPUCORDS_DATA_DIR}/log"
+  rm -rf "${QUIPUCORDS_DATA_DIR}/sshkeys"
+  rm -rf "${QUIPUCORDS_DATA_DIR}/certs"
   podman secret rm quipucords-server-password &>/dev/null
   podman secret rm quipucords-django-secret-key &>/dev/null
 
   echo "Quipucords Uninstalled."
   exit 0
-fi
+}
 
-echo "Usage: ${INSTALLER_COMMAND} [-v | --verbose] <command>"
-echo ""
-echo "Where <command> is one of:"
-echo "  install                  - Install Quipucords"
-echo "  uninstall                - Uninstall Quipucords"
-echo "  create-server-password   - Create a Quipucords server password"
-echo "  create-app-secret        - Create a Quipucords application secret"
-
-exit 1
+set_default_vars
+main "$@"
