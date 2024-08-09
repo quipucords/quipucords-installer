@@ -22,13 +22,23 @@ usage() {
   exit 1
 }
 
+check_prereqs() {
+  local requirements="base64 basename cp diff echo grep head mkdir podman tr read rm sed systemctl"
+  for requirement in $requirements; do
+    if ! command -v "$requirement" >/dev/null 2>&1; then
+      echo "Error: $requirement is not installed or is not in the PATH." >&2
+      exit 1
+    fi
+  done
+}
+
 set_default_vars() {
   VERBOSE="n"
   OVERRIDE_CONF_DIR="" # Optional
 
-  # All external programs quipucords-installer needs are in /usr/bin.
+  # All external programs quipucords-installer needs are in standard bin paths.
   # Do not allow a user's custom PATH environment to interfere.
-  export PATH=/usr/bin
+  export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
 
   INSTALLER_BIN_DIR=$(dirname "$(realpath "$0")")
   INSTALLER_BASE_DIR=$(dirname "$INSTALLER_BIN_DIR")
@@ -320,5 +330,6 @@ uninstall() {
   exit 0
 }
 
+check_prereqs
 set_default_vars
 main "$@"
