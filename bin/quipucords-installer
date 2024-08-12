@@ -2,6 +2,12 @@
 #
 # Quipucords Installer
 #
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+  echo "This script is intended to be run, not sourced." >&2
+  return 1
+fi
+
 set -e
 
 if [ "$(id -u)" -eq 0 ]; then
