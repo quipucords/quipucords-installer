@@ -22,6 +22,7 @@ usage() {
   echo "  --override-conf-dir value     Path of a directory containing config overrides"
   echo "Commands:"
   echo "  install                       Install Quipucords"
+  echo "  upgrade                       Upgrade Quipucords"
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
@@ -106,6 +107,16 @@ main() {
   case "$COMMAND" in
   install)
     install
+    echo "Quipucords Installed."
+    exit 0
+    ;;
+  upgrade)
+    upgrade
+    upgrade_status=$?
+    if [ $upgrade_status -eq 0 ]; then
+      echo "Upgrade complete. You may now start Quipucords."
+    fi
+    exit $upgrade_status
     ;;
   uninstall)
     uninstall
@@ -305,15 +316,44 @@ install() {
 
   echo "Generate the Quipucords services ..."
   systemctl --user daemon-reload
-
-  echo "Quipucords Installed."
-  exit 0
 }
 
-uninstall() {
+pull_latest_images() {
+  local exit_status=0
+  for config_container in "${INSTALLER_CONFIG_DIR}"/*.container; do
+    local container_basename
+    container_basename=$(basename "$config_container")
+    local systemd_container="${SYSTEMD_CONFIG_DIR}/${container_basename}"
+    local image
+    image=$(grep -o '^Image=.*' "$systemd_container" | tail -n 1 | sed 's/^Image=//')
+    echo "Pulling the latest version of '$image'"
+    if ! podman pull -q "$image" &>/dev/null; then
+      echo "Error: Could not pull '$image'." >&2
+      exit_status=1
+    fi
+  done
+  if [ $exit_status -ne 0 ]; then
+    echo "At least one image failed to pull. Check network connectivity and try again, or manually import the images before starting Quipucords." >&2
+  fi
+  return $exit_status
+}
+
+upgrade() {
+  echo "Upgrading Quipucords ..."
+  stop_containers
+  install
+  pull_latest_images
+  return $?
+}
+
+stop_containers() {
   echo "Stopping Quipucords ..."
   systemctl --user stop quipucords-app || true
   systemctl --user stop quipucords-network || true
+}
+
+uninstall() {
+  stop_containers
 
   echo "Removing Quipucords Services ..."
   rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/quipucords-*.service
