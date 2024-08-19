@@ -43,14 +43,21 @@ set_default_vars() {
   VERBOSE="n"
   OVERRIDE_CONF_DIR="" # Optional
 
-  # All external programs quipucords-installer needs are in standard bin paths.
-  # Do not allow a user's custom PATH environment to interfere.
-  export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
-
   INSTALLER_BIN_DIR=$(dirname "$(realpath "$0")")
-  INSTALLER_BASE_DIR=$(dirname "$INSTALLER_BIN_DIR")
+  if [[ $INSTALLER_BIN_DIR == "/usr/bin" ]]; then
+    # bin and base dirs are different when installed by RPM...
+    INSTALLER_BASE_DIR="/usr/share/quipucords-installer"
+  else
+    # ...versus when running from source.
+    INSTALLER_BASE_DIR=$(dirname "$INSTALLER_BIN_DIR")
+  fi
+  INSTALLER_BIN_DIR="${INSTALLER_BASE_DIR}/bin"
   INSTALLER_CONFIG_DIR="${INSTALLER_BASE_DIR}/config"
   INSTALLER_ENV_DIR="${INSTALLER_BASE_DIR}/env"
+
+  # All external programs quipucords-installer needs are in these bin paths.
+  # Do not allow a user's custom PATH environment to interfere.
+  export PATH="${INSTALLER_BIN_DIR}:/usr/bin:/bin:/usr/sbin:/sbin"
 
   QUIPUCORDS_ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords/env"
   QUIPUCORDS_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/quipucords"
@@ -122,11 +129,11 @@ main() {
     uninstall
     ;;
   create-server-password)
-    "${INSTALLER_BIN_DIR}"/create-server-password
+    create-server-password
     exit $?
     ;;
   create-app-secret)
-    "${INSTALLER_BIN_DIR}"/create-app-secret
+    create-app-secret
     exit $?
     ;;
   *)
@@ -287,11 +294,11 @@ copy_env() {
 
 install() {
   if ! podman secret exists quipucords-server-password; then
-    "${INSTALLER_BIN_DIR}"/create-server-password || exit 1
+    create-server-password || exit 1
   fi
 
   if ! podman secret exists quipucords-django-secret-key; then
-    "${INSTALLER_BIN_DIR}"/create-app-secret -y || exit 1
+    create-app-secret -y || exit 1
   fi
 
   mkdir -p "${QUIPUCORDS_DATA_DIR}/data"
