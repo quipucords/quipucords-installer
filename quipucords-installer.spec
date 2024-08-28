@@ -1,6 +1,6 @@
 %global product_name_lower quipucords
 %global product_name_title Quipucords
-%global version_installer 1.9.4
+%global version_installer 1.10.0
 %global server_image quay.io/quipucords/quipucords:1.9
 %global ui_image quay.io/quipucords/quipucords-ui:latest
 
@@ -86,6 +86,9 @@ sed -i 's#^Image=.*#Image=%{ui_image}#g' %{buildroot}/%{_datadir}/%{name}/config
 %{_datadir}/%{name}/env/env-server.env
 
 %changelog
+* Wed Aug 28 2024 Brad Smith <brasmith@redhat.com> - 0:1.10.0-1
+- Rename environment variables prefix "QPC_" to "QUIPUCORDS_".
+
 * Thu Aug 15 2024 Brad Smith <brasmith@redhat.com> - 0:1.9.3-1
 - Add upgrade command.
 
