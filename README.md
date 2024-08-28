@@ -172,7 +172,7 @@ Still can't login? If the password you set it too weak, Quipucords will reset it
 journalctl --user -u quipucords-server | grep password
 ```
 ```
-QPC_SERVER_PASSWORD value failed password requirements. Using a randomly generated password instead.
+QUIPUCORDS_SERVER_PASSWORD value failed password requirements. Using a randomly generated password instead.
 Updated user 'admin' with random password: jbzRwrvjnw
 ```
 
