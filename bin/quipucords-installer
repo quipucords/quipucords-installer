@@ -37,6 +37,30 @@ check_prereqs() {
       exit 1
     fi
   done
+
+  if [[ $(stat -fc %T /sys/fs/cgroup/) != "cgroup2fs" ]]; then
+    cat <<EOFDOC >&2
+Error: cgroup2fs is required but is not currently available.
+
+To enable cgroup2fs (a.k.a. "cgroups-v2"), you may need to
+update your kernel arguments and reboot. Consider running
+these commands before trying to use quipucords-installer:
+
+$ sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=1"
+$ cat << EOF >>~/.config/containers/containers.conf
+[containers]
+pids_limit=0
+EOF
+$ sudo reboot
+
+For more information, please see:
+
+  https://issues.redhat.com/browse/RHEL-5870
+  https://access.redhat.com/solutions/5913671
+
+EOFDOC
+    exit 1
+  fi
 }
 
 set_default_vars() {
