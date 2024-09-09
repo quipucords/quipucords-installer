@@ -38,11 +38,11 @@ check_prereqs() {
     fi
   done
 
-  if [[ $(stat -fc %T /sys/fs/cgroup/) != "cgroup2fs" ]]; then
+  if [[ "$(podman info --format "{{.Host.CgroupsVersion}}")" != "v2" ]]; then
     cat <<EOFDOC >&2
-Error: cgroup2fs is required but is not currently available.
+Error: system is not configured to use cgroups v2.
 
-To enable cgroup2fs (a.k.a. "cgroups-v2"), you may need to
+To enable cgroups v2 (a.k.a. cgroup2fs), you may need to
 update your kernel arguments and reboot. Consider running
 these commands before trying to use quipucords-installer:
 
