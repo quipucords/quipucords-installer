@@ -23,6 +23,7 @@ BuildRequires:  sed
 Requires:       bash
 Requires:       coreutils
 Requires:       diffutils
+Requires:       gawk
 Requires:       grep
 Requires:       podman
 Requires:       sed
