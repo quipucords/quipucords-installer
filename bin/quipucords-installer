@@ -30,7 +30,7 @@ usage() {
 }
 
 check_prereqs() {
-  local requirements="base64 basename cp diff echo grep head mkdir podman tr read rm sed systemctl"
+  local requirements="awk base64 basename cp diff echo grep head mkdir podman tr read rm sed sort systemctl"
   for requirement in $requirements; do
     if ! command -v "$requirement" >/dev/null 2>&1; then
       echo "Error: $requirement is not installed or is not in the PATH." >&2
@@ -369,6 +369,33 @@ pull_latest_images() {
   return $exit_status
 }
 
+remove_container_images() {
+  echo "Removing Quipucords container images ..."
+  local exit_status=0
+  local unique_images
+  unique_images=$(
+    grep -h '^Image=.*' "${INSTALLER_CONFIG_DIR}"/*.container |
+      awk -F= '!seen[$2]++' |
+      sed 's/^Image=//g' |
+      sort -u
+  )
+  if [[ -z "$unique_images" || "$unique_images" =~ ^[[:space:]]*$ ]]; then
+    # no images found, nothing to do
+    return
+  fi
+
+  while IFS= read -r image; do
+    echo "Removing container image '$image'"
+    if ! podman rmi "$image" &>/dev/null; then
+      echo "Error: Could not remove '$image'." >&2
+      exit_status=1
+    fi
+  done <<<"$unique_images"
+  if [ $exit_status -ne 0 ]; then
+    echo "At least one image failed to be removed." >&2
+  fi
+}
+
 upgrade() {
   echo "Upgrading Quipucords ..."
   stop_containers
@@ -385,6 +412,7 @@ stop_containers() {
 
 uninstall() {
   stop_containers
+  remove_container_images
 
   echo "Removing Quipucords Services ..."
   rm -f "${XDG_RUNTIME_DIR}"/systemd/generator/quipucords-*.service
