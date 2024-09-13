@@ -359,12 +359,12 @@ pull_latest_images() {
     image=$(grep -o '^Image=.*' "$systemd_container" | tail -n 1 | sed 's/^Image=//')
     echo "Pulling the latest version of '$image'"
     if ! podman pull -q "$image" &>/dev/null; then
-      echo "Error: Could not pull '$image'." >&2
+      echo "Warning: Could not pull '$image'." >&2
       exit_status=1
     fi
   done
   if [ $exit_status -ne 0 ]; then
-    echo "At least one image failed to pull. Check network connectivity and try again, or manually import the images before starting Quipucords." >&2
+    echo "At least one image failed to pull. Check network connectivity and try again, or manually import the images before starting Quipucords. If you are installing in a disconnected environment and you have already pulled the latest images, you may ignore these warnings." >&2
   fi
   return $exit_status
 }
