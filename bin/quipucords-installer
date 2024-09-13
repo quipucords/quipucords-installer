@@ -139,14 +139,28 @@ main() {
   case "$COMMAND" in
   install)
     install
-    echo "Quipucords Installed."
+    cat <<EOFDOC
+Install complete.
+
+You may now start Quipucords by running the following command:
+
+    systemctl --user start quipucords-app
+
+EOFDOC
     exit 0
     ;;
   upgrade)
     upgrade
     upgrade_status=$?
     if [ $upgrade_status -eq 0 ]; then
-      echo "Upgrade complete. You may now start Quipucords."
+      cat <<EOFDOC
+Upgrade complete.
+
+You may now start Quipucords by running the following command:
+
+    systemctl --user start quipucords-app
+
+EOFDOC
     fi
     exit $upgrade_status
     ;;
