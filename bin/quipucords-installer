@@ -47,6 +47,7 @@ update your kernel arguments and reboot. Consider running
 these commands before trying to use quipucords-installer:
 
 $ sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=1"
+$ mkdir -p ~/.config/containers
 $ cat << EOF >>~/.config/containers/containers.conf
 [containers]
 pids_limit=0
