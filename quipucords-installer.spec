@@ -27,7 +27,6 @@ Requires:       gawk
 Requires:       grep
 Requires:       podman
 Requires:       sed
-Requires:       systemd
 
 %description
 %{name} configures and installs the %{product_name_title} server to be
