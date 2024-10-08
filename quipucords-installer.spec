@@ -25,7 +25,7 @@ Requires:       coreutils
 Requires:       diffutils
 Requires:       gawk
 Requires:       grep
-Requires:       podman
+Requires:       podman>=4.7.0
 Requires:       sed
 
 %description
