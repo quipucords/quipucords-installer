@@ -13,9 +13,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
       - run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
-      - run: sudo apt-get install -y shellcheck
+      - run: sudo apt-get install -y shellcheck rpmlint
       - name: run shellcheck
         run: shellcheck ./bin/*
       - name: run shfmt
         run: shfmt -i 2 --diff ./bin/*
-
+      - name: run rpmlint
+        env:
+          RPMLINT_EXTRA_CONF: "nobuild.rpmlint.toml"
+        run: |
+          echo 'Filters = ["no-%build-section", "no-cleaning-of", "no-buildroot-tag"]' > "$RPMLINT_EXTRA_CONF"
+          rpmlint -c "$RPMLINT_EXTRA_CONF" -s quipucords-installer.spec
