@@ -26,6 +26,7 @@ usage() {
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
+  echo "  check                         Check Quipucords setup and configurations"
   exit 1
 }
 
@@ -74,6 +75,7 @@ set_default_vars() {
   # Do not allow a user's custom PATH environment to interfere.
   export PATH="${INSTALLER_BIN_DIR}:/usr/bin:/bin:/usr/sbin:/sbin"
 
+  QUIPUCORDS_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords"
   QUIPUCORDS_ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords/env"
   QUIPUCORDS_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/quipucords"
   SYSTEMD_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd"
@@ -156,6 +158,10 @@ EOFDOC
     ;;
   uninstall)
     uninstall
+    ;;
+  check)
+    check
+    exit $?
     ;;
   create-server-password)
     create-server-password
@@ -407,6 +413,75 @@ upgrade() {
   install
   pull_latest_images
   return $?
+}
+
+check_directory_status() {
+  if [ -d "${1}" ]; then
+    if [ -O "${1}" ]; then
+      return 0 # OK
+    else
+      return 1 # Not owned by you
+    fi
+  fi
+  return 2 # Missing
+}
+
+check_file_status() {
+  if [ -f "${1}" ]; then
+    if [ -O "${1}" ]; then
+      return 0 # OK
+    else
+      return 1 # Not owned by you
+    fi
+  fi
+  return 2 # Missing
+}
+
+check_and_print_status() {
+  if [ "${1}" == "d" ]; then
+    check_directory_status "${2}"
+  else
+    check_file_status "${2}"
+  fi
+  local status=$?
+  if [ $status -eq 0 ]; then
+    echo "${2}: OK"
+    return 0
+  fi
+  if [ $status -eq 1 ]; then
+    echo "${2}: ERROR: Not owned by you"
+    return 1
+  fi
+  echo "${2}: ERROR: Missing"
+  return 2
+}
+
+check() {
+  echo "Checking Quipucords setup and configurations..."
+  local result=0
+  check_and_print_status d "${QUIPUCORDS_DATA_DIR}" || result=$((result + 1))
+  for name in certs data db log sshkeys; do
+    local subdirectory="${QUIPUCORDS_DATA_DIR}/$name"
+    check_and_print_status d "$subdirectory" || result=$((result + 1))
+  done
+  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/certs/server.key" || result=$((result + 1))
+  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/certs/server.crt" || result=$((result + 1))
+  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/data/secret.txt" || result=$((result + 1))
+  check_and_print_status d "${QUIPUCORDS_DATA_DIR}/db/userdata" || result=$((result + 1))
+  check_and_print_status d "${QUIPUCORDS_CONFIG_DIR}" || result=$((result + 1))
+  check_and_print_status d "${QUIPUCORDS_ENV_DIR}" || result=$((result + 1))
+  for name in ansible app celery-worker db redis server; do
+    local env_file="$QUIPUCORDS_ENV_DIR/env-${name}.env"
+    check_and_print_status f "${env_file}" || result=$((result + 1))
+  done
+  check_and_print_status d "${SYSTEMD_CONFIG_DIR}" || result=$((result + 1))
+  for name in app celery-worker db redis server; do
+    local container_file="${SYSTEMD_CONFIG_DIR}/quipucords-${name}.container"
+    check_and_print_status f "${container_file}" || result=$((result + 1))
+  done
+  local network_file="${SYSTEMD_CONFIG_DIR}/quipucords.network"
+  check_and_print_status f "${network_file}" || result=$((result + 1))
+  return $result
 }
 
 stop_containers() {
