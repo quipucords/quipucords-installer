@@ -418,23 +418,31 @@ upgrade() {
 check_directory_status() {
   if [ -d "${1}" ]; then
     if [ -O "${1}" ]; then
-      return 0 # OK
+      if [ -r "${1}" ] && [ -w "${1}" ] && [ -x "${1}" ]; then
+        return 0 # OK
+      else
+        return 1 # Not writable
+      fi
     else
-      return 1 # Not owned by you
+      return 2 # Not owned by you
     fi
   fi
-  return 2 # Missing
+  return 3 # Missing
 }
 
 check_file_status() {
   if [ -f "${1}" ]; then
     if [ -O "${1}" ]; then
-      return 0 # OK
+      if [ -r "${1}" ] && [ -w "${1}" ]; then
+        return 0 # OK
+      else
+        return 1 # Not writable
+      fi
     else
-      return 1 # Not owned by you
+      return 2 # Not owned by you
     fi
   fi
-  return 2 # Missing
+  return 3 # Missing
 }
 
 check_and_print_status() {
@@ -449,11 +457,15 @@ check_and_print_status() {
     return 0
   fi
   if [ $status -eq 1 ]; then
-    echo "${2}: ERROR: Not owned by you"
+    echo "${2}: ERROR: Wrong permission(s)"
     return 1
   fi
+  if [ $status -eq 2 ]; then
+    echo "${2}: ERROR: Not owned by you (bad ownership)"
+    return 2
+  fi
   echo "${2}: ERROR: Missing"
-  return 2
+  return 3
 }
 
 check() {
