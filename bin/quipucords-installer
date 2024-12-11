@@ -421,7 +421,7 @@ check_directory_status() {
       if [ -r "${1}" ] && [ -w "${1}" ] && [ -x "${1}" ]; then
         return 0 # OK
       else
-        return 1 # Not writable
+        return 1 # Bad permissions
       fi
     else
       return 2 # Not owned by you
@@ -436,7 +436,7 @@ check_file_status() {
       if [ -r "${1}" ] && [ -w "${1}" ]; then
         return 0 # OK
       else
-        return 1 # Not writable
+        return 1 # Bad permissions
       fi
     else
       return 2 # Not owned by you
@@ -453,15 +453,18 @@ check_and_print_status() {
   fi
   local status=$?
   if [ $status -eq 0 ]; then
-    echo "${2}: OK"
+    perms_owner=$(stat -c '%A %U' "${2}")
+    echo "${2}: OK: ${perms_owner}"
     return 0
   fi
   if [ $status -eq 1 ]; then
-    echo "${2}: ERROR: Wrong permission(s)"
+    perms=$(stat -c '%a %A' "${2}")
+    echo "${2}: ERROR: Incorrect permission(s): ${perms}"
     return 1
   fi
   if [ $status -eq 2 ]; then
-    echo "${2}: ERROR: Not owned by you (bad ownership)"
+    owner=$(stat -c '%u %U' "${2}")
+    echo "${2}: ERROR: Not owned by you (incorrect ownership): ${owner}"
     return 2
   fi
   echo "${2}: ERROR: Missing"
