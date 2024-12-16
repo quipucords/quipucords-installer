@@ -429,57 +429,63 @@ check_file_status() {
   return 1                                       # Bad permissions
 }
 
-check_and_print_status() {
-  if [ "${1}" == "d" ]; then
-    check_directory_status "${2}"
-  else
-    check_file_status "${2}"
-  fi
-  local status=$?
-  if [ $status -eq 0 ]; then
+print_path_status() {
+  local owner perms perms_owner
+  if [ "${1}" -eq 0 ]; then
     perms_owner=$(stat -c '%A %U' "${2}")
     echo "${2}: OK: ${perms_owner}"
-    return 0
-  fi
-  if [ $status -eq 1 ]; then
+  elif [ "${1}" -eq 1 ]; then
     perms=$(stat -c '%a %A' "${2}")
     echo "${2}: ERROR: Incorrect permission(s): ${perms}"
-    return 1
-  fi
-  if [ $status -eq 2 ]; then
+  elif [ "${1}" -eq 2 ]; then
     owner=$(stat -c '%u %U' "${2}")
     echo "${2}: ERROR: Not owned by you (incorrect ownership): ${owner}"
-    return 2
+  elif [ "${1}" -eq 3 ]; then
+    echo "${2}: ERROR: Missing"
+  else
+    echo "${2}: ERROR: Unknown status"
   fi
-  echo "${2}: ERROR: Missing"
-  return 3
+}
+
+check_directory_and_print_status() {
+  check_directory_status "${1}"
+  local exit_status=$?
+  print_path_status ${exit_status} "${1}"
+  return $exit_status
+}
+
+check_file_and_print_status() {
+  check_file_status "${1}"
+  local exit_status=$?
+  print_path_status ${exit_status} "${1}"
+  return $exit_status
 }
 
 check() {
   echo "Checking Quipucords setup and configurations..."
   local result=0
-  check_and_print_status d "${QUIPUCORDS_DATA_DIR}" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_DATA_DIR}" || result=$((result + 1))
   for name in certs data db log sshkeys; do
     local subdirectory="${QUIPUCORDS_DATA_DIR}/$name"
-    check_and_print_status d "$subdirectory" || result=$((result + 1))
+    check_directory_and_print_status "$subdirectory" || result=$((result + 1))
   done
-  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/certs/server.key" || result=$((result + 1))
-  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/certs/server.crt" || result=$((result + 1))
-  check_and_print_status f "${QUIPUCORDS_DATA_DIR}/data/secret.txt" || result=$((result + 1))
-  check_and_print_status d "${QUIPUCORDS_DATA_DIR}/db/userdata" || result=$((result + 1))
-  check_and_print_status d "${QUIPUCORDS_CONFIG_DIR}" || result=$((result + 1))
-  check_and_print_status d "${QUIPUCORDS_ENV_DIR}" || result=$((result + 1))
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/certs/server.key" || result=$((result + 1))
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/certs/server.crt" || result=$((result + 1))
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/data/secret.txt" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_DATA_DIR}/db/userdata" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_CONFIG_DIR}" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_ENV_DIR}" || result=$((result + 1))
   for name in ansible app celery-worker db redis server; do
     local env_file="$QUIPUCORDS_ENV_DIR/env-${name}.env"
-    check_and_print_status f "${env_file}" || result=$((result + 1))
+    check_file_and_print_status "${env_file}" || result=$((result + 1))
   done
-  check_and_print_status d "${SYSTEMD_CONFIG_DIR}" || result=$((result + 1))
+  check_directory_and_print_status "${SYSTEMD_CONFIG_DIR}" || result=$((result + 1))
   for name in app celery-worker db redis server; do
     local container_file="${SYSTEMD_CONFIG_DIR}/quipucords-${name}.container"
-    check_and_print_status f "${container_file}" || result=$((result + 1))
+    check_file_and_print_status "${container_file}" || result=$((result + 1))
   done
   local network_file="${SYSTEMD_CONFIG_DIR}/quipucords.network"
-  check_and_print_status f "${network_file}" || result=$((result + 1))
+  check_file_and_print_status "${network_file}" || result=$((result + 1))
   return $result
 }
 
