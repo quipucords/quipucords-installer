@@ -26,6 +26,7 @@ usage() {
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
+  echo "  check                         Check Quipucords setup and configurations"
   exit 1
 }
 
@@ -74,6 +75,7 @@ set_default_vars() {
   # Do not allow a user's custom PATH environment to interfere.
   export PATH="${INSTALLER_BIN_DIR}:/usr/bin:/bin:/usr/sbin:/sbin"
 
+  QUIPUCORDS_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords"
   QUIPUCORDS_ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quipucords/env"
   QUIPUCORDS_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/quipucords"
   SYSTEMD_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd"
@@ -156,6 +158,10 @@ EOFDOC
     ;;
   uninstall)
     uninstall
+    ;;
+  check)
+    check
+    exit $?
     ;;
   create-server-password)
     create-server-password
@@ -407,6 +413,80 @@ upgrade() {
   install
   pull_latest_images
   return $?
+}
+
+check_directory_status() {
+  [[ ! -d "${1}" ]] && return 3                  # Missing
+  [[ ! -O "${1}" ]] && return 2                  # Not owned by you
+  [[ -r "${1}" ]] && [[ -w "${1}" ]] && return 0 # OK
+  return 1                                       # Bad permissions
+}
+
+check_file_status() {
+  [[ ! -f "${1}" ]] && return 3                  # Missing
+  [[ ! -O "${1}" ]] && return 2                  # Not owned by you
+  [[ -r "${1}" ]] && [[ -w "${1}" ]] && return 0 # OK
+  return 1                                       # Bad permissions
+}
+
+print_path_status() {
+  local owner perms perms_owner
+  if [ "${1}" -eq 0 ]; then
+    perms_owner=$(stat -c '%A %U' "${2}")
+    echo "${2}: OK: ${perms_owner}"
+  elif [ "${1}" -eq 1 ]; then
+    perms=$(stat -c '%a %A' "${2}")
+    echo "${2}: ERROR: Incorrect permission(s): ${perms}"
+  elif [ "${1}" -eq 2 ]; then
+    owner=$(stat -c '%u %U' "${2}")
+    echo "${2}: ERROR: Not owned by you (incorrect ownership): ${owner}"
+  elif [ "${1}" -eq 3 ]; then
+    echo "${2}: ERROR: Missing"
+  else
+    echo "${2}: ERROR: Unknown status"
+  fi
+}
+
+check_directory_and_print_status() {
+  check_directory_status "${1}"
+  local exit_status=$?
+  print_path_status ${exit_status} "${1}"
+  return $exit_status
+}
+
+check_file_and_print_status() {
+  check_file_status "${1}"
+  local exit_status=$?
+  print_path_status ${exit_status} "${1}"
+  return $exit_status
+}
+
+check() {
+  echo "Checking Quipucords setup and configurations..."
+  local result=0
+  check_directory_and_print_status "${QUIPUCORDS_DATA_DIR}" || result=$((result + 1))
+  for name in certs data db log sshkeys; do
+    local subdirectory="${QUIPUCORDS_DATA_DIR}/$name"
+    check_directory_and_print_status "$subdirectory" || result=$((result + 1))
+  done
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/certs/server.key" || result=$((result + 1))
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/certs/server.crt" || result=$((result + 1))
+  check_file_and_print_status "${QUIPUCORDS_DATA_DIR}/data/secret.txt" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_DATA_DIR}/db/userdata" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_CONFIG_DIR}" || result=$((result + 1))
+  check_directory_and_print_status "${QUIPUCORDS_ENV_DIR}" || result=$((result + 1))
+  for name in ansible app celery-worker db redis server; do
+    local env_file="$QUIPUCORDS_ENV_DIR/env-${name}.env"
+    check_file_and_print_status "${env_file}" || result=$((result + 1))
+  done
+  check_directory_and_print_status "${SYSTEMD_CONFIG_DIR}" || result=$((result + 1))
+  for name in app celery-worker db redis server; do
+    local container_file="${SYSTEMD_CONFIG_DIR}/quipucords-${name}.container"
+    check_file_and_print_status "${container_file}" || result=$((result + 1))
+  done
+  local network_file="${SYSTEMD_CONFIG_DIR}/quipucords.network"
+  check_file_and_print_status "${network_file}" || result=$((result + 1))
+  return $result
 }
 
 stop_containers() {
