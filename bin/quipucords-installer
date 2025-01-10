@@ -309,8 +309,9 @@ copy_env() {
     while IFS=$'\n' read -r line; do
       env_var=${line%=*}
       env_val=${line#*=}
-      if ! echo "${env_unit}" | grep "^${env_var}=" >/dev/null; then
-        env_unit="${env_unit//${env_var}=.*/${env_var}=${env_val}/}"
+      if echo "${env_unit}" | grep "^${env_var}=" >/dev/null; then
+        # shellcheck disable=SC2001
+        env_unit="$(echo "${env_unit}" | sed -e "s/^${env_var}=.\+/${env_var}=${env_val}/")"
       else
         NL=$'\n'
         env_unit="${env_unit}${NL}${env_var}=${env_val}"
