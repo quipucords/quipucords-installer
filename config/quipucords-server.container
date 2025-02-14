@@ -22,6 +22,12 @@ Network=quipucords.network
 # RHEL 8 needs --pids-limit flag. This is not necessary on RHEL 9, and
 # in fact causes us to ignore user settings, if any.
 PidsLimit=0
+# Konflux requires non-root users in container images; for this reason, quipucords-server
+# versions above 1.12.1 shall use user 1001, regardless of being released through Konflux
+# or Brew, to accomodate this change.
+# Mounted volumes are always mapped to root on SELinux, so we need to use UserNS config to
+# set the ownership correctly.
+UserNS=keep-id:uid=1001
 
 [Service]
 Restart=always
