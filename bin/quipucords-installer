@@ -446,10 +446,10 @@ remove_container_images() {
 
 upgrade_with_db() {
   echo "Upgrading Quipucords and database ..."
-  local upgrade_ts
+  local upgrade_ts db_backup_filename db_backup_file
   upgrade_ts="$(date '+%FT%T')"
-  local db_backup_filename="quipucords_db_backup.${upgrade_ts}.sql"
-  local db_backup_file="${QUIPUCORDS_DATA_DIR}/db/${db_backup_filename}"
+  db_backup_filename="quipucords_db_backup.${upgrade_ts}.sql"
+  db_backup_file="${QUIPUCORDS_DATA_DIR}/db/${db_backup_filename}"
 
   echo "Backing up Quipucords database to ${db_backup_file} ..."
   # Database needs to be running for getting a backup
@@ -473,8 +473,12 @@ upgrade_with_db() {
   wait_for_db
 
   echo "Restoring Quipucords database from ${db_backup_file} ..."
-  # AAB - instead of qpc use the currently configured values
-  podman exec -it quipucords-db /usr/bin/psql -U qpc -d qpc -f "/var/lib/pgsql/data/${db_backup_filename}"
+  local db_env db_user db_name
+  db_env="${QUIPUCORDS_ENV_DIR}"/env-db.env
+  db_user="$(grep -o '^QUIPUCORDS_DBMS_USER=.*' "${db_env}" | tail -n 1 | sed 's/^[^=]\+=//')"
+  db_name="$(grep -o '^QUIPUCORDS_DBMS_DATABASE=.*' "${db_env}" | tail -n 1 | sed 's/^[^=]\+=//')"
+  podman exec -it quipucords-db /usr/bin/psql -U "${db_user}" -d "${db_name}" \
+    -f "/var/lib/pgsql/data/${db_backup_filename}"
   return $?
 }
 
