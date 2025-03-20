@@ -121,7 +121,7 @@ main() {
   done
 
   if [[ $# -lt 1 ]]; then
-    echo "Error: One command is required." 1>&2
+    echo "Error: Command is missing." 1>&2
     usage
   fi
 
@@ -202,6 +202,12 @@ debug_msg() {
   if [ "${VERBOSE}" == "y" ]; then
     echo "$@"
   fi
+}
+
+get_image() {
+  container_file="${1}"
+  grep -o '^Image=.*' "${container_file}" | tail -n 1 | sed 's/^Image=//'
+  return 0
 }
 
 get_section() {
@@ -388,7 +394,7 @@ pull_latest_images() {
     container_basename=$(basename "$config_container")
     local systemd_container="${SYSTEMD_CONFIG_DIR}/${container_basename}"
     local image
-    image=$(grep -o '^Image=.*' "$systemd_container" | tail -n 1 | sed 's/^Image=//')
+    image=$(get_image "$systemd_container")
     echo "Pulling the latest version of '$image'"
     if ! podman pull -q "$image" &>/dev/null; then
       echo "Warning: Could not pull '$image'." >&2
@@ -455,9 +461,9 @@ upgrade_with_db() {
 upgrade() {
   local db_container="quipucords-db.container"
   local from_db_image
-  from_db_image=$(grep -o '^Image=.*' "${SYSTEMD_CONFIG_DIR}/${db_container}" | tail -n 1 | sed 's/^Image=//')
+  from_db_image=$(get_image "${SYSTEMD_CONFIG_DIR}/${db_container}")
   local to_db_image
-  to_db_image=$(grep -o '^Image=.*' "${INSTALLER_CONFIG_DIR}/${db_container}" | tail -n 1 | sed 's/^Image=//')
+  to_db_image=$(get_image "${INSTALLER_CONFIG_DIR}/${db_container}")
   if [[ "${from_db_image}" != "${to_db_image}" ]]; then
     if [[ -z "${UPGRADE_DB_DATA}" ]]; then
       echo "About to update the Quipucords DB image from ${from_db_image} to ${to_db_image}" >&2
