@@ -354,6 +354,16 @@ copy_env() {
   fi
 }
 
+wait_for_db() {
+  while true; do
+    if podman exec -it quipucords-db /usr/bin/pg_isready -q; then
+      break
+    fi
+    debug_msg "Waiting for Quipucords DB ..."
+    sleep 2
+  done
+}
+
 install() {
   if ! podman secret exists quipucords-server-password; then
     create-server-password || exit 1
@@ -435,24 +445,34 @@ remove_container_images() {
 }
 
 upgrade_with_db() {
-  echo "Upgrading Quipucords and database data ..."
+  echo "Upgrading Quipucords and database ..."
   local upgrade_ts
   upgrade_ts="$(date '+%FT%T')"
   local db_backup_filename="quipucords_db_backup.${upgrade_ts}.sql"
   local db_backup_file="${QUIPUCORDS_DATA_DIR}/db/${db_backup_filename}"
-  echo "Backing up Quipucords DB data to ${db_backup_file} ..."
-  systemctl --user start quipucords-db # gotta be running for doing a pg_dumpall
+
+  echo "Backing up Quipucords database to ${db_backup_file} ..."
+  # Database needs to be running for getting a backup
+  systemctl --user start quipucords-db
   podman exec -t quipucords-db /usr/bin/pg_dumpall >"${db_backup_file}"
+
   stop_containers
+
   local userdata_dir="${QUIPUCORDS_DATA_DIR}/db/userdata"
+  # Save the current database
+  echo "Saving the Quipucords database to ${userdata_dir}.${upgrade_ts} ..."
   mv "${userdata_dir}" "${userdata_dir}.${upgrade_ts}"
   mkdir "${userdata_dir}"
+
   install
   pull_latest_images
+
+  # Start the Quipucords DB for restoring from the backup
   echo "Starting Quipucords DB ..."
   systemctl --user start quipucords-db
-  sleep 5 # AAB - query/ping instead
-  echo "Restoring Quipucords DB data from ${db_backup_file} ..."
+  wait_for_db
+
+  echo "Restoring Quipucords database from ${db_backup_file} ..."
   # AAB - instead of qpc use the currently configured values
   podman exec -it quipucords-db /usr/bin/psql -U qpc -d qpc -f "/var/lib/pgsql/data/${db_backup_filename}"
   return $?
