@@ -22,7 +22,7 @@ usage() {
   echo "  --override-conf-dir value     Path of a directory containing config overrides"
   echo "Commands:"
   echo "  install                       Install Quipucords"
-  echo "  upgrade                       Upgrade Quipucords"
+  echo "  upgrade [--db | --keep-db]    Upgrade Quipucords (also upgrade or keep db data as is)"
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
@@ -120,13 +120,33 @@ main() {
     esac
   done
 
-  if [[ $# -ne 1 ]]; then
-    echo "Error: Exactly one command is required." 1>&2
+  if [[ $# -lt 1 ]]; then
+    echo "Error: One command is required." 1>&2
     usage
   fi
 
   COMMAND="$1"
   shift
+
+  if [[ "${COMMAND}" == "upgrade" ]]; then
+    if [[ $# -eq 1 ]]; then
+      COMMAND_OPTION="${1}"
+      shift
+      if [[ "${COMMAND_OPTION}" == "--db" ]]; then
+        UPGRADE_DB_DATA="y"
+      elif [[ "${COMMAND_OPTION}" == "--skip-db" ]]; then
+        UPGRADE_DB_DATA="n"
+      else
+        echo "Error: Unknown upgrade option ${COMMAND_OPTION} specified." >&2
+        usage
+      fi
+    fi
+  fi
+
+  if [[ $# -ne 0 ]]; then
+    echo "Error: Exactly one command is required." 1>&2
+    usage
+  fi
 
   case "$COMMAND" in
   install)
@@ -408,7 +428,47 @@ remove_container_images() {
   fi
 }
 
+upgrade_with_db() {
+  echo "Upgrading Quipucords and database data ..."
+  local upgrade_ts
+  upgrade_ts="$(date '+%FT%T')"
+  local db_backup_filename="quipucords_db_backup.${upgrade_ts}.sql"
+  local db_backup_file="${QUIPUCORDS_DATA_DIR}/db/${db_backup_filename}"
+  echo "Backing up Quipucords DB data to ${db_backup_file} ..."
+  systemctl --user start quipucords-db # gotta be running for doing a pg_dumpall
+  podman exec -t quipucords-db /usr/bin/pg_dumpall >"${db_backup_file}"
+  stop_containers
+  local userdata_dir="${QUIPUCORDS_DATA_DIR}/db/userdata"
+  mv "${userdata_dir}" "${userdata_dir}.${upgrade_ts}"
+  mkdir "${userdata_dir}"
+  install
+  pull_latest_images
+  echo "Starting Quipucords DB ..."
+  systemctl --user start quipucords-db
+  sleep 5 # AAB - query/ping instead
+  echo "Restoring Quipucords DB data from ${db_backup_file} ..."
+  # AAB - instead of qpc use the currently configured values
+  podman exec -it quipucords-db /usr/bin/psql -U qpc -d qpc -f "/var/lib/pgsql/data/${db_backup_filename}"
+  return $?
+}
+
 upgrade() {
+  local db_container="quipucords-db.container"
+  local from_db_image
+  from_db_image=$(grep -o '^Image=.*' "${SYSTEMD_CONFIG_DIR}/${db_container}" | tail -n 1 | sed 's/^Image=//')
+  local to_db_image
+  to_db_image=$(grep -o '^Image=.*' "${INSTALLER_CONFIG_DIR}/${db_container}" | tail -n 1 | sed 's/^Image=//')
+  if [[ "${from_db_image}" != "${to_db_image}" ]]; then
+    if [[ -z "${UPGRADE_DB_DATA}" ]]; then
+      echo "About to update the Quipucords DB image from ${from_db_image} to ${to_db_image}" >&2
+      echo "Use quipucords-installer upgrade --db | --skip-db" >&2
+      return 1
+    fi
+    if [[ "${UPGRADE_DB_DATA}" == "y" ]]; then
+      upgrade_with_db
+      return $?
+    fi
+  fi
   echo "Upgrading Quipucords ..."
   stop_containers
   install
