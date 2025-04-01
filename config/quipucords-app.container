@@ -1,10 +1,10 @@
 [Unit]
 Description=Quipucords App
 Requires=podman.socket
-Wants=quipucords-db.service
-Wants=quipucords-redis.service
-Wants=quipucords-celery-worker.service
-Wants=quipucords-server.service
+Requires=quipucords-db.service
+Requires=quipucords-redis.service
+Requires=quipucords-celery-worker.service
+Requires=quipucords-server.service
 After=quipucords-server.service
 
 [Container]
