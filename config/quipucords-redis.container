@@ -5,7 +5,7 @@ PartOf=quipucords-app.service
 
 [Container]
 ContainerName=quipucords-redis
-Image=registry.redhat.io/rhel9/redis-6:latest
+Image=registry.redhat.io/rhel9/redis-7:latest
 ExposeHostPort=6379
 EnvironmentFile=%h/.config/quipucords/env/env-redis.env
 Network=quipucords.network
