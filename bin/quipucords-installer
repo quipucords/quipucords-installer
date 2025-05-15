@@ -26,6 +26,8 @@ usage() {
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
+  echo "  create-db-password            Create a DB password"
+  echo "  create-redis-password         Create a Redis password"
   echo "  check                         Check Quipucords setup and configurations"
   exit 1
 }
@@ -169,6 +171,14 @@ EOFDOC
     ;;
   create-app-secret)
     create-app-secret
+    exit $?
+    ;;
+  create-db-password)
+    create-db-password
+    exit $?
+    ;;
+  create-redis-password)
+    create-redis-password
     exit $?
     ;;
   *)
@@ -335,6 +345,14 @@ install() {
 
   if ! podman secret exists quipucords-django-secret-key; then
     create-app-secret -y || exit 1
+  fi
+
+  if ! podman secret exists quipucords-db-password; then
+    create-db-password -y || exit 1
+  fi
+
+  if ! podman secret exists quipucords-redis-password; then
+    create-redis-password -y || exit 1
   fi
 
   mkdir -p "${QUIPUCORDS_DATA_DIR}/data"
@@ -516,6 +534,8 @@ uninstall() {
   rm -rf "${QUIPUCORDS_DATA_DIR}/certs"
   podman secret rm quipucords-server-password &>/dev/null
   podman secret rm quipucords-django-secret-key &>/dev/null
+  podman secret rm quipucords-db-password &>/dev/null
+  podman secret rm quipucords-redis-password &>/dev/null
 
   echo "Quipucords Uninstalled."
   exit 0

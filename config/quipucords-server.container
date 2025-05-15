@@ -15,6 +15,8 @@ EnvironmentFile=%h/.config/quipucords/env/env-ansible.env
 EnvironmentFile=%h/.config/quipucords/env/env-server.env
 Secret=quipucords-server-password,type=env,target=QUIPUCORDS_SERVER_PASSWORD
 Secret=quipucords-django-secret-key,type=env,target=DJANGO_SECRET_KEY
+Secret=quipucords-db-password,type=env,target=QUIPUCORDS_DBMS_PASSWORD
+Secret=quipucords-redis-password,type=env,target=REDIS_PASSWORD
 Volume=%h/.local/share/quipucords/data:/var/data:z
 Volume=%h/.local/share/quipucords/log:/var/log:z
 Volume=%h/.local/share/quipucords/sshkeys:/sshkeys:z
