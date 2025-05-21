@@ -41,6 +41,8 @@ mkdir -p %{buildroot}/%{_bindir}
 mkdir -p %{buildroot}/%{_datadir}/%{name}/bin
 cp bin/quipucords-installer %{buildroot}/%{_bindir}/%{name}
 cp bin/create-server-password %{buildroot}/%{_datadir}/%{name}/bin/
+cp bin/create-redis-password %{buildroot}/%{_datadir}/%{name}/bin/
+cp bin/create-db-password %{buildroot}/%{_datadir}/%{name}/bin/
 cp bin/create-app-secret %{buildroot}/%{_datadir}/%{name}/bin/
 
 mkdir -p %{buildroot}/%{_datadir}/%{name}/env
@@ -71,6 +73,8 @@ sed -i 's#^Image=.*#Image=%{ui_image}#g' %{buildroot}/%{_datadir}/%{name}/config
 %doc README.md
 %{_bindir}/%{name}
 %{_datadir}/%{name}/bin/create-server-password
+%{_datadir}/%{name}/bin/create-redis-password
+%{_datadir}/%{name}/bin/create-db-password
 %{_datadir}/%{name}/bin/create-app-secret
 %{_datadir}/%{name}/config/%{product_name_lower}.network
 %{_datadir}/%{name}/config/%{product_name_lower}-app.container
