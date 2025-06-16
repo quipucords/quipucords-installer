@@ -12,6 +12,7 @@ Environment=POSTGRESQL_DATABASE=qpc
 Volume=%h/.local/share/quipucords/db:/var/lib/pgsql/data:z
 Secret=quipucords-db-password,type=env,target=POSTGRESQL_PASSWORD
 Network=quipucords.network
+LogDriver=journald
 # for some reason podman default user mapping won't map host user to postgres container uid (26)[1]
 # (maybe due to fix-permission script it executes later on [2]), so we fix that setting this up with
 # UserNS.
