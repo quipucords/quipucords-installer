@@ -19,6 +19,7 @@ Volume=%h/.local/share/quipucords/data:/var/data:z
 Volume=%h/.local/share/quipucords/log:/var/log:z
 Volume=%h/.local/share/quipucords/sshkeys:/sshkeys:z
 Network=quipucords.network
+LogDriver=journald
 # RHEL 8 needs --pids-limit flag. This is not necessary on RHEL 9, and
 # in fact causes us to ignore user settings, if any.
 PidsLimit=0
