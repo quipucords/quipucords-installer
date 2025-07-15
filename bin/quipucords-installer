@@ -543,4 +543,3 @@ uninstall() {
 
 check_prereqs
 set_default_vars
-main "$@"
