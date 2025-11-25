@@ -45,6 +45,10 @@ systemctl --user start quipucords-app
 
 A few seconds (or minutes depending on your hardware) later, you may access Quipucords on https://localhost:9443
 
+## Contributing
+
+**Note**: If you use AI tools to generate code, please review our [Policy for AI-Generated Code](AI-POLICY.md) for disclosure and quality requirements.
+
 ## Accessing Quipucords
 
 You can access Quipucords on the host where it was installed at https://localhost:9443.
