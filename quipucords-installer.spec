@@ -1,6 +1,6 @@
 %global product_name_lower quipucords
 %global product_name_title Quipucords
-%global version_installer 2.4.0
+%global version_installer 2.4.1
 %global server_image quay.io/quipucords/quipucords:2.4
 %global ui_image quay.io/quipucords/quipucords-ui:2.4
 
