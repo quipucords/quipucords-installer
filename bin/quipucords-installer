@@ -22,7 +22,7 @@ usage() {
   echo "  --override-conf-dir value     Path of a directory containing config overrides"
   echo "Commands:"
   echo "  install                       Install Quipucords"
-  echo "  upgrade                       Upgrade Quipucords"
+  echo "  upgrade [--db | --keep-db]    Upgrade Quipucords (also upgrade or keep db data as is)"
   echo "  uninstall                     Uninstall Quipucords"
   echo "  create-server-password        Create a Quipucords server password"
   echo "  create-app-secret             Create a Quipucords application secret"
@@ -122,13 +122,33 @@ main() {
     esac
   done
 
-  if [[ $# -ne 1 ]]; then
-    echo "Error: Exactly one command is required." 1>&2
+  if [[ $# -lt 1 ]]; then
+    echo "Error: Command is missing." 1>&2
     usage
   fi
 
   COMMAND="$1"
   shift
+
+  if [[ "${COMMAND}" == "upgrade" ]]; then
+    if [[ $# -eq 1 ]]; then
+      COMMAND_OPTION="${1}"
+      shift
+      if [[ "${COMMAND_OPTION}" == "--db" ]]; then
+        UPGRADE_DB_DATA="y"
+      elif [[ "${COMMAND_OPTION}" == "--skip-db" ]]; then
+        UPGRADE_DB_DATA="n"
+      else
+        echo "Error: Unknown upgrade option ${COMMAND_OPTION} specified." >&2
+        usage
+      fi
+    fi
+  fi
+
+  if [[ $# -ne 0 ]]; then
+    echo "Error: Exactly one command is required." 1>&2
+    usage
+  fi
 
   case "$COMMAND" in
   install)
@@ -192,6 +212,12 @@ debug_msg() {
   if [ "${VERBOSE}" == "y" ]; then
     echo "$@"
   fi
+}
+
+get_image() {
+  container_file="${1}"
+  grep -o '^Image=.*' "${container_file}" | tail -n 1 | sed 's/^Image=//'
+  return 0
 }
 
 get_section() {
@@ -338,6 +364,16 @@ copy_env() {
   fi
 }
 
+wait_for_db() {
+  while true; do
+    if podman exec -it quipucords-db /usr/bin/pg_isready -q; then
+      break
+    fi
+    debug_msg "Waiting for Quipucords DB ..."
+    sleep 2
+  done
+}
+
 install() {
   if ! podman secret exists quipucords-server-password; then
     create-server-password || exit 1
@@ -386,7 +422,7 @@ pull_latest_images() {
     container_basename=$(basename "$config_container")
     local systemd_container="${SYSTEMD_CONFIG_DIR}/${container_basename}"
     local image
-    image=$(grep -o '^Image=.*' "$systemd_container" | tail -n 1 | sed 's/^Image=//')
+    image=$(get_image "$systemd_container")
     echo "Pulling the latest version of '$image'"
     if ! podman pull -q "$image" &>/dev/null; then
       echo "Warning: Could not pull '$image'." >&2
@@ -426,7 +462,61 @@ remove_container_images() {
   fi
 }
 
+upgrade_with_db() {
+  echo "Upgrading Quipucords and database ..."
+  local upgrade_ts db_backup_filename db_backup_file
+  upgrade_ts="$(date '+%FT%T')"
+  db_backup_filename="quipucords_db_backup.${upgrade_ts}.sql"
+  db_backup_file="${QUIPUCORDS_DATA_DIR}/db/${db_backup_filename}"
+
+  echo "Backing up Quipucords database to ${db_backup_file} ..."
+  # Database needs to be running for getting a backup
+  systemctl --user start quipucords-db
+  podman exec -t quipucords-db /usr/bin/pg_dumpall >"${db_backup_file}"
+
+  stop_containers
+
+  local userdata_dir="${QUIPUCORDS_DATA_DIR}/db/userdata"
+  # Save the current database
+  echo "Saving the Quipucords database to ${userdata_dir}.${upgrade_ts} ..."
+  mv "${userdata_dir}" "${userdata_dir}.${upgrade_ts}"
+  mkdir "${userdata_dir}"
+
+  install
+  pull_latest_images
+
+  # Start the Quipucords DB for restoring from the backup
+  echo "Starting Quipucords DB ..."
+  systemctl --user start quipucords-db
+  wait_for_db
+
+  echo "Restoring Quipucords database from ${db_backup_file} ..."
+  local db_env db_user db_name
+  db_env="${QUIPUCORDS_ENV_DIR}"/env-db.env
+  db_user="$(grep -o '^QUIPUCORDS_DBMS_USER=.*' "${db_env}" | tail -n 1 | sed 's/^[^=]\+=//')"
+  db_name="$(grep -o '^QUIPUCORDS_DBMS_DATABASE=.*' "${db_env}" | tail -n 1 | sed 's/^[^=]\+=//')"
+  podman exec -it quipucords-db /usr/bin/psql -U "${db_user}" -d "${db_name}" \
+    -f "/var/lib/pgsql/data/${db_backup_filename}"
+  return $?
+}
+
 upgrade() {
+  local db_container="quipucords-db.container"
+  local from_db_image
+  from_db_image=$(get_image "${SYSTEMD_CONFIG_DIR}/${db_container}")
+  local to_db_image
+  to_db_image=$(get_image "${INSTALLER_CONFIG_DIR}/${db_container}")
+  if [[ "${from_db_image}" != "${to_db_image}" ]]; then
+    if [[ -z "${UPGRADE_DB_DATA}" ]]; then
+      echo "About to update the Quipucords DB image from ${from_db_image} to ${to_db_image}" >&2
+      echo "Use quipucords-installer upgrade --db | --skip-db" >&2
+      return 1
+    fi
+    if [[ "${UPGRADE_DB_DATA}" == "y" ]]; then
+      upgrade_with_db
+      return $?
+    fi
+  fi
   echo "Upgrading Quipucords ..."
   stop_containers
   install
