@@ -1,8 +1,16 @@
-# Installing Quipucords using `quipucords-installer`
+# `quipucords-installer` is EOL. Migrate to `quipucordsctl`.
 
 ## What is this?
 
-`quipucords-installer` is a small bundle of commands and templates that you can use to install and configure Quipucords and all its required components to run in Podman containers on your local system.
+`quipucords-installer` *was* a small bundle of commands and templates that you could use to install and configure Quipucords and all its required components to run in Podman containers on your local system.
+
+However, `quipucords-installer` is no longer maintained and has been superseded by [`quipucordsctl`](https://github.com/quipucords/quipucordsctl).
+
+See more at: https://github.com/quipucords/quipucordsctl
+
+# Legacy Repo Preservation
+
+The remainder of this document and all files in this git repository exist only as historic artifacts and are **no longer maintained**. Please do not rely on any information from this project or the files contained therein as representative of any current software needs, solutions, or behaviors.
 
 ## Using the RPM
 
